@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtMessageCenterMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtMessageCenter" >
+    <id column="message_center_id" property="messageCenterId" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="state" property="state" jdbcType="SMALLINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="sponsor_user_id" property="sponsorUserId" jdbcType="BIGINT" />
+    <result column="sponsor_user_name" property="sponsorUserName" jdbcType="VARCHAR" />
+    <result column="receive_user_id" property="receiveUserId" jdbcType="BIGINT" />
+    <result column="receive_user_name" property="receiveUserName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    message_center_id, title, type, state, content, sponsor_user_id, sponsor_user_name, 
+    receive_user_id, receive_user_name, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_message_center
+    where message_center_id = #{messageCenterId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from xt_message_center
+    where message_center_id = #{messageCenterId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtMessageCenter" >
+    insert into xt_message_center (message_center_id, title, type, 
+      state, content, sponsor_user_id, 
+      sponsor_user_name, receive_user_id, receive_user_name, 
+      create_time, update_time)
+    values (#{messageCenterId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{type,jdbcType=SMALLINT}, 
+      #{state,jdbcType=SMALLINT}, #{content,jdbcType=VARCHAR}, #{sponsorUserId,jdbcType=BIGINT}, 
+      #{sponsorUserName,jdbcType=VARCHAR}, #{receiveUserId,jdbcType=BIGINT}, #{receiveUserName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtMessageCenter" >
+    insert into xt_message_center
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="messageCenterId != null" >
+        message_center_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="sponsorUserId != null" >
+        sponsor_user_id,
+      </if>
+      <if test="sponsorUserName != null" >
+        sponsor_user_name,
+      </if>
+      <if test="receiveUserId != null" >
+        receive_user_id,
+      </if>
+      <if test="receiveUserName != null" >
+        receive_user_name,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="messageCenterId != null" >
+        #{messageCenterId,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="sponsorUserId != null" >
+        #{sponsorUserId,jdbcType=BIGINT},
+      </if>
+      <if test="sponsorUserName != null" >
+        #{sponsorUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveUserId != null" >
+        #{receiveUserId,jdbcType=BIGINT},
+      </if>
+      <if test="receiveUserName != null" >
+        #{receiveUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtMessageCenter" >
+    update xt_message_center
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=SMALLINT},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="sponsorUserId != null" >
+        sponsor_user_id = #{sponsorUserId,jdbcType=BIGINT},
+      </if>
+      <if test="sponsorUserName != null" >
+        sponsor_user_name = #{sponsorUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveUserId != null" >
+        receive_user_id = #{receiveUserId,jdbcType=BIGINT},
+      </if>
+      <if test="receiveUserName != null" >
+        receive_user_name = #{receiveUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where message_center_id = #{messageCenterId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtMessageCenter" >
+    update xt_message_center
+    set title = #{title,jdbcType=VARCHAR},
+      type = #{type,jdbcType=SMALLINT},
+      state = #{state,jdbcType=SMALLINT},
+      content = #{content,jdbcType=VARCHAR},
+      sponsor_user_id = #{sponsorUserId,jdbcType=BIGINT},
+      sponsor_user_name = #{sponsorUserName,jdbcType=VARCHAR},
+      receive_user_id = #{receiveUserId,jdbcType=BIGINT},
+      receive_user_name = #{receiveUserName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=VARCHAR}
+    where message_center_id = #{messageCenterId,jdbcType=VARCHAR}
+  </update>
+    <select id="select" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtMessageCenter" >
+    select  *
+    from xt_message_center
+  	<where>
+  		1=1
+  		<if test="messageCenterId!=null">
+  			and message_center_id= #{messageCenterId,jdbcType=OTHER}
+  		</if>
+		<if test="title != null">
+			and title = #{title,jdbcType=OTHER}
+		</if>
+		<if test="type != null">
+			and type = #{type,jdbcType=OTHER}
+		</if>
+		<if test="state != null">
+			and state = #{state,jdbcType=OTHER}
+		</if>
+		<if test="content != null">
+			and content = #{content,jdbcType=OTHER}
+		</if>
+		<if test="sponsorUserId != null">
+			and sponsor_user_id = #{sponsorUserId,jdbcType=OTHER}
+		</if>
+		<if test="sponsorUserName != null">
+			and sponsor_user_name = #{sponsorUserName,jdbcType=OTHER}
+		</if>
+		<if test="receiveUserId != null">
+			and receive_user_id = #{receiveUserId,jdbcType=OTHER}
+		</if>
+		<if test="receiveUserName != null">
+			and receive_user_name = #{receiveUserName,jdbcType=OTHER}
+		</if>
+	</where>
+	order by create_time asc
+  </select>
+  
+  
+  
+  
+  
+  
+  <!-- 自定义 -->
+  <select id="listXtMessageCenter" parameterType="map" resultMap="BaseResultMap" >
+	select *
+	from xt_message_center
+	where 1=1
+	<if test="sponsorUserId != null">
+		and sponsor_user_id = #{sponsorUserId}
+	</if>
+	<if test="receiveUserId != null">
+		and receive_user_id = #{receiveUserId}
+	</if>
+	and state = 1
+	order by create_time desc
+  </select>
+  
+  
+  <cache />
+</mapper>

@@ -1,0 +1,97 @@
+# Server settings
+server:
+    port: 8082
+#    address:localhost
+
+# DATASOURCE
+spring.datasource.241:
+    dataSourceClassName: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+    url: jdbc:mysql://192.168.0.241:3306/huatuo?useUnicode=true&amp;characterEncoding=UTF-8
+    databaseName: test1
+    username: admin
+    password: admin!@22
+    cachePrepStmts: true
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+    useServerPrepStmts: true
+    
+spring.datasource.61:
+    dataSourceClassName: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+    url: jdbc:mysql://192.168.0.61:3306/huatuo?useUnicode=true&amp;characterEncoding=UTF-8
+    databaseName: test1
+    username: admin
+    password: admin!@22
+    cachePrepStmts: true
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+    useServerPrepStmts: true
+    
+spring.datasource.www:
+    dataSourceClassName: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+    url: jdbc:mysql:loadbalance://192.168.10.9:3306,192.168.10.7:3306,192.168.10.8:3306/huatuo?roundRobinLoadBalance=true&useUnicode=true
+    databaseName: test1
+    username: admin
+    password: admin!@22
+    cachePrepStmts: true
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+    useServerPrepStmts: true
+
+#REDIS
+spring.redis.241:
+    url: 192.168.0.241
+    port: 6379
+    pool.maxActive: 1024
+    pool.maxIdle: 200
+    pool.maxWait: 1000
+    pool.testOnBorrow: true
+    entry.expire: 86400
+    
+spring.redis.61:
+    url: 192.168.0.61
+    port: 6379
+    pool.maxActive: 1024
+    pool.maxIdle: 200
+    pool.maxWait: 1000
+    pool.testOnBorrow: true
+    entry.expire: 86400
+    
+spring.redis.www:
+    url: 192.168.10.3
+    port: 6379
+    pool.maxActive: 1024
+    pool.maxIdle: 200
+    pool.maxWait: 1000
+    pool.testOnBorrow: true
+    entry.expire: 86400
+
+#fms_host流媒体配置
+
+fms.host.241:
+    host: 192.168.0.252
+    application: huatuo
+    applicationStream: huatuoStream
+    rootJSPURL: http://www.huatuooh.com
+    rootURL: http://www.huatuooh.com/huatuo-flex
+    rootContentURL: http://192.168.0.61:9999/images/upload
+    printURL: http://www.huatuooh.com/web/person/print/
+    performance: 
+    resourcePath: /resource/flex/
+    authorizeURL: http://219.138.163.21:800/newhealth/oauth/authorize2.aspx
+    remoteAssistUrl: http://www.huatuooh.com/cooperation/cooperation/1
+
+
+
+# SPRING PROFILES
+spring:       
+    # HTTP ENCODING
+    http:
+        encoding.charset: UTF-8
+        encoding.enable: true
+        encoding.force: true
+
+# MyBatis
+mybatis:
+    typeAliasesPackage: com.huatuo.customer.domain
+    mapperLocations: classpath:/mapper/*.xml
+    configLocation: classpath:/mybatis-config.xml

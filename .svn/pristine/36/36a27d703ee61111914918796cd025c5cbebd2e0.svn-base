@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtEvaluateMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtEvaluate" >
+    <id column="evaluate_id" property="evaluateId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="doctor_id" property="doctorId" jdbcType="VARCHAR" />
+    <result column="service_id" property="serviceId" jdbcType="VARCHAR" />
+    <result column="service_type" property="serviceType" jdbcType="INTEGER" />
+    <result column="satisfaction" property="satisfaction" jdbcType="INTEGER" />
+    <result column="professional_level" property="professionalLevel" jdbcType="INTEGER" />
+    <result column="is_use" property="isUse" jdbcType="INTEGER" />
+    <result column="evaluate_content" property="evaluateContent" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    evaluate_id, user_id, doctor_id, service_id, service_type, satisfaction, professional_level, 
+    is_use, evaluate_content, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_evaluate
+    where evaluate_id = #{evaluateId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from xt_evaluate
+    where evaluate_id = #{evaluateId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtEvaluate" >
+    insert into xt_evaluate (evaluate_id, user_id, doctor_id, 
+      service_id, service_type, satisfaction, 
+      professional_level, is_use, evaluate_content, 
+      create_time)
+    values (#{evaluateId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{doctorId,jdbcType=VARCHAR}, 
+      #{serviceId,jdbcType=VARCHAR}, #{serviceType,jdbcType=INTEGER}, #{satisfaction,jdbcType=INTEGER}, 
+      #{professionalLevel,jdbcType=INTEGER}, #{isUse,jdbcType=INTEGER}, #{evaluateContent,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtEvaluate" >
+    insert into xt_evaluate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="evaluateId != null" >
+        evaluate_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="doctorId != null" >
+        doctor_id,
+      </if>
+      <if test="serviceId != null" >
+        service_id,
+      </if>
+      <if test="serviceType != null" >
+        service_type,
+      </if>
+      <if test="satisfaction != null" >
+        satisfaction,
+      </if>
+      <if test="professionalLevel != null" >
+        professional_level,
+      </if>
+      <if test="isUse != null" >
+        is_use,
+      </if>
+      <if test="evaluateContent != null" >
+        evaluate_content,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="evaluateId != null" >
+        #{evaluateId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorId != null" >
+        #{doctorId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceId != null" >
+        #{serviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceType != null" >
+        #{serviceType,jdbcType=INTEGER},
+      </if>
+      <if test="satisfaction != null" >
+        #{satisfaction,jdbcType=INTEGER},
+      </if>
+      <if test="professionalLevel != null" >
+        #{professionalLevel,jdbcType=INTEGER},
+      </if>
+      <if test="isUse != null" >
+        #{isUse,jdbcType=INTEGER},
+      </if>
+      <if test="evaluateContent != null" >
+        #{evaluateContent,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtEvaluate" >
+    update xt_evaluate
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorId != null" >
+        doctor_id = #{doctorId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceId != null" >
+        service_id = #{serviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceType != null" >
+        service_type = #{serviceType,jdbcType=INTEGER},
+      </if>
+      <if test="satisfaction != null" >
+        satisfaction = #{satisfaction,jdbcType=INTEGER},
+      </if>
+      <if test="professionalLevel != null" >
+        professional_level = #{professionalLevel,jdbcType=INTEGER},
+      </if>
+      <if test="isUse != null" >
+        is_use = #{isUse,jdbcType=INTEGER},
+      </if>
+      <if test="evaluateContent != null" >
+        evaluate_content = #{evaluateContent,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where evaluate_id = #{evaluateId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtEvaluate" >
+    update xt_evaluate
+    set user_id = #{userId,jdbcType=VARCHAR},
+      doctor_id = #{doctorId,jdbcType=VARCHAR},
+      service_id = #{serviceId,jdbcType=VARCHAR},
+      service_type = #{serviceType,jdbcType=INTEGER},
+      satisfaction = #{satisfaction,jdbcType=INTEGER},
+      professional_level = #{professionalLevel,jdbcType=INTEGER},
+      is_use = #{isUse,jdbcType=INTEGER},
+      evaluate_content = #{evaluateContent,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR}
+    where evaluate_id = #{evaluateId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="seachEvaluateCount" parameterType="com.huatuo.customer.query.EvaluateQuery" resultType="int">
+		SELECT
+		count(e.evaluate_id)
+		FROM
+		xt_evaluate e
+		LEFT JOIN xt_person p on e.user_id = p.user_id
+		<where>
+			<if test="doctorId != null">
+				and e.doctor_id = #{doctorId}
+			</if>
+		</where>
+ </select>
+ 
+ <select id="seachEvaluateList" parameterType="com.huatuo.customer.query.EvaluateQuery" resultMap="BaseResultMap">
+		SELECT
+		e.evaluate_id,
+		e.user_id, doctor_id,
+		e.service_id,
+		e.service_type,
+		e.satisfaction,
+		e.professional_level, 
+    	e.is_use,
+    	e.evaluate_content,
+    	e.create_time,
+		p.name userName,
+		p.sex userSex,
+		p.age userAge
+		FROM
+		xt_evaluate e
+		LEFT JOIN xt_person p on e.user_id = p.user_id
+		<where>
+			<if test="doctorId != null">
+				and e.doctor_id = #{doctorId}
+			</if>
+		</where>
+		order by e.create_time desc
+		limit #{start,jdbcType=OTHER}, #{pageSize,jdbcType=OTHER}
+  </select>
+	
+  <cache />
+</mapper>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huatuo.customer.dao.DtTypeMapper">
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.DtType">
+    <id column="dt_type_id" jdbcType="VARCHAR" property="dtTypeId" />
+    <result column="dt_team_id" jdbcType="VARCHAR" property="dtTeamId" />
+    <result column="service_address_id" jdbcType="VARCHAR" property="serviceAddressId" />
+    <result column="type_name" jdbcType="VARCHAR" property="typeName" />
+    <result column="service_address_name" jdbcType="VARCHAR" property="serviceAddressName" />
+    <result column="del_flg" jdbcType="INTEGER" property="delFlg" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="sync_time" jdbcType="VARCHAR" property="syncTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    dt_type_id, dt_team_id, service_address_id, type_name, service_address_name, del_flg, 
+    create_time, sync_time
+  </sql>
+  <select id="selectByExample" parameterType="com.huatuo.customer.domain.DtTypeCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dt_type
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dt_type
+    where dt_type_id = #{dtTypeId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dt_type
+    where dt_type_id = #{dtTypeId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.DtTypeCriteria">
+    delete from dt_type
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.DtType">
+    insert into dt_type (dt_type_id, dt_team_id, service_address_id, 
+      type_name, service_address_name, del_flg, 
+      create_time, sync_time)
+    values (#{dtTypeId,jdbcType=VARCHAR}, #{dtTeamId,jdbcType=VARCHAR}, #{serviceAddressId,jdbcType=VARCHAR}, 
+      #{typeName,jdbcType=VARCHAR}, #{serviceAddressName,jdbcType=VARCHAR}, #{delFlg,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=VARCHAR}, #{syncTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.DtType">
+    insert into dt_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dtTypeId != null">
+        dt_type_id,
+      </if>
+      <if test="dtTeamId != null">
+        dt_team_id,
+      </if>
+      <if test="serviceAddressId != null">
+        service_address_id,
+      </if>
+      <if test="typeName != null">
+        type_name,
+      </if>
+      <if test="serviceAddressName != null">
+        service_address_name,
+      </if>
+      <if test="delFlg != null">
+        del_flg,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="syncTime != null">
+        sync_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="dtTypeId != null">
+        #{dtTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="dtTeamId != null">
+        #{dtTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceAddressId != null">
+        #{serviceAddressId,jdbcType=VARCHAR},
+      </if>
+      <if test="typeName != null">
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceAddressName != null">
+        #{serviceAddressName,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlg != null">
+        #{delFlg,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="syncTime != null">
+        #{syncTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.DtTypeCriteria" resultType="java.lang.Integer">
+    select count(*) from dt_type
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update dt_type
+    <set>
+      <if test="record.dtTypeId != null">
+        dt_type_id = #{record.dtTypeId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dtTeamId != null">
+        dt_team_id = #{record.dtTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serviceAddressId != null">
+        service_address_id = #{record.serviceAddressId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.typeName != null">
+        type_name = #{record.typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serviceAddressName != null">
+        service_address_name = #{record.serviceAddressName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.delFlg != null">
+        del_flg = #{record.delFlg,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.syncTime != null">
+        sync_time = #{record.syncTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update dt_type
+    set dt_type_id = #{record.dtTypeId,jdbcType=VARCHAR},
+      dt_team_id = #{record.dtTeamId,jdbcType=VARCHAR},
+      service_address_id = #{record.serviceAddressId,jdbcType=VARCHAR},
+      type_name = #{record.typeName,jdbcType=VARCHAR},
+      service_address_name = #{record.serviceAddressName,jdbcType=VARCHAR},
+      del_flg = #{record.delFlg,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=VARCHAR},
+      sync_time = #{record.syncTime,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.DtType">
+    update dt_type
+    <set>
+      <if test="dtTeamId != null">
+        dt_team_id = #{dtTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceAddressId != null">
+        service_address_id = #{serviceAddressId,jdbcType=VARCHAR},
+      </if>
+      <if test="typeName != null">
+        type_name = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceAddressName != null">
+        service_address_name = #{serviceAddressName,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlg != null">
+        del_flg = #{delFlg,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="syncTime != null">
+        sync_time = #{syncTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where dt_type_id = #{dtTypeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.DtType">
+    update dt_type
+    set dt_team_id = #{dtTeamId,jdbcType=VARCHAR},
+      service_address_id = #{serviceAddressId,jdbcType=VARCHAR},
+      type_name = #{typeName,jdbcType=VARCHAR},
+      service_address_name = #{serviceAddressName,jdbcType=VARCHAR},
+      del_flg = #{delFlg,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      sync_time = #{syncTime,jdbcType=VARCHAR}
+    where dt_type_id = #{dtTypeId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.huatuo.customer.domain.DtTypeCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dt_type
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

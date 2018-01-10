@@ -1,0 +1,266 @@
+package com.huatuo.customer.domain;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+
+
+public class TwConsultQuestion implements Serializable {
+	private static final long serialVersionUID = -197221503552605095L;
+	private List<TwConsultAnswer> answers;//图文聊天记录
+	private List<XtServiceFile> files;//图文主题图片+音频
+	private Long id;
+    private Long userId;
+
+    private Long memberId;
+
+    private String countext;
+
+    private String createTime;
+
+    private String startTime;
+
+    private String endTime;
+
+    private Long doctorUid;
+
+    private Long doctorId;
+
+    private String doctorTeamId;
+
+    private String disId;
+
+    private String disName;
+
+    private String specialtyId;
+
+    private String specialtyName;
+
+    private Integer consultState;
+
+    private Integer specialty;
+
+    private BigDecimal price;
+
+    private String orderNo;
+
+    private Integer isRead;
+    
+    private List<String> file;
+    
+    private String msg;//推送消息数据
+
+	
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+
+	public List<String> getFile() {
+		return file;
+	}
+
+	public void setFile(List<String> file) {
+		this.file = file;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public String getCountext() {
+        return countext;
+    }
+
+    public void setCountext(String countext) {
+        this.countext = countext == null ? null : countext.trim();
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime == null ? null : createTime.trim();
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime == null ? null : startTime.trim();
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime == null ? null : endTime.trim();
+    }
+
+    public Long getDoctorUid() {
+        return doctorUid;
+    }
+
+    public void setDoctorUid(Long doctorUid) {
+        this.doctorUid = doctorUid;
+    }
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public String getDoctorTeamId() {
+        return doctorTeamId;
+    }
+
+    public void setDoctorTeamId(String doctorTeamId) {
+        this.doctorTeamId = doctorTeamId == null ? null : doctorTeamId.trim();
+    }
+
+    public String getDisId() {
+        return disId;
+    }
+
+    public void setDisId(String disId) {
+        this.disId = disId == null ? null : disId.trim();
+    }
+
+    public String getDisName() {
+        return disName;
+    }
+
+    public void setDisName(String disName) {
+        this.disName = disName == null ? null : disName.trim();
+    }
+
+    public String getSpecialtyId() {
+        return specialtyId;
+    }
+
+    public void setSpecialtyId(String specialtyId) {
+        this.specialtyId = specialtyId == null ? null : specialtyId.trim();
+    }
+
+    public String getSpecialtyName() {
+        return specialtyName;
+    }
+
+    public void setSpecialtyName(String specialtyName) {
+        this.specialtyName = specialtyName == null ? null : specialtyName.trim();
+    }
+
+    public Integer getConsultState() {
+        return consultState;
+    }
+
+    public void setConsultState(Integer consultState) {
+        this.consultState = consultState;
+    }
+
+    public Integer getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(Integer specialty) {
+        this.specialty = specialty;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo == null ? null : orderNo.trim();
+    }
+
+    public Integer getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(Integer isRead) {
+        this.isRead = isRead;
+    }
+
+    public List<TwConsultAnswer> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(List<TwConsultAnswer> answers) {
+		this.answers = answers;
+	}
+
+	public List<XtServiceFile> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<XtServiceFile> files) {
+		this.files = files;
+	}
+
+	@Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", userId=").append(userId);
+        sb.append(", memberId=").append(memberId);
+        sb.append(", countext=").append(countext);
+        sb.append(", createTime=").append(createTime);
+        sb.append(", startTime=").append(startTime);
+        sb.append(", endTime=").append(endTime);
+        sb.append(", doctorUid=").append(doctorUid);
+        sb.append(", doctorId=").append(doctorId);
+        sb.append(", doctorTeamId=").append(doctorTeamId);
+        sb.append(", disId=").append(disId);
+        sb.append(", disName=").append(disName);
+        sb.append(", specialtyId=").append(specialtyId);
+        sb.append(", specialtyName=").append(specialtyName);
+        sb.append(", consultState=").append(consultState);
+        sb.append(", specialty=").append(specialty);
+        sb.append(", price=").append(price);
+        sb.append(", orderNo=").append(orderNo);
+        sb.append(", isRead=").append(isRead);
+        sb.append("]");
+        return sb.toString();
+    }
+}

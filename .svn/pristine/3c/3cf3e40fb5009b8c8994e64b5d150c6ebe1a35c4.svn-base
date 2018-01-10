@@ -1,0 +1,72 @@
+package com.huatuo.customer.service.impl;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.huatuo.customer.base.page.Page;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.dao.MzVisitMapper;
+import com.huatuo.customer.dao.XtEvaluateMapper;
+import com.huatuo.customer.domain.MzVisit;
+import com.huatuo.customer.domain.XtEvaluate;
+import com.huatuo.customer.query.EvaluateQuery;
+import com.huatuo.customer.service.EvaluateService;
+
+@Service
+@Transactional
+public class EvaluateServiceImpl implements EvaluateService {
+	@Autowired
+	private XtEvaluateMapper evaluateMapper;
+	@Autowired
+	private MzVisitMapper visitMapper;
+	
+	public ScheduledExecutorService scheduExec = Executors.newScheduledThreadPool(10);
+
+	@Override
+	public Integer addEvaluate(XtEvaluate evaluate) {
+		String evaluateId = UUID.randomUUID().toString();
+		Long visitId = Long.valueOf(evaluate.getServiceId());
+		MzVisit mzVisit = visitMapper.selectByPrimaryKey(visitId);  // 根据visitId查询服务类型和医生id
+		evaluate.setDoctorId(mzVisit.getDoctorId().toString());
+		evaluate.setServiceType(mzVisit.getVisitType());
+		//  默认好评
+		if(StringUtils.isEmpty(evaluate.getEvaluateContent())) {
+			evaluate.setEvaluateContent("好评");
+		}
+		evaluate.setEvaluateId(evaluateId);
+		evaluate.setCreateTime(Utils.getNowTime());
+		int evaluateCount = evaluateMapper.insertSelective(evaluate);
+		// 评价成功之后回填 就诊记录的评价
+		if(evaluateCount > 0) {
+			MzVisit visit = new MzVisit();
+			visit.setVisitId(visitId);
+			visit.setEvaluateId(evaluateId);
+			visitMapper.updateByPrimaryKeySelective(visit);
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public Page<XtEvaluate> selectEvaluatesByPage(EvaluateQuery evaluateQuery) {
+		Integer count = evaluateMapper.seachEvaluateCount(evaluateQuery);
+		if(count > 0) {
+			Page<XtEvaluate> page = new Page<>(count, evaluateQuery.getCurrentPage(), evaluateQuery.getPageSize());
+			evaluateQuery.setStart(page.getStart());
+			List<XtEvaluate> list = evaluateMapper.seachEvaluateList(evaluateQuery);
+			page.setList(list);
+			return page;
+		}
+		return null;
+	}
+
+}

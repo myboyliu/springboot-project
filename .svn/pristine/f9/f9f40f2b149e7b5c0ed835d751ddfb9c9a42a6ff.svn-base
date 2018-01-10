@@ -1,0 +1,92 @@
+package com.huatuo.customer.service;
+
+import java.text.ParseException;
+
+import com.huatuo.customer.base.page.Page;
+import com.huatuo.customer.domain.MzPatient;
+import com.huatuo.customer.domain.MzVisit;
+import com.huatuo.customer.domain.OrderResult;
+import com.huatuo.customer.domain.PayOrder;
+import com.huatuo.customer.query.OrderQuery;
+import com.huatuo.customer.request.VisitForm;
+
+public interface PayOrderService {
+	/**
+	 * 增加一条支付订单
+	 * @param payOrder
+	 * @return
+	 */
+	public Integer savePayOrder(PayOrder payOrder);
+	
+	/**
+	 * 订单分页查询
+	 * @param orderQuery
+	 * @return
+	 */
+	public Page<OrderResult> selectOrdersByPage(OrderQuery orderQuery);
+	
+	/**
+	 * 查询订单详情
+	 * @param orderQuery
+	 * @return
+	 */
+	public OrderResult selectOrderDetailsByOrderNo(OrderQuery orderQuery);
+	
+	/**
+	 * 业务流程保存支付订单
+	 * @param visitForm
+	 * @param mzVisit
+	 * @return
+	 * @throws ParseException 
+	 * @throws Exception 
+	 */
+	public PayOrder savePayOrderByVisitForm(VisitForm visitForm, MzVisit mzVisit, MzPatient mzPatient) throws Exception;
+
+	/**
+	 * 根据订单号查询订单信息
+	 * @param orderNo		订单号
+	 * @return
+	 */
+	public PayOrder getPayOrderByOrderNo(String orderNo);
+	
+	/**
+	 * 生成支付的字符串参数信息
+	 * @param orderNo
+	 * @return
+	 */
+	public String createPayTrandInfo(String orderNo, Integer paySource, Integer payType);
+	
+	/**
+	 * 支付成功后推送消息给wap手机端支付结果
+	 * @return
+	 * @throws Exception 
+	 */
+	public String payReturnInfoSend(String orderNo, String tradeStatus, String userId) throws Exception;
+	
+	/**
+	 * 修改支付订单状态
+	 * @param payOrder
+	 * @return
+	 */
+	public Integer updateOrderByOrderNo(PayOrder payOrder);
+	
+	/**
+	 * 根据订单号取消订单
+	 * @param orderNo
+	 * @return
+	 */
+	public Integer cacelOrderByOrderNo(String orderNo);
+	
+	/**
+	 * 0元订单将未支付订单的相关信息修改为已支付的
+	 * @param orderNo
+	 * @return
+	 */
+	public Integer updatePayOrderPayInfo(String orderNo, Integer paySource, Integer payType);
+	
+	/**
+	 * 根据业务订单id查询一条支付订单
+	 * @return
+	 */
+	public PayOrder selectPayOrderByServiceId(Long serviceId);
+}

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.DtRegionServiceMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.DtRegionService" >
+    <id column="region_service_id" property="regionServiceId" jdbcType="CHAR" />
+    <result column="region" property="region" jdbcType="INTEGER" />
+    <result column="service_id" property="serviceId" jdbcType="INTEGER" />
+    <result column="gregion_uide_price" property="gregionUidePrice" jdbcType="DECIMAL" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="sync_time" property="syncTime" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    region_service_id, region, service_id, gregion_uide_price, del_flag, sync_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.DtRegionServiceCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dt_region_service
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from dt_region_service
+    where region_service_id = #{regionServiceId,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from dt_region_service
+    where region_service_id = #{regionServiceId,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.DtRegionServiceCriteria" >
+    delete from dt_region_service
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.DtRegionService" >
+    insert into dt_region_service (region_service_id, region, service_id, 
+      gregion_uide_price, del_flag, sync_time
+      )
+    values (#{regionServiceId,jdbcType=CHAR}, #{region,jdbcType=INTEGER}, #{serviceId,jdbcType=INTEGER}, 
+      #{gregionUidePrice,jdbcType=DECIMAL}, #{delFlag,jdbcType=INTEGER}, #{syncTime,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.DtRegionService" >
+    insert into dt_region_service
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="regionServiceId != null" >
+        region_service_id,
+      </if>
+      <if test="region != null" >
+        region,
+      </if>
+      <if test="serviceId != null" >
+        service_id,
+      </if>
+      <if test="gregionUidePrice != null" >
+        gregion_uide_price,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="syncTime != null" >
+        sync_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="regionServiceId != null" >
+        #{regionServiceId,jdbcType=CHAR},
+      </if>
+      <if test="region != null" >
+        #{region,jdbcType=INTEGER},
+      </if>
+      <if test="serviceId != null" >
+        #{serviceId,jdbcType=INTEGER},
+      </if>
+      <if test="gregionUidePrice != null" >
+        #{gregionUidePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="syncTime != null" >
+        #{syncTime,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.DtRegionServiceCriteria" resultType="java.lang.Integer" >
+    select count(*) from dt_region_service
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dt_region_service
+    <set >
+      <if test="record.regionServiceId != null" >
+        region_service_id = #{record.regionServiceId,jdbcType=CHAR},
+      </if>
+      <if test="record.region != null" >
+        region = #{record.region,jdbcType=INTEGER},
+      </if>
+      <if test="record.serviceId != null" >
+        service_id = #{record.serviceId,jdbcType=INTEGER},
+      </if>
+      <if test="record.gregionUidePrice != null" >
+        gregion_uide_price = #{record.gregionUidePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.delFlag != null" >
+        del_flag = #{record.delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.syncTime != null" >
+        sync_time = #{record.syncTime,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dt_region_service
+    set region_service_id = #{record.regionServiceId,jdbcType=CHAR},
+      region = #{record.region,jdbcType=INTEGER},
+      service_id = #{record.serviceId,jdbcType=INTEGER},
+      gregion_uide_price = #{record.gregionUidePrice,jdbcType=DECIMAL},
+      del_flag = #{record.delFlag,jdbcType=INTEGER},
+      sync_time = #{record.syncTime,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.DtRegionService" >
+    update dt_region_service
+    <set >
+      <if test="region != null" >
+        region = #{region,jdbcType=INTEGER},
+      </if>
+      <if test="serviceId != null" >
+        service_id = #{serviceId,jdbcType=INTEGER},
+      </if>
+      <if test="gregionUidePrice != null" >
+        gregion_uide_price = #{gregionUidePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="syncTime != null" >
+        sync_time = #{syncTime,jdbcType=CHAR},
+      </if>
+    </set>
+    where region_service_id = #{regionServiceId,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.DtRegionService" >
+    update dt_region_service
+    set region = #{region,jdbcType=INTEGER},
+      service_id = #{serviceId,jdbcType=INTEGER},
+      gregion_uide_price = #{gregionUidePrice,jdbcType=DECIMAL},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      sync_time = #{syncTime,jdbcType=CHAR}
+    where region_service_id = #{regionServiceId,jdbcType=CHAR}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.DtRegionServiceCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dt_region_service
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <cache />
+</mapper>

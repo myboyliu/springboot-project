@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.MzOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.MzOrder" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="visit_id" property="visitId" jdbcType="BIGINT" />
+    <result column="order_type" property="orderType" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="INTEGER" />
+    <result column="order_explain" property="orderExplain" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="CHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="task_state" property="taskState" jdbcType="INTEGER" />
+    <result column="sub_time" property="subTime" jdbcType="VARCHAR" />
+    <result column="task_uid" property="taskUid" jdbcType="BIGINT" />
+    <result column="task_time" property="taskTime" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="order_state" property="orderState" jdbcType="INTEGER" />
+    <result column="order_version" property="orderVersion" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.huatuo.customer.domain.MzOrder" extends="BaseResultMap" >
+    <result column="task_describe" property="taskDescribe" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, visit_id, order_type, amount, order_explain, order_no, price, create_time, task_state, 
+    sub_time, task_uid, task_time, del_flag, order_state, order_version
+  </sql>
+  <sql id="Blob_Column_List" >
+    task_describe
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from mz_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mz_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.MzOrder" >
+    insert into mz_order (id, visit_id, order_type, 
+      amount, order_explain, order_no, 
+      price, create_time, task_state, 
+      sub_time, task_uid, task_time, 
+      del_flag, order_state, order_version, 
+      task_describe)
+    values (#{id,jdbcType=BIGINT}, #{visitId,jdbcType=BIGINT}, #{orderType,jdbcType=INTEGER}, 
+      #{amount,jdbcType=INTEGER}, #{orderExplain,jdbcType=VARCHAR}, #{orderNo,jdbcType=CHAR}, 
+      #{price,jdbcType=DECIMAL}, #{createTime,jdbcType=VARCHAR}, #{taskState,jdbcType=INTEGER}, 
+      #{subTime,jdbcType=VARCHAR}, #{taskUid,jdbcType=BIGINT}, #{taskTime,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER}, #{orderState,jdbcType=INTEGER}, #{orderVersion,jdbcType=VARCHAR}, 
+      #{taskDescribe,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.MzOrder" >
+    insert into mz_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="visitId != null" >
+        visit_id,
+      </if>
+      <if test="orderType != null" >
+        order_type,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="orderExplain != null" >
+        order_explain,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="taskState != null" >
+        task_state,
+      </if>
+      <if test="subTime != null" >
+        sub_time,
+      </if>
+      <if test="taskUid != null" >
+        task_uid,
+      </if>
+      <if test="taskTime != null" >
+        task_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="orderState != null" >
+        order_state,
+      </if>
+      <if test="orderVersion != null" >
+        order_version,
+      </if>
+      <if test="taskDescribe != null" >
+        task_describe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="visitId != null" >
+        #{visitId,jdbcType=BIGINT},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="orderExplain != null" >
+        #{orderExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=CHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="taskState != null" >
+        #{taskState,jdbcType=INTEGER},
+      </if>
+      <if test="subTime != null" >
+        #{subTime,jdbcType=VARCHAR},
+      </if>
+      <if test="taskUid != null" >
+        #{taskUid,jdbcType=BIGINT},
+      </if>
+      <if test="taskTime != null" >
+        #{taskTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="orderState != null" >
+        #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="orderVersion != null" >
+        #{orderVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="taskDescribe != null" >
+        #{taskDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.MzOrder" >
+    update mz_order
+    <set >
+      <if test="visitId != null" >
+        visit_id = #{visitId,jdbcType=BIGINT},
+      </if>
+      <if test="orderType != null" >
+        order_type = #{orderType,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="orderExplain != null" >
+        order_explain = #{orderExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=CHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="taskState != null" >
+        task_state = #{taskState,jdbcType=INTEGER},
+      </if>
+      <if test="subTime != null" >
+        sub_time = #{subTime,jdbcType=VARCHAR},
+      </if>
+      <if test="taskUid != null" >
+        task_uid = #{taskUid,jdbcType=BIGINT},
+      </if>
+      <if test="taskTime != null" >
+        task_time = #{taskTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="orderState != null" >
+        order_state = #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="orderVersion != null" >
+        order_version = #{orderVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="taskDescribe != null" >
+        task_describe = #{taskDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.huatuo.customer.domain.MzOrder" >
+    update mz_order
+    set visit_id = #{visitId,jdbcType=BIGINT},
+      order_type = #{orderType,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=INTEGER},
+      order_explain = #{orderExplain,jdbcType=VARCHAR},
+      order_no = #{orderNo,jdbcType=CHAR},
+      price = #{price,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      task_state = #{taskState,jdbcType=INTEGER},
+      sub_time = #{subTime,jdbcType=VARCHAR},
+      task_uid = #{taskUid,jdbcType=BIGINT},
+      task_time = #{taskTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      order_state = #{orderState,jdbcType=INTEGER},
+      order_version = #{orderVersion,jdbcType=VARCHAR},
+      task_describe = #{taskDescribe,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.MzOrder" >
+    update mz_order
+    set visit_id = #{visitId,jdbcType=BIGINT},
+      order_type = #{orderType,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=INTEGER},
+      order_explain = #{orderExplain,jdbcType=VARCHAR},
+      order_no = #{orderNo,jdbcType=CHAR},
+      price = #{price,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      task_state = #{taskState,jdbcType=INTEGER},
+      sub_time = #{subTime,jdbcType=VARCHAR},
+      task_uid = #{taskUid,jdbcType=BIGINT},
+      task_time = #{taskTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      order_state = #{orderState,jdbcType=INTEGER},
+      order_version = #{orderVersion,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <cache />
+  <!-- 根据就诊查询未删除的处方列表 -->
+  <select id="getListByVisitId" parameterType="long" resultMap="BaseResultMap">
+  	SELECT * FROM mz_order WHERE visit_id = #{visitId} 
+  	and del_flag = 0 
+  	and order_state = 0
+  	ORDER BY create_time DESC
+  </select>
+</mapper>

@@ -1,0 +1,472 @@
+package com.huatuo.customer.base.util;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.huatuo.customer.base.redis.RedisSupport;
+import com.huatuo.customer.config.SpringContextUtils;
+import com.huatuo.customer.response.PregnantMomResponse;
+import com.huatuo.register.domain.response.LoginDataResponse;
+
+/**
+ * 常用工具类方法
+ * @author master
+ *
+ */
+public class Utils {
+	
+	private static RedisSupport redisSupport;
+	
+	static{
+		redisSupport = (RedisSupport)SpringContextUtils.getBean("redisSupport");
+	}
+	
+	/**
+	 * 利用spring工具类将两个bean对象对应转换,注意调用强制转换
+	 * 
+	 * @param <BOUser>
+	 * @param source
+	 *            源javabean对象
+	 * @param target
+	 *            目标javabean对象
+	 * @return
+	 */
+	public static <T> T exchangeObject(Object source, Class<T> target) {
+		if (StringUtils.isEmpty(source)) {
+			return null;
+		}
+		T t = null;
+		try {
+			t = target.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		BeanUtils.copyProperties(source, t);
+		return t;
+	}
+	
+	/**
+	 * 获取当前时间
+	 * 
+	 * @return
+	 */
+	public static String getNowTime() {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+		return df.format(new Date());
+	}
+	
+	/**
+	 * 获取今天或者昨天的年月日
+	 * 
+	 * @param TodayOrYesterday
+	 *            true:今天 false:昨天
+	 * @return
+	 */
+	public static String getTodayOrYestorday(boolean TodayOrYesterday) {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+		Calendar calendar = Calendar.getInstance();
+		if (TodayOrYesterday) {
+			return df.format(calendar.getTime());
+		} else {
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+			return df.format(calendar.getTime());
+		}
+	}
+	
+	/**
+	 * 获取今天的年月
+	 * 
+	 * @param TodayOrYesterday
+	 *            true:今天 false:昨天
+	 * @return
+	 */
+	public static String getNowDateForMonth() {
+		SimpleDateFormat df = new SimpleDateFormat("yyyyMM");// 设置日期格式
+		return df.format(Calendar.getInstance().getTime());
+	}
+	
+	/**
+	 * 生成订单号
+	 * 
+	 * @param serviceType
+	 *            根据服务类型生产订单号
+	 * @return
+	 */
+	public static String getOrderNo(Integer serviceType) {
+		String orderNo;
+		long now = System.currentTimeMillis();
+		String r;
+		while (true) {
+			r = (int) (Math.random() * (1000)) + "";
+			if(r.length() == 3) break;
+		}
+
+		String t = now + "";
+		t = t.substring(t.length() - 8, t.length());
+		orderNo = serviceType.toString() + t + r;
+		if (orderNo.length() != 12) {
+			orderNo = getOrderNo(serviceType);
+		}
+		return orderNo;
+	}
+	
+	/**
+	 * 将json字符串转化为对应的Object对象
+	 * @param jsonStr
+	 * @param clazz
+	 * @return
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	public static <T> T jsonStrToObject(String jsonStr, Class<T> clazz) 
+			throws JsonParseException, JsonMappingException, IOException{
+		return new ObjectMapper().readValue(jsonStr, clazz);
+	}
+	
+	/**
+	 * 将对象转化为json字符串
+	 * @param object
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	public static String objectToJsonStr(Object object) 
+			throws JsonProcessingException{
+		return new ObjectMapper().writeValueAsString(object);
+	}
+	
+	/**
+	 * 生日转换年龄(年)
+	 * 
+	 * @param birthTime
+	 * @return
+	 * @throws ParseException
+	 */
+	public static int getAge(String birthTime) throws ParseException {
+		if (StringUtils.isEmpty(birthTime)) {
+			return 0;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+
+		if (cal.before(birthTime)) {
+			throw new IllegalArgumentException("The birthDay is before Now.It's unbelievable!");
+		}
+		int yearNow = cal.get(Calendar.YEAR);
+		int monthNow = cal.get(Calendar.MONTH) + 1;
+		int dayOfMonthNow = cal.get(Calendar.DAY_OF_MONTH);
+		cal.setTime(sdf.parse(birthTime));
+		int yearBirth = cal.get(Calendar.YEAR);
+		int monthBirth = cal.get(Calendar.MONTH) + 1;
+		int dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH);
+
+		int age = yearNow - yearBirth;
+
+		if (monthNow <= monthBirth) {
+			if (monthNow == monthBirth) {
+				// monthNow==monthBirth
+				if (dayOfMonthNow < dayOfMonthBirth) {
+					age--;
+				}
+			} else {
+				// monthNow>monthBirth
+				age--;
+			}
+		}
+		return age;
+	}
+	
+	/**
+	 * 获取当日开始和结束时间
+	 * 
+	 * @param startOrEnd
+	 *            true:开始时间 false:结束时间
+	 * @return
+	 */
+	public static String getNowDayBeginOrEnd(boolean startOrEnd) {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd ");// 设置日期格式
+		String timeEnds = startOrEnd ? "00:00:00" : "23:59:59";
+		return df.format(new Date()) + timeEnds;
+	}
+	
+	/**
+	 * 获取当天的年月日
+	 * @param startOrEnd
+	 *            true:开始时间 false:结束时间
+	 * @return
+	 */
+	public static String getNowDate() {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
+		return df.format(new Date());
+	}
+	
+	/**
+	 * 计算指定日期前后的时间hours
+	 * @param date	指定日期
+	 * @param hours	小时差(正数:往后计算时间,负数:往过去计算时间)
+	 * @return
+	 * @throws ParseException
+	 */
+	@SuppressWarnings("static-access")
+	public static String getDateBeforeHour(String date, int hours) throws ParseException {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置时间格式
+		Date dNow = sdf.parse(date); //将String格式转换成date格式
+		Calendar calendar = Calendar.getInstance(); //得到日历
+		calendar.setTime(dNow);//把当前时间赋给日历
+		calendar.add(calendar.HOUR_OF_DAY, hours); //设置为n个小时以后
+
+		return sdf.format(calendar.getTime());//得到前计算后的时间的时间
+	}
+	
+	/**
+	 * 返回某个年月日是一个星期的周几
+	 * @param date		日期
+	 * @return
+	 * @throws ParseException
+	 */
+	public static Integer getIntOfWeek(String date) throws ParseException {
+		Calendar cal = Calendar.getInstance();  
+		cal.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date));  
+		return cal.get(Calendar.DAY_OF_WEEK) - 1;	//返回星期几
+	}
+	
+	/**
+	 * 获取前n个月的时间
+	 * @param months	月份差(负数:往后计算时间,正数:往过去计算时间)
+	 * @return
+	 * @throws ParseException 
+	 */
+	@SuppressWarnings("static-access")
+	public static String getBeforeDate(String date, int months) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置时间格式
+		Date dNow = sdf.parse(date); //将String格式转换成date格式
+		Calendar calendar = Calendar.getInstance(); //得到日历
+		calendar.setTime(dNow);//把当前时间赋给日历
+		calendar.add(calendar.MONTH, - months); //设置为前3月
+		
+		return sdf.format(calendar.getTime());//得到前计算后的时间的时间
+	}
+	
+	/**传入的日期加上任意天数
+     * @return
+     */
+    public static String addAnyDay(String theDay, String format,Integer days){   
+        SimpleDateFormat f =  new SimpleDateFormat(format);
+        try   {   
+            Date  d  =  new Date(f.parse(theDay).getTime()+24*3600*1000 * days);     
+              return  f.format(d);
+        }   
+        catch(Exception ex) {   
+            return   "输入格式错误";     
+        }   
+    }
+    
+    /**
+     * 字符串转换成日期类型
+     */
+    public static Date strToDate(String strData){
+	   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+       Date date = null;
+       try {   	   
+           date = dateFormat.parse(strData);
+          // date1 = date.toLocaleString().split(" ")[0]);//切割掉不要的时分秒数据
+       } catch (ParseException e) {
+           e.printStackTrace();
+       }
+    	return date;
+    }   
+    
+    /*
+     * 获取当前天所在的周的周几
+     */
+    public static String getDayOfWeek(String date,int day){        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");        
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(sdf.parse(date));
+            // Calendar默认周日为第一天, 所以设置为1
+            cal.set(Calendar.DAY_OF_WEEK, day);
+            // 如果要返回00点0分0秒
+            //cal.set(Calendar.HOUR_OF_DAY, 0);
+            //cal.set(Calendar.MINUTE, 0);
+            //cal.set(Calendar.SECOND, 0);
+            //cal.set(Calendar.MILLISECOND, 0);
+        } catch (ParseException e) {
+                
+        }        
+        return sdf.format(cal.getTime());
+    }
+    
+    
+    /*
+     * 获取当前天所在的月初跟月末
+     */
+    public static String getDayOfMonth(String day){        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");        
+        Calendar cal = Calendar.getInstance();
+        try {
+            if(day.equals("first")){
+            	// 3.当前月的第一天  
+            	cal.set(Calendar.DAY_OF_MONTH, 1);             	
+            }
+            else if(day.equals("last")){            	
+            	// 4.当前月的最后一天  
+            	cal.add(Calendar.MONTH, 1);  
+            	cal.set(Calendar.DAY_OF_MONTH, 0);  
+            }else{
+            	return null;
+            }
+            
+        } catch (Exception e) {
+                
+        }  	
+        return sdf.format(cal.getTime());
+    }
+    
+    /**
+     * 从request的header里面取得token
+     * @param request
+     * @return
+     */
+    public static String getToken(HttpServletRequest request){
+    	return request.getHeader("token");
+    }
+    
+    /**
+     * 从request里面取得用户id
+     * @param request
+     * @return
+     */
+    public static String getUserIdByToken(HttpServletRequest request){
+    	String token = getToken(request);
+    	if(StringUtils.isEmpty(token)){
+    		return null;
+    	}
+    	Serializable serializable = redisSupport.get(token);
+    	if(serializable != null){
+    		LoginDataResponse LoginDataResponse = (LoginDataResponse) serializable;
+    		return LoginDataResponse.getXtUser().getUserId();
+    	}else{
+    		return null;
+    	}
+    }
+    
+    /**
+     * 从request中获得登录信息
+     * @param request
+     * @return
+     */
+   public static LoginDataResponse getLoginUserInfo(HttpServletRequest request){
+	   if(getToken(request) == null){
+		   return null;
+	   }
+	   Serializable serializable = redisSupport.get(getToken(request));
+	   if(serializable != null){
+		   return (LoginDataResponse) serializable;
+	   }else{
+		   return null;
+	   }
+   }
+   
+   /**
+    * 随机生成问诊处方的提取码
+    * @return
+    */
+   public static String createExtractedCode(){
+	   Integer extractedCode = (int)(Math.random() * 1000000);
+	   String returnExtractedCode = extractedCode.toString();
+	   if(returnExtractedCode.length() ==  5){
+		   returnExtractedCode = "0" + returnExtractedCode;
+	   }
+	   return returnExtractedCode;
+   }
+   
+   /**
+    * 从Header中获取版本号
+    * @return
+    */
+   public static String getVersion(HttpServletRequest request){
+	   return request.getHeader("version");
+   }
+   
+   /**
+    * 根据当前怀孕日期计算出怀孕相关数据
+    * @param conceiveDate 末次月经日期
+    * @param preProductionDate 预产期
+    * @param nowConceiveDate  当前怀孕日期
+    * @return
+ * @throws Exception 
+    */
+   public static PregnantMomResponse calculatePregnantData(String conceiveDate, String preProductionDate, String nowConceiveDate) throws Exception{
+	   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	   PregnantMomResponse pregnantMomResponse = new PregnantMomResponse();
+	   if(StringUtils.isEmpty(preProductionDate)){
+		   preProductionDate = getPreProductionOrLastMenstrualDate(conceiveDate, 280);
+	   }
+	   Integer betweensDays = daysBetween(simpleDateFormat.parse(conceiveDate), simpleDateFormat.parse(nowConceiveDate));
+	   pregnantMomResponse.setPregnantWeek((betweensDays / 7) + "");
+	   pregnantMomResponse.setPregnantSpotDay((betweensDays % 7) + "");
+	   pregnantMomResponse.setBirthDistanceDay(daysBetween(simpleDateFormat.parse(nowConceiveDate), simpleDateFormat.parse(preProductionDate)).toString());
+	   return pregnantMomResponse;
+   }
+   
+   /**
+    * 计算两个日期之间的相差天数
+    */
+   public static Integer daysBetween(Date beforeDate,Date afterDate) throws Exception{    
+       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
+       beforeDate = sdf.parse(sdf.format(beforeDate));  
+       afterDate = sdf.parse(sdf.format(afterDate));  
+       Calendar cal = Calendar.getInstance();    
+       cal.setTime(beforeDate);    
+       Long time1 = cal.getTimeInMillis();                 
+       cal.setTime(afterDate);    
+       Long time2 = cal.getTimeInMillis();         
+       Long between_days = (time2-time1)/(1000*3600*24);
+      return Integer.parseInt(String.valueOf(between_days));           
+   } 
+   
+   /**
+    * 根据传入的date和days算预产期或末次月经期
+    * days为正，算出的是预产期
+    * days为负，算出的是末次月经期
+    * @param date
+    * @param days
+    * @return
+    * @throws ParseException
+    */
+   public static String getPreProductionOrLastMenstrualDate(String date,int days) throws ParseException{
+		String dateStr = "";
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date d1 = sdf.parse(date);
+		Calendar d = Calendar.getInstance();  
+		d.setTime(d1);
+		// 克隆一个保存下  
+       Calendar Calendarborn = (Calendar) d.clone(); 
+		// 电脑计算预产期，只需在末次月经第一天加上9个月零1周（280天）即可  
+       Calendarborn.add(Calendar.DAY_OF_MONTH, days);
+       // 为输出年月日做准备  
+       int bornyear = Calendarborn.get(Calendar.YEAR);  
+       int bornmonth = 1 + Calendarborn.get(Calendar.MONTH);  
+       int bornday = Calendarborn.get(Calendar.DAY_OF_MONTH);
+       dateStr = (String.valueOf(bornyear) + "年"  
+               + String.valueOf(bornmonth) + "月" + String.valueOf(bornday) + "日");
+       
+		return dateStr;
+	}
+   
+}

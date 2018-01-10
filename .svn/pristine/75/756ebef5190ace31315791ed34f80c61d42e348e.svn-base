@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.MzPatientMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.MzPatient" >
+    <id column="patient_id" property="patientId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="name_py" property="namePy" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="birth_date" property="birthDate" jdbcType="VARCHAR" />
+    <result column="marry" property="marry" jdbcType="INTEGER" />
+    <result column="birth_place" property="birthPlace" jdbcType="VARCHAR" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="address_id" property="addressId" jdbcType="BIGINT" />
+    <result column="occupation_id" property="occupationId" jdbcType="INTEGER" />
+    <result column="relate_tel" property="relateTel" jdbcType="VARCHAR" />
+    <result column="social_id_type" property="socialIdType" jdbcType="INTEGER" />
+    <result column="social_id" property="socialId" jdbcType="VARCHAR" />
+    <result column="doctor_id" property="doctorId" jdbcType="BIGINT" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="country" property="country" jdbcType="VARCHAR" />
+    <result column="allergic_history" property="allergicHistory" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="DOUBLE" />
+    <result column="times" property="times" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="CorrelationResultMap" type="com.huatuo.customer.domain.MzPatient" >
+    <id column="patientId" property="patientId" jdbcType="BIGINT" />
+    <result column="patientName" property="name" jdbcType="VARCHAR" />
+    <result column="patientNamePy" property="namePy" jdbcType="VARCHAR" />
+    <result column="patientSex" property="sex" jdbcType="INTEGER" />
+    <result column="patientBirthDate" property="birthDate" jdbcType="VARCHAR" />
+    <result column="patientMarry" property="marry" jdbcType="INTEGER" />
+    <result column="patientBirthPlace" property="birthPlace" jdbcType="VARCHAR" />
+    <result column="patientNation" property="nation" jdbcType="VARCHAR" />
+    <result column="patientAddressId" property="addressId" jdbcType="BIGINT" />
+    <result column="patientOccupationId" property="occupationId" jdbcType="INTEGER" />
+    <result column="patientRelateTel" property="relateTel" jdbcType="VARCHAR" />
+    <result column="patientSocialIdType" property="socialIdType" jdbcType="INTEGER" />
+    <result column="patientSocialId" property="socialId" jdbcType="VARCHAR" />
+    <result column="patientDoctorId" property="doctorId" jdbcType="BIGINT" />
+    <result column="patientOperator" property="operator" jdbcType="VARCHAR" />
+    <result column="patientCountry" property="country" jdbcType="VARCHAR" />
+    <result column="patientAllergicHistory" property="allergicHistory" jdbcType="VARCHAR" />
+    <result column="patientWeight" property="weight" jdbcType="DOUBLE" />
+    <result column="patienTimes" property="times" jdbcType="INTEGER" />
+    <result column="addressProvince" property="province" jdbcType="INTEGER" />
+    <result column="addressCity" property="city" jdbcType="INTEGER" />
+    <result column="addressCounty" property="county" jdbcType="INTEGER" />
+    <result column="addressRoad" property="road" jdbcType="INTEGER" />
+    <result column="addressAddress" property="address" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    patient_id, name, name_py, sex, birth_date, marry, birth_place, nation, address_id, 
+    occupation_id, relate_tel, social_id_type, social_id, doctor_id, operator, country, 
+    allergic_history, weight, times
+  </sql>
+  <sql id="Correlation_Column_List">
+	mp.patient_id patientId, mp.name patientName, mp.name_py patientNamePy, mp.sex patientSex, mp.birth_date patientBirthDate,
+	mp.marry patientMarry, mp.birth_place patientBirthPlace, mp.nation patientNation, mp.address_id patientAddressId, 
+	mp.occupation_id patientOccupationId, mp.relate_tel patientRelateTel, mp.social_id_type patientSocialIdType, mp.social_id patientSocialId,
+	mp.doctor_id patientDoctorId, mp.operator patientOperator, mp.country patientCountry, 
+	mp.allergic_history patientAllergicHistory, mp.weight patientWeight, mp.times patienTimes, xa.province addressProvince, xa.city addressCity,
+	xa.county addressCounty, xa.road addressRoad, xa.address addressAddress
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.MzPatientCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mz_patient
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mz_patient
+    where patient_id = #{patientId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mz_patient
+    where patient_id = #{patientId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.MzPatientCriteria" >
+    delete from mz_patient
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.MzPatient" useGeneratedKeys="true" keyProperty="patientId" >
+    insert into mz_patient (patient_id, name, name_py, 
+      sex, birth_date, marry, 
+      birth_place, nation, address_id, 
+      occupation_id, relate_tel, social_id_type, 
+      social_id, doctor_id, operator, 
+      country, allergic_history, weight, 
+      times)
+    values (#{patientId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{namePy,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=INTEGER}, #{birthDate,jdbcType=VARCHAR}, #{marry,jdbcType=INTEGER}, 
+      #{birthPlace,jdbcType=VARCHAR}, #{nation,jdbcType=VARCHAR}, #{addressId,jdbcType=BIGINT}, 
+      #{occupationId,jdbcType=INTEGER}, #{relateTel,jdbcType=VARCHAR}, #{socialIdType,jdbcType=INTEGER}, 
+      #{socialId,jdbcType=VARCHAR}, #{doctorId,jdbcType=BIGINT}, #{operator,jdbcType=VARCHAR}, 
+      #{country,jdbcType=VARCHAR}, #{allergicHistory,jdbcType=VARCHAR}, #{weight,jdbcType=DOUBLE}, 
+      #{times,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.MzPatient" >
+    insert into mz_patient
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="patientId != null" >
+        patient_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="namePy != null" >
+        name_py,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="birthDate != null" >
+        birth_date,
+      </if>
+      <if test="marry != null" >
+        marry,
+      </if>
+      <if test="birthPlace != null" >
+        birth_place,
+      </if>
+      <if test="nation != null" >
+        nation,
+      </if>
+      <if test="addressId != null" >
+        address_id,
+      </if>
+      <if test="occupationId != null" >
+        occupation_id,
+      </if>
+      <if test="relateTel != null" >
+        relate_tel,
+      </if>
+      <if test="socialIdType != null" >
+        social_id_type,
+      </if>
+      <if test="socialId != null" >
+        social_id,
+      </if>
+      <if test="doctorId != null" >
+        doctor_id,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="country != null" >
+        country,
+      </if>
+      <if test="allergicHistory != null" >
+        allergic_history,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="times != null" >
+        times,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="patientId != null" >
+        #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="namePy != null" >
+        #{namePy,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="birthDate != null" >
+        #{birthDate,jdbcType=VARCHAR},
+      </if>
+      <if test="marry != null" >
+        #{marry,jdbcType=INTEGER},
+      </if>
+      <if test="birthPlace != null" >
+        #{birthPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null" >
+        #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="addressId != null" >
+        #{addressId,jdbcType=BIGINT},
+      </if>
+      <if test="occupationId != null" >
+        #{occupationId,jdbcType=INTEGER},
+      </if>
+      <if test="relateTel != null" >
+        #{relateTel,jdbcType=VARCHAR},
+      </if>
+      <if test="socialIdType != null" >
+        #{socialIdType,jdbcType=INTEGER},
+      </if>
+      <if test="socialId != null" >
+        #{socialId,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorId != null" >
+        #{doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null" >
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="allergicHistory != null" >
+        #{allergicHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=DOUBLE},
+      </if>
+      <if test="times != null" >
+        #{times,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.MzPatientCriteria" resultType="java.lang.Integer" >
+    select count(*) from mz_patient
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update mz_patient
+    <set >
+      <if test="record.patientId != null" >
+        patient_id = #{record.patientId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.namePy != null" >
+        name_py = #{record.namePy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sex != null" >
+        sex = #{record.sex,jdbcType=INTEGER},
+      </if>
+      <if test="record.birthDate != null" >
+        birth_date = #{record.birthDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marry != null" >
+        marry = #{record.marry,jdbcType=INTEGER},
+      </if>
+      <if test="record.birthPlace != null" >
+        birth_place = #{record.birthPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nation != null" >
+        nation = #{record.nation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressId != null" >
+        address_id = #{record.addressId,jdbcType=BIGINT},
+      </if>
+      <if test="record.occupationId != null" >
+        occupation_id = #{record.occupationId,jdbcType=INTEGER},
+      </if>
+      <if test="record.relateTel != null" >
+        relate_tel = #{record.relateTel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.socialIdType != null" >
+        social_id_type = #{record.socialIdType,jdbcType=INTEGER},
+      </if>
+      <if test="record.socialId != null" >
+        social_id = #{record.socialId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.doctorId != null" >
+        doctor_id = #{record.doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="record.operator != null" >
+        operator = #{record.operator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.country != null" >
+        country = #{record.country,jdbcType=VARCHAR},
+      </if>
+      <if test="record.allergicHistory != null" >
+        allergic_history = #{record.allergicHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="record.weight != null" >
+        weight = #{record.weight,jdbcType=DOUBLE},
+      </if>
+      <if test="record.times != null" >
+        times = #{record.times,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update mz_patient
+    set patient_id = #{record.patientId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      name_py = #{record.namePy,jdbcType=VARCHAR},
+      sex = #{record.sex,jdbcType=INTEGER},
+      birth_date = #{record.birthDate,jdbcType=VARCHAR},
+      marry = #{record.marry,jdbcType=INTEGER},
+      birth_place = #{record.birthPlace,jdbcType=VARCHAR},
+      nation = #{record.nation,jdbcType=VARCHAR},
+      address_id = #{record.addressId,jdbcType=BIGINT},
+      occupation_id = #{record.occupationId,jdbcType=INTEGER},
+      relate_tel = #{record.relateTel,jdbcType=VARCHAR},
+      social_id_type = #{record.socialIdType,jdbcType=INTEGER},
+      social_id = #{record.socialId,jdbcType=VARCHAR},
+      doctor_id = #{record.doctorId,jdbcType=BIGINT},
+      operator = #{record.operator,jdbcType=VARCHAR},
+      country = #{record.country,jdbcType=VARCHAR},
+      allergic_history = #{record.allergicHistory,jdbcType=VARCHAR},
+      weight = #{record.weight,jdbcType=DOUBLE},
+      times = #{record.times,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.MzPatient" >
+    update mz_patient
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="namePy != null" >
+        name_py = #{namePy,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="birthDate != null" >
+        birth_date = #{birthDate,jdbcType=VARCHAR},
+      </if>
+      <if test="marry != null" >
+        marry = #{marry,jdbcType=INTEGER},
+      </if>
+      <if test="birthPlace != null" >
+        birth_place = #{birthPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="nation != null" >
+        nation = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="addressId != null" >
+        address_id = #{addressId,jdbcType=BIGINT},
+      </if>
+      <if test="occupationId != null" >
+        occupation_id = #{occupationId,jdbcType=INTEGER},
+      </if>
+      <if test="relateTel != null" >
+        relate_tel = #{relateTel,jdbcType=VARCHAR},
+      </if>
+      <if test="socialIdType != null" >
+        social_id_type = #{socialIdType,jdbcType=INTEGER},
+      </if>
+      <if test="socialId != null" >
+        social_id = #{socialId,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorId != null" >
+        doctor_id = #{doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null" >
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="allergicHistory != null" >
+        allergic_history = #{allergicHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=DOUBLE},
+      </if>
+      <if test="times != null" >
+        times = #{times,jdbcType=INTEGER},
+      </if>
+    </set>
+    where patient_id = #{patientId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.MzPatient" >
+    update mz_patient
+    set name = #{name,jdbcType=VARCHAR},
+      name_py = #{namePy,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      birth_date = #{birthDate,jdbcType=VARCHAR},
+      marry = #{marry,jdbcType=INTEGER},
+      birth_place = #{birthPlace,jdbcType=VARCHAR},
+      nation = #{nation,jdbcType=VARCHAR},
+      address_id = #{addressId,jdbcType=BIGINT},
+      occupation_id = #{occupationId,jdbcType=INTEGER},
+      relate_tel = #{relateTel,jdbcType=VARCHAR},
+      social_id_type = #{socialIdType,jdbcType=INTEGER},
+      social_id = #{socialId,jdbcType=VARCHAR},
+      doctor_id = #{doctorId,jdbcType=BIGINT},
+      operator = #{operator,jdbcType=VARCHAR},
+      country = #{country,jdbcType=VARCHAR},
+      allergic_history = #{allergicHistory,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=DOUBLE},
+      times = #{times,jdbcType=INTEGER}
+    where patient_id = #{patientId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.MzPatientCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mz_patient
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectPatientAndAddressDetail" parameterType="long" resultMap="CorrelationResultMap">
+  	select 
+  		<include refid="Correlation_Column_List"/>
+	from mz_patient mp
+		left join xt_address `xa` on mp.address_id = `xa`.address_id
+	where mp.patient_id = #{patientId,jdbcType=BIGINT}
+  </select>
+</mapper>

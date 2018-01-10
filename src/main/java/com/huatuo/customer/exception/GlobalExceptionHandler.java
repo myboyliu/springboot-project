@@ -1,0 +1,220 @@
+package com.huatuo.customer.exception;
+
+import java.util.zip.DataFormatException;
+
+import javax.management.modelmbean.XMLParseException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.huatuo.customer.base.response.BaseResponse;
+
+/**
+ * 全局异常统一分类处理器
+ * @author master
+ *
+ */
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+	private static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+	/**
+	 * 类的字节码未找到异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = ClassNotFoundException.class)
+	public @ResponseBody BaseResponse classNotFoundExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----类的字节码未找到:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 日期格式化异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = DataFormatException.class)
+	public @ResponseBody BaseResponse dataFormatExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----日期格式化异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 类中无此字段异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = NoSuchFieldException.class)
+	public @ResponseBody BaseResponse noSuchFieldExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----类中无此字段异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 类中无此方法异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = NoSuchMethodException.class)
+	public @ResponseBody BaseResponse noSuchMethodExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----类中无此方法异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * xml解析异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = XMLParseException.class)
+	public @ResponseBody BaseResponse xmlParseExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----xml解析异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 类型转换异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = ClassCastException.class)
+	public @ResponseBody BaseResponse classCastExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----类型转换异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 非法参数异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = IllegalArgumentException.class)
+	public @ResponseBody BaseResponse illegalArgumentExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----非法参数异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 数组越界异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = IndexOutOfBoundsException.class)
+	public @ResponseBody BaseResponse indexOutOfBoundsExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----数组越界异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 空指针异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = NullPointerException.class)
+	public @ResponseBody BaseResponse nullPointerExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----空指针异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 数组非法值异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = ArrayStoreException.class)
+	public @ResponseBody BaseResponse arrayStoreExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setCode(BaseResponse.ERROR_CODE);
+		baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		logger.info("-----数组非法值异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+	/**
+	 * 其他类型异常
+	 * @param request
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(value = Exception.class)
+	public @ResponseBody BaseResponse otherExceptionHandler(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
+		BaseResponse baseResponse = new BaseResponse();
+		if(e.getMessage().equals("该医生预约服务时段已约满")){
+			baseResponse.setCode(BaseResponse.SUCCESS_CODE);
+			baseResponse.setHasReservationNumber(1);
+			baseResponse.setMessage(e.getMessage());
+		}else{
+			baseResponse.setCode(BaseResponse.ERROR_CODE);
+			baseResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		}
+		logger.info("-----其他类型异常:" + e.getMessage());
+		logger.info(request.getRequestURI());
+		return baseResponse;
+	}
+	
+}

@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.DtTeamMapper">
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.DtTeam">
+    <id column="dt_team_id" jdbcType="VARCHAR" property="dtTeamId" />
+    <result column="team_name" jdbcType="VARCHAR" property="teamName" />
+    <result column="own_member" jdbcType="INTEGER" property="ownMember" />
+    <result column="admin_doctor_id" jdbcType="VARCHAR" property="adminDoctorId" />
+    <result column="recommended_index" jdbcType="INTEGER" property="recommendedIndex" />
+    <result column="already_signed_number" jdbcType="INTEGER" property="alreadySignedNumber" />
+    <result column="already_serve_number" jdbcType="INTEGER" property="alreadyServeNumber" />
+    <result column="team_desc" jdbcType="VARCHAR" property="teamDesc" />
+    <result column="uses" jdbcType="INTEGER" property="uses" />
+    <result column="del_flg" jdbcType="INTEGER" property="delFlg" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="sync_time" jdbcType="VARCHAR" property="syncTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    dt_team_id, team_name, own_member, admin_doctor_id, recommended_index, already_signed_number, 
+    already_serve_number, team_desc, uses, del_flg, create_time, sync_time
+  </sql>
+  <select id="selectByExample" parameterType="com.huatuo.customer.domain.DtTeamCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dt_team
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dt_team
+    where dt_team_id = #{dtTeamId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dt_team
+    where dt_team_id = #{dtTeamId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.DtTeamCriteria">
+    delete from dt_team
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.DtTeam">
+    insert into dt_team (dt_team_id, team_name, own_member, 
+      admin_doctor_id, recommended_index, already_signed_number, 
+      already_serve_number, team_desc, uses, 
+      del_flg, create_time, sync_time
+      )
+    values (#{dtTeamId,jdbcType=VARCHAR}, #{teamName,jdbcType=VARCHAR}, #{ownMember,jdbcType=INTEGER}, 
+      #{adminDoctorId,jdbcType=VARCHAR}, #{recommendedIndex,jdbcType=INTEGER}, #{alreadySignedNumber,jdbcType=INTEGER}, 
+      #{alreadyServeNumber,jdbcType=INTEGER}, #{teamDesc,jdbcType=VARCHAR}, #{uses,jdbcType=INTEGER}, 
+      #{delFlg,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR}, #{syncTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.DtTeam">
+    insert into dt_team
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dtTeamId != null">
+        dt_team_id,
+      </if>
+      <if test="teamName != null">
+        team_name,
+      </if>
+      <if test="ownMember != null">
+        own_member,
+      </if>
+      <if test="adminDoctorId != null">
+        admin_doctor_id,
+      </if>
+      <if test="recommendedIndex != null">
+        recommended_index,
+      </if>
+      <if test="alreadySignedNumber != null">
+        already_signed_number,
+      </if>
+      <if test="alreadyServeNumber != null">
+        already_serve_number,
+      </if>
+      <if test="teamDesc != null">
+        team_desc,
+      </if>
+      <if test="uses != null">
+        uses,
+      </if>
+      <if test="delFlg != null">
+        del_flg,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="syncTime != null">
+        sync_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="dtTeamId != null">
+        #{dtTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="teamName != null">
+        #{teamName,jdbcType=VARCHAR},
+      </if>
+      <if test="ownMember != null">
+        #{ownMember,jdbcType=INTEGER},
+      </if>
+      <if test="adminDoctorId != null">
+        #{adminDoctorId,jdbcType=VARCHAR},
+      </if>
+      <if test="recommendedIndex != null">
+        #{recommendedIndex,jdbcType=INTEGER},
+      </if>
+      <if test="alreadySignedNumber != null">
+        #{alreadySignedNumber,jdbcType=INTEGER},
+      </if>
+      <if test="alreadyServeNumber != null">
+        #{alreadyServeNumber,jdbcType=INTEGER},
+      </if>
+      <if test="teamDesc != null">
+        #{teamDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="uses != null">
+        #{uses,jdbcType=INTEGER},
+      </if>
+      <if test="delFlg != null">
+        #{delFlg,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="syncTime != null">
+        #{syncTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.DtTeamCriteria" resultType="java.lang.Integer">
+    select count(*) from dt_team
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update dt_team
+    <set>
+      <if test="record.dtTeamId != null">
+        dt_team_id = #{record.dtTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.teamName != null">
+        team_name = #{record.teamName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ownMember != null">
+        own_member = #{record.ownMember,jdbcType=INTEGER},
+      </if>
+      <if test="record.adminDoctorId != null">
+        admin_doctor_id = #{record.adminDoctorId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.recommendedIndex != null">
+        recommended_index = #{record.recommendedIndex,jdbcType=INTEGER},
+      </if>
+      <if test="record.alreadySignedNumber != null">
+        already_signed_number = #{record.alreadySignedNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.alreadyServeNumber != null">
+        already_serve_number = #{record.alreadyServeNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.teamDesc != null">
+        team_desc = #{record.teamDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uses != null">
+        uses = #{record.uses,jdbcType=INTEGER},
+      </if>
+      <if test="record.delFlg != null">
+        del_flg = #{record.delFlg,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.syncTime != null">
+        sync_time = #{record.syncTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update dt_team
+    set dt_team_id = #{record.dtTeamId,jdbcType=VARCHAR},
+      team_name = #{record.teamName,jdbcType=VARCHAR},
+      own_member = #{record.ownMember,jdbcType=INTEGER},
+      admin_doctor_id = #{record.adminDoctorId,jdbcType=VARCHAR},
+      recommended_index = #{record.recommendedIndex,jdbcType=INTEGER},
+      already_signed_number = #{record.alreadySignedNumber,jdbcType=INTEGER},
+      already_serve_number = #{record.alreadyServeNumber,jdbcType=INTEGER},
+      team_desc = #{record.teamDesc,jdbcType=VARCHAR},
+      uses = #{record.uses,jdbcType=INTEGER},
+      del_flg = #{record.delFlg,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=VARCHAR},
+      sync_time = #{record.syncTime,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.DtTeam">
+    update dt_team
+    <set>
+      <if test="teamName != null">
+        team_name = #{teamName,jdbcType=VARCHAR},
+      </if>
+      <if test="ownMember != null">
+        own_member = #{ownMember,jdbcType=INTEGER},
+      </if>
+      <if test="adminDoctorId != null">
+        admin_doctor_id = #{adminDoctorId,jdbcType=VARCHAR},
+      </if>
+      <if test="recommendedIndex != null">
+        recommended_index = #{recommendedIndex,jdbcType=INTEGER},
+      </if>
+      <if test="alreadySignedNumber != null">
+        already_signed_number = #{alreadySignedNumber,jdbcType=INTEGER},
+      </if>
+      <if test="alreadyServeNumber != null">
+        already_serve_number = #{alreadyServeNumber,jdbcType=INTEGER},
+      </if>
+      <if test="teamDesc != null">
+        team_desc = #{teamDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="uses != null">
+        uses = #{uses,jdbcType=INTEGER},
+      </if>
+      <if test="delFlg != null">
+        del_flg = #{delFlg,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="syncTime != null">
+        sync_time = #{syncTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where dt_team_id = #{dtTeamId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.DtTeam">
+    update dt_team
+    set team_name = #{teamName,jdbcType=VARCHAR},
+      own_member = #{ownMember,jdbcType=INTEGER},
+      admin_doctor_id = #{adminDoctorId,jdbcType=VARCHAR},
+      recommended_index = #{recommendedIndex,jdbcType=INTEGER},
+      already_signed_number = #{alreadySignedNumber,jdbcType=INTEGER},
+      already_serve_number = #{alreadyServeNumber,jdbcType=INTEGER},
+      team_desc = #{teamDesc,jdbcType=VARCHAR},
+      uses = #{uses,jdbcType=INTEGER},
+      del_flg = #{delFlg,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      sync_time = #{syncTime,jdbcType=VARCHAR}
+    where dt_team_id = #{dtTeamId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.huatuo.customer.domain.DtTeamCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dt_team
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  
+  <!-- 自定义 -->
+  <!-- 查询团队总数 -->
+  <select id="countDtTeams" parameterType="map" resultType="int">
+	select count(*)
+	from dt_team dt
+	left join xt_doctor xd
+	on(dt.admin_doctor_id = xd.id)
+	left join xt_zd_org xzo
+	on(xd.zd_org_id = xzo.id)
+	where 1=1
+	<if test="orgs != null">
+      and xd.zd_org_id 
+      in
+		<foreach close=")" collection="orgs" index="index" item="item" open="(" separator=",">
+			#{item}
+		</foreach>
+    </if>
+    and dt.uses = 1
+    and dt.del_flg = 0
+  </select>
+  
+  <!-- 查询团队信息集合 -->
+  <select id="listDtTeams" parameterType="map" resultType="com.huatuo.customer.domain.DtTeamPojo">
+	select 
+		dt.dt_team_id dtTeamId, dt.team_name teamName, dt.own_member ownMember, dt.admin_doctor_id adminDoctorId, 
+		dt.recommended_index recommendedIndex, dt.already_signed_number alreadySignedNumber, 
+		already_serve_number alreadyServeNumber, dt.team_desc teamDesc, dt.uses uses, dt.del_flg delFlg, 
+		dt.create_time createTime, dt.sync_time syncTime, xd.zd_org_id zdOrgId, xd.dept dept, xd.picture picture,
+		xzo.name orgName
+	from dt_team dt
+	left join xt_doctor xd
+	on(dt.admin_doctor_id = xd.id)
+	left join xt_zd_org xzo
+	on(xd.zd_org_id = xzo.id)
+	where 1=1
+	<if test="orgs != null">
+      and xd.zd_org_id 
+      in
+		<foreach close=")" collection="orgs" index="index" item="item" open="(" separator=",">
+			#{item}
+		</foreach>
+    </if>
+    <if test="dtTeamId != null">
+      and dt.dt_team_id = ${dtTeamId}
+    </if>
+    and dt.uses = 1
+    and dt.del_flg = 0
+	<if test="start != null and pageSize != null">
+		order by dt.dt_team_id limit ${start}, ${pageSize}
+    </if>
+  </select>
+  
+  <!-- 查询我的医生团队 -->
+  <select id="getMyDoctorTeam" parameterType="map" resultType="com.huatuo.customer.domain.DtTeamPojo">
+	select 
+		dt.dt_team_id dtTeamId, dt.team_name teamName, dt.own_member ownMember, dt.admin_doctor_id adminDoctorId, 
+		dt.recommended_index recommendedIndex, dt.already_signed_number alreadySignedNumber, 
+		already_serve_number alreadyServeNumber, dt.team_desc teamDesc, dt.uses uses, dt.del_flg delFlg, 
+		dt.create_time createTime, dt.sync_time syncTime, xd.zd_org_id zdOrgId, xd.dept dept, xd.picture picture,
+		xzo.name orgName
+	from dt_user_team dut
+	left join dt_team dt
+	on(dut.doctor_team_id = dt.dt_team_id)
+	left join xt_doctor xd
+	on(dt.admin_doctor_id = xd.id)
+	left join xt_zd_org xzo
+	on(xd.zd_org_id = xzo.id)
+	where 1=1
+    <if test="userId != null">
+		and dut.user_id = ${userId}
+    </if>
+	and dut.del_flag = 0
+  </select>
+  
+  <!-- 用户的家庭医生个数 -->
+  <select id="hasDoctorTeam" parameterType="map" resultType="int">
+	select 
+		IFNULL(count(1),0)
+	from dt_user_team dut
+	where 1=1
+    <if test="userId != null">
+		and dut.user_id = ${userId}
+    </if>
+	and dut.del_flag = 0
+  </select>
+  
+    <!--通过地址id查询某个地区的医生团队  -->
+  <select id="selectByaddressId" parameterType="long" resultType="com.huatuo.customer.domain.DtTeam">
+    select 
+    team.dt_team_id dtTeamId,team.team_name teamName,
+    team.own_member ownMember,doctor.name doctorName,doctor.picture picture,
+    type.service_address_name serviceAddressName,
+    org.name orgName
+    from dt_team team
+    left join xt_doctor doctor
+    on doctor.id = team.admin_doctor_id
+    left join xt_zd_org org
+    on org.id = doctor.zd_org_id 
+    left join dt_type type
+    on team.dt_team_id = type.dt_team_id
+    left join xt_address address
+    on address.address_id = type.service_address_id  
+    where address.address_id = #{addressId}
+    <if test="start != null and pageSize != null">	    
+	      limit #{start}, #{pageSize}      	
+    </if>
+  </select>
+   <!--通过地址id查询某个地区的医生团队总条数  -->
+  <select id="countByAddressId" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from dt_team team
+    left join xt_doctor doctor
+    on doctor.id = team.admin_doctor_id
+    left join xt_specialty s
+    on s.id = doctor.specialty_id
+    left join dt_type type
+    on team.dt_team_id = type.dt_team_id
+    left join xt_address address
+    on address.address_id = type.service_address_id  
+    where address.address_id = #{addressId}
+  </select>
+
+</mapper>

@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.PayOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.PayOrder" >
+    <id column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="make_time" property="makeTime" jdbcType="VARCHAR" />
+    <result column="complete_time" property="completeTime" jdbcType="VARCHAR" />
+    <result column="mode" property="mode" jdbcType="INTEGER" />
+    <result column="order_state" property="orderState" jdbcType="INTEGER" />
+    <result column="service_id" property="serviceId" jdbcType="BIGINT" />
+    <result column="service_type" property="serviceType" jdbcType="INTEGER" />
+    <result column="pay_way" property="payWay" jdbcType="INTEGER" />
+    <result column="pay_type" property="payType" jdbcType="INTEGER" />
+    <result column="pay_source" property="paySource" jdbcType="INTEGER" />
+    <result column="cancel_reason" property="cancelReason" jdbcType="VARCHAR" />
+    <result column="patient_id" property="patientId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="doctor_id" property="doctorId" jdbcType="BIGINT" />
+    <result column="doctor_name" property="doctorName" jdbcType="VARCHAR" />
+    <result column="doctor_dept" property="doctorDept" jdbcType="VARCHAR" />
+    <result column="doctor_titles_teach" property="doctorTitlesTeach" jdbcType="INTEGER" />
+    <result column="doctor_titles_clinical" property="doctorTitlesClinical" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="service_state" property="serviceState" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.huatuo.customer.domain.PayOrderWithBLOBs" extends="BaseResultMap" >
+    <result column="customer_remark" property="customerRemark" jdbcType="LONGVARCHAR" />
+    <result column="goods_remark" property="goodsRemark" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <resultMap type="com.huatuo.customer.domain.OrderResult" id="orderResultMap">
+  	<id column="visit_id" property="visitId"/>
+  	<result column="order_no" property="orderNo" />
+  	<result column="mode" property="mode" />
+  	<result column="doctor_id" property="doctorId" />
+  	<result column="specialty_id" property="specialtyId" />
+  	<result column="org_id" property="orgId" />
+  	<result column="patient_id" property="patientId" />
+  	<result column="visit_type" property="visitType" />
+  	<result column="service_cost" property="serviceCost" />
+  	<result column="order_state" property="orderState" />
+  	<result column="doctor_name" property="doctorName" />
+  	<result column="docotor_titles_clinical" property="titlesClinical" />
+  	<result column="doctor_titles_teach" property="titlesTeach" />
+  	<result column="patient_name" property="patientName" />
+  	<result column="org_name" property="orgName" />
+  	<result column="specialty_name" property="specialtyName" />
+  	<result column="order_create_time" property="payOrderCreateTime" />
+  	<result column="visit_start_time" property="startTime" />
+  	<result column="visit_end_time" property="endTime" />
+  	<result column="patient_mobile" property="patientMobile" />
+  	<result column="patient_sex" property="patientSex" />
+  	<result column="patient_birth_date" property="patientBirthDate" />
+  	<result column="address_id" property="addressId" />
+  	<result column="address_province" property="addressProvince" />
+  	<result column="address_city" property="addressCity" />
+  	<result column="address_county" property="addressCountry" />
+  	<result column="address_road" property="addressRoad" />
+  	<result column="address_address" property="addressDetails" />
+  	<result column="doctor_avg_time" property="doctorAvgTime" />
+  	<result column="doctor_picture" property="doctorPicture" />
+  	<result column="r_start_time" property="rStartTime" />
+  	<result column="r_end_time" property="rEndTime" />
+  	<result column="evaluate_id" property="evaluateId"  />
+  	<result column="service_state" property="serviceState" />
+  	<result column="reservation_task" property="reservationTask" />
+  	<result column="doctor_team_id" property="doctorTeamId" />
+  </resultMap>
+  <sql id="orderResultSql">
+	mv.id visit_id, mv.service_cost service_cost, po.order_no order_no, po.mode mode, xd.id doctor_id, xs.id specialty_id,
+	xzo.id org_id, mp.patient_id patient_id, xd.picture doctor_picture,mv.r_start_time r_start_time, mv.r_end_time r_end_time,
+	mv.visit_type visit_type, po.order_state order_state, xd.name doctor_name, xd.titles_clinical docotor_titles_clinical, 
+	xd.titles_teach doctor_titles_teach, mp.name patient_name, xzo.name org_name, xs.name specialty_name, 
+	po.create_time order_create_time, xd.avg_time doctor_avg_time, mv.evaluate_id evaluate_id, po.service_state service_state,
+	mv.reservation_task reservation_task, dup.doctor_team_id doctor_team_id
+  </sql>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    order_no, price, create_time, make_time, complete_time, mode, order_state, service_id, 
+    service_type, pay_way, pay_type, pay_source, cancel_reason, patient_id, user_id, 
+    doctor_id, doctor_name, doctor_dept, doctor_titles_teach, doctor_titles_clinical, 
+    org_id, service_state
+  </sql>
+  <sql id="Blob_Column_List" >
+    customer_remark, goods_remark
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.huatuo.customer.domain.PayOrderCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from pay_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.PayOrderCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from pay_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from pay_order
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+    and mode != 2
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from pay_order
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.PayOrderCriteria" >
+    delete from pay_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.PayOrder" useGeneratedKeys="true" keyProperty="orderNo">
+    insert into pay_order (order_no, price, create_time, 
+      make_time, complete_time, mode, 
+      order_state, service_id, service_type, 
+      pay_way, pay_type, pay_source, 
+      cancel_reason, patient_id, user_id, 
+      doctor_id, doctor_name, doctor_dept, 
+      doctor_titles_teach, doctor_titles_clinical, 
+      org_id, service_state, customer_remark, 
+      goods_remark)
+    values (#{orderNo,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{createTime,jdbcType=VARCHAR}, 
+      #{makeTime,jdbcType=VARCHAR}, #{completeTime,jdbcType=VARCHAR}, #{mode,jdbcType=INTEGER}, 
+      #{orderState,jdbcType=INTEGER}, #{serviceId,jdbcType=BIGINT}, #{serviceType,jdbcType=INTEGER}, 
+      #{payWay,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{paySource,jdbcType=INTEGER}, 
+      #{cancelReason,jdbcType=VARCHAR}, #{patientId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{doctorId,jdbcType=BIGINT}, #{doctorName,jdbcType=VARCHAR}, #{doctorDept,jdbcType=VARCHAR}, 
+      #{doctorTitlesTeach,jdbcType=INTEGER}, #{doctorTitlesClinical,jdbcType=INTEGER}, 
+      #{orgId,jdbcType=INTEGER}, #{serviceState,jdbcType=INTEGER}, #{customerRemark,jdbcType=LONGVARCHAR}, 
+      #{goodsRemark,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.PayOrderWithBLOBs" >
+    insert into pay_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="makeTime != null" >
+        make_time,
+      </if>
+      <if test="completeTime != null" >
+        complete_time,
+      </if>
+      <if test="mode != null" >
+        mode,
+      </if>
+      <if test="orderState != null" >
+        order_state,
+      </if>
+      <if test="serviceId != null" >
+        service_id,
+      </if>
+      <if test="serviceType != null" >
+        service_type,
+      </if>
+      <if test="payWay != null" >
+        pay_way,
+      </if>
+      <if test="payType != null" >
+        pay_type,
+      </if>
+      <if test="paySource != null" >
+        pay_source,
+      </if>
+      <if test="cancelReason != null" >
+        cancel_reason,
+      </if>
+      <if test="patientId != null" >
+        patient_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="doctorId != null" >
+        doctor_id,
+      </if>
+      <if test="doctorName != null" >
+        doctor_name,
+      </if>
+      <if test="doctorDept != null" >
+        doctor_dept,
+      </if>
+      <if test="doctorTitlesTeach != null" >
+        doctor_titles_teach,
+      </if>
+      <if test="doctorTitlesClinical != null" >
+        doctor_titles_clinical,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="serviceState != null" >
+        service_state,
+      </if>
+      <if test="customerRemark != null" >
+        customer_remark,
+      </if>
+      <if test="goodsRemark != null" >
+        goods_remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="makeTime != null" >
+        #{makeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="completeTime != null" >
+        #{completeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null" >
+        #{mode,jdbcType=INTEGER},
+      </if>
+      <if test="orderState != null" >
+        #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="serviceId != null" >
+        #{serviceId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceType != null" >
+        #{serviceType,jdbcType=INTEGER},
+      </if>
+      <if test="payWay != null" >
+        #{payWay,jdbcType=INTEGER},
+      </if>
+      <if test="payType != null" >
+        #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="paySource != null" >
+        #{paySource,jdbcType=INTEGER},
+      </if>
+      <if test="cancelReason != null" >
+        #{cancelReason,jdbcType=VARCHAR},
+      </if>
+      <if test="patientId != null" >
+        #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="doctorId != null" >
+        #{doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="doctorName != null" >
+        #{doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorDept != null" >
+        #{doctorDept,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorTitlesTeach != null" >
+        #{doctorTitlesTeach,jdbcType=INTEGER},
+      </if>
+      <if test="doctorTitlesClinical != null" >
+        #{doctorTitlesClinical,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="serviceState != null" >
+        #{serviceState,jdbcType=INTEGER},
+      </if>
+      <if test="customerRemark != null" >
+        #{customerRemark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="goodsRemark != null" >
+        #{goodsRemark,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.PayOrderCriteria" resultType="java.lang.Integer" >
+    select count(*) from pay_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update pay_order
+    <set >
+      <if test="record.orderNo != null" >
+        order_no = #{record.orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.price != null" >
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.makeTime != null" >
+        make_time = #{record.makeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.completeTime != null" >
+        complete_time = #{record.completeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mode != null" >
+        mode = #{record.mode,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderState != null" >
+        order_state = #{record.orderState,jdbcType=INTEGER},
+      </if>
+      <if test="record.serviceId != null" >
+        service_id = #{record.serviceId,jdbcType=BIGINT},
+      </if>
+      <if test="record.serviceType != null" >
+        service_type = #{record.serviceType,jdbcType=INTEGER},
+      </if>
+      <if test="record.payWay != null" >
+        pay_way = #{record.payWay,jdbcType=INTEGER},
+      </if>
+      <if test="record.payType != null" >
+        pay_type = #{record.payType,jdbcType=INTEGER},
+      </if>
+      <if test="record.paySource != null" >
+        pay_source = #{record.paySource,jdbcType=INTEGER},
+      </if>
+      <if test="record.cancelReason != null" >
+        cancel_reason = #{record.cancelReason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.patientId != null" >
+        patient_id = #{record.patientId,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.doctorId != null" >
+        doctor_id = #{record.doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="record.doctorName != null" >
+        doctor_name = #{record.doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.doctorDept != null" >
+        doctor_dept = #{record.doctorDept,jdbcType=VARCHAR},
+      </if>
+      <if test="record.doctorTitlesTeach != null" >
+        doctor_titles_teach = #{record.doctorTitlesTeach,jdbcType=INTEGER},
+      </if>
+      <if test="record.doctorTitlesClinical != null" >
+        doctor_titles_clinical = #{record.doctorTitlesClinical,jdbcType=INTEGER},
+      </if>
+      <if test="record.orgId != null" >
+        org_id = #{record.orgId,jdbcType=INTEGER},
+      </if>
+      <if test="record.serviceState != null" >
+        service_state = #{record.serviceState,jdbcType=INTEGER},
+      </if>
+      <if test="record.customerRemark != null" >
+        customer_remark = #{record.customerRemark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.goodsRemark != null" >
+        goods_remark = #{record.goodsRemark,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update pay_order
+    set order_no = #{record.orderNo,jdbcType=VARCHAR},
+      price = #{record.price,jdbcType=DECIMAL},
+      create_time = #{record.createTime,jdbcType=VARCHAR},
+      make_time = #{record.makeTime,jdbcType=VARCHAR},
+      complete_time = #{record.completeTime,jdbcType=VARCHAR},
+      mode = #{record.mode,jdbcType=INTEGER},
+      order_state = #{record.orderState,jdbcType=INTEGER},
+      service_id = #{record.serviceId,jdbcType=BIGINT},
+      service_type = #{record.serviceType,jdbcType=INTEGER},
+      pay_way = #{record.payWay,jdbcType=INTEGER},
+      pay_type = #{record.payType,jdbcType=INTEGER},
+      pay_source = #{record.paySource,jdbcType=INTEGER},
+      cancel_reason = #{record.cancelReason,jdbcType=VARCHAR},
+      patient_id = #{record.patientId,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      doctor_id = #{record.doctorId,jdbcType=BIGINT},
+      doctor_name = #{record.doctorName,jdbcType=VARCHAR},
+      doctor_dept = #{record.doctorDept,jdbcType=VARCHAR},
+      doctor_titles_teach = #{record.doctorTitlesTeach,jdbcType=INTEGER},
+      doctor_titles_clinical = #{record.doctorTitlesClinical,jdbcType=INTEGER},
+      org_id = #{record.orgId,jdbcType=INTEGER},
+      service_state = #{record.serviceState,jdbcType=INTEGER},
+      customer_remark = #{record.customerRemark,jdbcType=LONGVARCHAR},
+      goods_remark = #{record.goodsRemark,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update pay_order
+    set order_no = #{record.orderNo,jdbcType=VARCHAR},
+      price = #{record.price,jdbcType=DECIMAL},
+      create_time = #{record.createTime,jdbcType=VARCHAR},
+      make_time = #{record.makeTime,jdbcType=VARCHAR},
+      complete_time = #{record.completeTime,jdbcType=VARCHAR},
+      mode = #{record.mode,jdbcType=INTEGER},
+      order_state = #{record.orderState,jdbcType=INTEGER},
+      service_id = #{record.serviceId,jdbcType=BIGINT},
+      service_type = #{record.serviceType,jdbcType=INTEGER},
+      pay_way = #{record.payWay,jdbcType=INTEGER},
+      pay_type = #{record.payType,jdbcType=INTEGER},
+      pay_source = #{record.paySource,jdbcType=INTEGER},
+      cancel_reason = #{record.cancelReason,jdbcType=VARCHAR},
+      patient_id = #{record.patientId,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      doctor_id = #{record.doctorId,jdbcType=BIGINT},
+      doctor_name = #{record.doctorName,jdbcType=VARCHAR},
+      doctor_dept = #{record.doctorDept,jdbcType=VARCHAR},
+      doctor_titles_teach = #{record.doctorTitlesTeach,jdbcType=INTEGER},
+      doctor_titles_clinical = #{record.doctorTitlesClinical,jdbcType=INTEGER},
+      org_id = #{record.orgId,jdbcType=INTEGER},
+      service_state = #{record.serviceState,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.PayOrder" >
+    update pay_order
+    <set >
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="makeTime != null" >
+        make_time = #{makeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="completeTime != null" >
+        complete_time = #{completeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null" >
+        mode = #{mode,jdbcType=INTEGER},
+      </if>
+      <if test="orderState != null" >
+        order_state = #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="serviceId != null" >
+        service_id = #{serviceId,jdbcType=BIGINT},
+      </if>
+      <if test="serviceType != null" >
+        service_type = #{serviceType,jdbcType=INTEGER},
+      </if>
+      <if test="payWay != null" >
+        pay_way = #{payWay,jdbcType=INTEGER},
+      </if>
+      <if test="payType != null" >
+        pay_type = #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="paySource != null" >
+        pay_source = #{paySource,jdbcType=INTEGER},
+      </if>
+      <if test="cancelReason != null" >
+        cancel_reason = #{cancelReason,jdbcType=VARCHAR},
+      </if>
+      <if test="patientId != null" >
+        patient_id = #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="doctorId != null" >
+        doctor_id = #{doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="doctorName != null" >
+        doctor_name = #{doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorDept != null" >
+        doctor_dept = #{doctorDept,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorTitlesTeach != null" >
+        doctor_titles_teach = #{doctorTitlesTeach,jdbcType=INTEGER},
+      </if>
+      <if test="doctorTitlesClinical != null" >
+        doctor_titles_clinical = #{doctorTitlesClinical,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="serviceState != null" >
+        service_state = #{serviceState,jdbcType=INTEGER},
+      </if>
+      <if test="customerRemark != null" >
+        customer_remark = #{customerRemark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="goodsRemark != null" >
+        goods_remark = #{goodsRemark,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.huatuo.customer.domain.PayOrderWithBLOBs" >
+    update pay_order
+    set price = #{price,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      make_time = #{makeTime,jdbcType=VARCHAR},
+      complete_time = #{completeTime,jdbcType=VARCHAR},
+      mode = #{mode,jdbcType=INTEGER},
+      order_state = #{orderState,jdbcType=INTEGER},
+      service_id = #{serviceId,jdbcType=BIGINT},
+      service_type = #{serviceType,jdbcType=INTEGER},
+      pay_way = #{payWay,jdbcType=INTEGER},
+      pay_type = #{payType,jdbcType=INTEGER},
+      pay_source = #{paySource,jdbcType=INTEGER},
+      cancel_reason = #{cancelReason,jdbcType=VARCHAR},
+      patient_id = #{patientId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      doctor_id = #{doctorId,jdbcType=BIGINT},
+      doctor_name = #{doctorName,jdbcType=VARCHAR},
+      doctor_dept = #{doctorDept,jdbcType=VARCHAR},
+      doctor_titles_teach = #{doctorTitlesTeach,jdbcType=INTEGER},
+      doctor_titles_clinical = #{doctorTitlesClinical,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      service_state = #{serviceState,jdbcType=INTEGER},
+      customer_remark = #{customerRemark,jdbcType=LONGVARCHAR},
+      goods_remark = #{goodsRemark,jdbcType=LONGVARCHAR}
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.PayOrder" >
+    update pay_order
+    set price = #{price,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      make_time = #{makeTime,jdbcType=VARCHAR},
+      complete_time = #{completeTime,jdbcType=VARCHAR},
+      mode = #{mode,jdbcType=INTEGER},
+      order_state = #{orderState,jdbcType=INTEGER},
+      service_id = #{serviceId,jdbcType=BIGINT},
+      service_type = #{serviceType,jdbcType=INTEGER},
+      pay_way = #{payWay,jdbcType=INTEGER},
+      pay_type = #{payType,jdbcType=INTEGER},
+      pay_source = #{paySource,jdbcType=INTEGER},
+      cancel_reason = #{cancelReason,jdbcType=VARCHAR},
+      patient_id = #{patientId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      doctor_id = #{doctorId,jdbcType=BIGINT},
+      doctor_name = #{doctorName,jdbcType=VARCHAR},
+      doctor_dept = #{doctorDept,jdbcType=VARCHAR},
+      doctor_titles_teach = #{doctorTitlesTeach,jdbcType=INTEGER},
+      doctor_titles_clinical = #{doctorTitlesClinical,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=INTEGER},
+      service_state = #{serviceState,jdbcType=INTEGER}
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </update>
+  <select resultMap="ResultMapWithBLOBs" parameterType="com.huatuo.customer.domain.PayOrderCriteria" id="selectByExampleWithBLOBsWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from pay_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.PayOrderCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from pay_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectOrdersList" parameterType="com.huatuo.customer.query.OrderQuery" resultMap="orderResultMap">
+  	select 
+  		<include refid="orderResultSql"/>
+	from mz_visit mv 
+		left join xt_user xu on mv.user_id = xu.id
+		left join pay_order po on po.service_id = mv.id
+		left join xt_doctor xd on mv.doctor_id = xd.id
+		left join xt_specialty xs on xd.specialty_id = xs.id
+		left join xt_zd_org xzo on xd.zd_org_id = xzo.id
+		left join mz_patient mp on mv.patient_id = mp.patient_id
+		left join dt_user_package dup on dup.order_no = po.order_no
+	<where>
+		<if test="userId != null">
+		  and mv.user_id = #{userId,jdbcType=BIGINT}
+		</if>
+		  and po.mode != 2
+	</where>
+	order by order_create_time desc
+	limit #{start,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
+  </select>
+  <select id="selectOrdersCount" parameterType="com.huatuo.customer.query.OrderQuery" resultType="int">
+  	select 
+  		count(mv.id)
+	from mz_visit mv 
+		left join xt_user xu on mv.user_id = xu.id
+		left join pay_order po on po.service_id = mv.id
+		left join xt_doctor xd on mv.doctor_id = xd.id
+		left join xt_specialty xs on xd.specialty_id = xs.id
+		left join xt_zd_org xzo on xd.zd_org_id = xzo.id
+		left join mz_patient mp on mv.patient_id = mp.patient_id
+	<where>
+		<if test="userId != null">
+			and mv.user_id = #{userId,jdbcType=BIGINT}
+		</if>
+		and po.mode != 2
+	</where>
+  </select>
+  <select id="selectOrderDetailsByOrderNo" parameterType="com.huatuo.customer.query.OrderQuery" resultMap="orderResultMap">
+  	select 
+		mv.id visit_id, po.order_no order_no, xd.id doctor_id, xs.id specialty_id, xzo.id org_id, mp.patient_id patient_id, 
+		mv.visit_type visit_type, mv.service_cost service_cost, po.order_state order_state, xd.`name` doctor_name, xd.titles_clinical docotor_titles_clinical, 
+		xd.titles_teach doctor_titles_teach, mp.`name` patient_name, xzo.`name` org_name, xs.`name` specialty_name, 
+		po.create_time order_create_time, mv.start_time visit_start_time,mv.end_time visit_end_time, mp.relate_tel patient_mobile, 
+		mp.sex patient_sex, mp.birth_date patient_birth_date, xa.address_id address_id, xa.province address_province, 
+		xa.city address_city, xa.county address_county, xa.road address_road, xa.address address_address, xd.avg_time doctor_avg_time,
+		mv.r_start_time r_start_time,mv.reservation_task reservation_task, dup.doctor_team_id doctor_team_id
+	from mz_visit mv 
+		left join xt_user xu on mv.user_id = xu.id
+		left join pay_order po on po.service_id = mv.id
+		left join xt_doctor xd on mv.doctor_id = xd.id
+		left join xt_specialty xs on xd.specialty_id = xs.id
+		left join xt_zd_org xzo on xd.zd_org_id = xzo.id
+		left join mz_patient mp on mv.patient_id = mp.patient_id
+		left join xt_address xa on xa.address_id = mp.address_id
+		left join dt_user_package dup on dup.order_no = po.order_no
+		<where>
+			<if test="userId != null">
+				and mv.user_id = #{userId,jdbcType=BIGINT}
+			</if>
+			<if test="orderNo != null">
+				and po.order_no = #{orderNo,jdbcType=VARCHAR}
+			</if>
+			and po.mode != 2
+		</where>
+  </select>
+  
+  <!-- 根据订单号查询订单信息 -->
+  <select id="getPayOrderByOrderNo" parameterType="map" resultMap="BaseResultMap">
+	select *
+	from pay_order
+	where 1=1
+	<if test="orderNo != null">
+		and order_no = #{orderNo}
+	</if>
+	and mode != 2
+  </select>
+  
+  <select id="selectPayOrderByOrderNumber" parameterType="string" resultMap="BaseResultMap">
+	select *
+	from pay_order
+	where order_no = #{orderNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectPayOrderByVisitId" parameterType="long" resultMap="BaseResultMap">
+  	select *
+  	from pay_order
+  	where service_id = 	#{visitId,jdbcType=BIGINT}
+  	and mode != 2
+  </select>
+  
+  <!-- 通过家庭医生信息获取家医订单 -->
+  <select id="getOrderByDtUserPackage" parameterType="map" resultMap="BaseResultMap">
+  	select po.*
+  	from pay_order po
+  	right join dt_user_package dup
+  	on(po.order_no = dup.order_no)
+  	where 1=1
+  	and dup.del_flag = 0
+  	<if test="userId != null">
+		and dup.user_id = #{userId}
+	</if>
+  	<if test="dtTeamId != null">
+		and dup.doctor_team_id = #{dtTeamId}
+	</if>
+  	<if test="teamPackageId != null">
+		and dup.team_package_id = #{teamPackageId}
+	</if>
+  	<if test="nowTime != null">
+		and #{nowTime} > dup.end_time
+	</if>
+  </select>
+  
+  
+  <!-- 修改家医订单状态 -->
+  <update id="updateByOrderNos" parameterType="map" >
+    update pay_order
+    set 
+      service_state = #{serviceState},
+      order_state = #{orderState}
+    where order_state = 1
+    and service_state = 7
+    and order_no in 
+   	 	<foreach collection="orderNos" item="orderNo" open="(" separator="," close=")">
+            #{orderNo}
+        </foreach>
+  </update>
+</mapper>

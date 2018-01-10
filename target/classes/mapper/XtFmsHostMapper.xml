@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtFmsHostMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtFmsHost" >
+    <id column="host_id" property="hostId" jdbcType="INTEGER" />
+    <result column="host_domain" property="hostDomain" jdbcType="VARCHAR" />
+    <result column="host_ip" property="hostIp" jdbcType="VARCHAR" />
+    <result column="host_version" property="hostVersion" jdbcType="VARCHAR" />
+    <result column="host_online_count" property="hostOnlineCount" jdbcType="INTEGER" />
+    <result column="host_max_count" property="hostMaxCount" jdbcType="INTEGER" />
+    <result column="host_status" property="hostStatus" jdbcType="VARCHAR" />
+    <result column="host_create_time" property="hostCreateTime" jdbcType="VARCHAR" />
+    <result column="host_update_time" property="hostUpdateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    host_id, host_domain, host_ip, host_version, host_online_count, host_max_count, host_status, 
+    host_create_time, host_update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtFmsHostCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from xt_fms_host
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_fms_host
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from xt_fms_host
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.XtFmsHostCriteria" >
+    delete from xt_fms_host
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtFmsHost" >
+    insert into xt_fms_host (host_id, host_domain, host_ip, 
+      host_version, host_online_count, host_max_count, 
+      host_status, host_create_time, host_update_time
+      )
+    values (#{hostId,jdbcType=INTEGER}, #{hostDomain,jdbcType=VARCHAR}, #{hostIp,jdbcType=VARCHAR}, 
+      #{hostVersion,jdbcType=VARCHAR}, #{hostOnlineCount,jdbcType=INTEGER}, #{hostMaxCount,jdbcType=INTEGER}, 
+      #{hostStatus,jdbcType=VARCHAR}, #{hostCreateTime,jdbcType=VARCHAR}, #{hostUpdateTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtFmsHost" >
+    insert into xt_fms_host
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hostId != null" >
+        host_id,
+      </if>
+      <if test="hostDomain != null" >
+        host_domain,
+      </if>
+      <if test="hostIp != null" >
+        host_ip,
+      </if>
+      <if test="hostVersion != null" >
+        host_version,
+      </if>
+      <if test="hostOnlineCount != null" >
+        host_online_count,
+      </if>
+      <if test="hostMaxCount != null" >
+        host_max_count,
+      </if>
+      <if test="hostStatus != null" >
+        host_status,
+      </if>
+      <if test="hostCreateTime != null" >
+        host_create_time,
+      </if>
+      <if test="hostUpdateTime != null" >
+        host_update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hostId != null" >
+        #{hostId,jdbcType=INTEGER},
+      </if>
+      <if test="hostDomain != null" >
+        #{hostDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="hostIp != null" >
+        #{hostIp,jdbcType=VARCHAR},
+      </if>
+      <if test="hostVersion != null" >
+        #{hostVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="hostOnlineCount != null" >
+        #{hostOnlineCount,jdbcType=INTEGER},
+      </if>
+      <if test="hostMaxCount != null" >
+        #{hostMaxCount,jdbcType=INTEGER},
+      </if>
+      <if test="hostStatus != null" >
+        #{hostStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="hostCreateTime != null" >
+        #{hostCreateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="hostUpdateTime != null" >
+        #{hostUpdateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.XtFmsHostCriteria" resultType="java.lang.Integer" >
+    select count(*) from xt_fms_host
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update xt_fms_host
+    <set >
+      <if test="record.hostId != null" >
+        host_id = #{record.hostId,jdbcType=INTEGER},
+      </if>
+      <if test="record.hostDomain != null" >
+        host_domain = #{record.hostDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hostIp != null" >
+        host_ip = #{record.hostIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hostVersion != null" >
+        host_version = #{record.hostVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hostOnlineCount != null" >
+        host_online_count = #{record.hostOnlineCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.hostMaxCount != null" >
+        host_max_count = #{record.hostMaxCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.hostStatus != null" >
+        host_status = #{record.hostStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hostCreateTime != null" >
+        host_create_time = #{record.hostCreateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hostUpdateTime != null" >
+        host_update_time = #{record.hostUpdateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update xt_fms_host
+    set host_id = #{record.hostId,jdbcType=INTEGER},
+      host_domain = #{record.hostDomain,jdbcType=VARCHAR},
+      host_ip = #{record.hostIp,jdbcType=VARCHAR},
+      host_version = #{record.hostVersion,jdbcType=VARCHAR},
+      host_online_count = #{record.hostOnlineCount,jdbcType=INTEGER},
+      host_max_count = #{record.hostMaxCount,jdbcType=INTEGER},
+      host_status = #{record.hostStatus,jdbcType=VARCHAR},
+      host_create_time = #{record.hostCreateTime,jdbcType=VARCHAR},
+      host_update_time = #{record.hostUpdateTime,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtFmsHost" >
+    update xt_fms_host
+    <set >
+      <if test="hostDomain != null" >
+        host_domain = #{hostDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="hostIp != null" >
+        host_ip = #{hostIp,jdbcType=VARCHAR},
+      </if>
+      <if test="hostVersion != null" >
+        host_version = #{hostVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="hostOnlineCount != null" >
+        host_online_count = #{hostOnlineCount,jdbcType=INTEGER},
+      </if>
+      <if test="hostMaxCount != null" >
+        host_max_count = #{hostMaxCount,jdbcType=INTEGER},
+      </if>
+      <if test="hostStatus != null" >
+        host_status = #{hostStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="hostCreateTime != null" >
+        host_create_time = #{hostCreateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="hostUpdateTime != null" >
+        host_update_time = #{hostUpdateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtFmsHost" >
+    update xt_fms_host
+    set host_domain = #{hostDomain,jdbcType=VARCHAR},
+      host_ip = #{hostIp,jdbcType=VARCHAR},
+      host_version = #{hostVersion,jdbcType=VARCHAR},
+      host_online_count = #{hostOnlineCount,jdbcType=INTEGER},
+      host_max_count = #{hostMaxCount,jdbcType=INTEGER},
+      host_status = #{hostStatus,jdbcType=VARCHAR},
+      host_create_time = #{hostCreateTime,jdbcType=VARCHAR},
+      host_update_time = #{hostUpdateTime,jdbcType=VARCHAR}
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtFmsHostCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from xt_fms_host
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <cache />
+</mapper>

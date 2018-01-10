@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtPregnantMomMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtPregnantMom" >
+    <id column="pregnant_mom_id" property="pregnantMomId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="fetus" property="fetus" jdbcType="VARCHAR" />
+    <result column="last_menstrual_date" property="lastMenstrualDate" jdbcType="VARCHAR" />
+    <result column="pre_production_date" property="preProductionDate" jdbcType="VARCHAR" />
+    <result column="conception_mode" property="conceptionMode" jdbcType="VARCHAR" />
+    <result column="pre_pregnancy_height" property="prePregnancyHeight" jdbcType="INTEGER" />
+    <result column="pre_pregnancy_weight" property="prePregnancyWeight" jdbcType="REAL" />
+    <result column="valid_flg" property="validFlg" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pregnant_mom_id, user_id, fetus, last_menstrual_date, pre_production_date, conception_mode, 
+    pre_pregnancy_height, pre_pregnancy_weight, valid_flg
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_pregnant_mom
+    where pregnant_mom_id = #{pregnantMomId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from xt_pregnant_mom
+    where pregnant_mom_id = #{pregnantMomId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtPregnantMom" >
+    insert into xt_pregnant_mom (pregnant_mom_id, user_id, fetus, 
+      last_menstrual_date, pre_production_date, conception_mode, 
+      pre_pregnancy_height, pre_pregnancy_weight, valid_flg
+      )
+    values (#{pregnantMomId,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{fetus,jdbcType=VARCHAR}, 
+      #{lastMenstrualDate,jdbcType=VARCHAR}, #{preProductionDate,jdbcType=VARCHAR}, #{conceptionMode,jdbcType=VARCHAR}, 
+      #{prePregnancyHeight,jdbcType=INTEGER}, #{prePregnancyWeight,jdbcType=REAL}, #{validFlg,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtPregnantMom" >
+    insert into xt_pregnant_mom
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pregnantMomId != null" >
+        pregnant_mom_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="fetus != null" >
+        fetus,
+      </if>
+      <if test="lastMenstrualDate != null" >
+        last_menstrual_date,
+      </if>
+      <if test="preProductionDate != null" >
+        pre_production_date,
+      </if>
+      <if test="conceptionMode != null" >
+        conception_mode,
+      </if>
+      <if test="prePregnancyHeight != null" >
+        pre_pregnancy_height,
+      </if>
+      <if test="prePregnancyWeight != null" >
+        pre_pregnancy_weight,
+      </if>
+      <if test="validFlg != null" >
+        valid_flg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pregnantMomId != null" >
+        #{pregnantMomId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="fetus != null" >
+        #{fetus,jdbcType=VARCHAR},
+      </if>
+      <if test="lastMenstrualDate != null" >
+        #{lastMenstrualDate,jdbcType=VARCHAR},
+      </if>
+      <if test="preProductionDate != null" >
+        #{preProductionDate,jdbcType=VARCHAR},
+      </if>
+      <if test="conceptionMode != null" >
+        #{conceptionMode,jdbcType=VARCHAR},
+      </if>
+      <if test="prePregnancyHeight != null" >
+        #{prePregnancyHeight,jdbcType=INTEGER},
+      </if>
+      <if test="prePregnancyWeight != null" >
+        #{prePregnancyWeight,jdbcType=REAL},
+      </if>
+      <if test="validFlg != null" >
+        #{validFlg,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtPregnantMom" >
+    update xt_pregnant_mom
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="fetus != null" >
+        fetus = #{fetus,jdbcType=VARCHAR},
+      </if>
+      <if test="lastMenstrualDate != null" >
+        last_menstrual_date = #{lastMenstrualDate,jdbcType=VARCHAR},
+      </if>
+      <if test="preProductionDate != null" >
+        pre_production_date = #{preProductionDate,jdbcType=VARCHAR},
+      </if>
+      <if test="conceptionMode != null" >
+        conception_mode = #{conceptionMode,jdbcType=VARCHAR},
+      </if>
+      <if test="prePregnancyHeight != null" >
+        pre_pregnancy_height = #{prePregnancyHeight,jdbcType=INTEGER},
+      </if>
+      <if test="prePregnancyWeight != null" >
+        pre_pregnancy_weight = #{prePregnancyWeight,jdbcType=REAL},
+      </if>
+      <if test="validFlg != null" >
+        valid_flg = #{validFlg,jdbcType=INTEGER},
+      </if>
+    </set>
+    where pregnant_mom_id = #{pregnantMomId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtPregnantMom" >
+    update xt_pregnant_mom
+    set user_id = #{userId,jdbcType=BIGINT},
+      fetus = #{fetus,jdbcType=VARCHAR},
+      last_menstrual_date = #{lastMenstrualDate,jdbcType=VARCHAR},
+      pre_production_date = #{preProductionDate,jdbcType=VARCHAR},
+      conception_mode = #{conceptionMode,jdbcType=VARCHAR},
+      pre_pregnancy_height = #{prePregnancyHeight,jdbcType=INTEGER},
+      pre_pregnancy_weight = #{prePregnancyWeight,jdbcType=REAL},
+      valid_flg = #{validFlg,jdbcType=INTEGER}
+    where pregnant_mom_id = #{pregnantMomId,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 自定义sql -->
+  <select id="selectByUid" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select 
+    <include refid="Base_Column_List" />
+    from xt_pregnant_mom
+    where valid_flg = 1
+    and user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  <cache />
+</mapper>

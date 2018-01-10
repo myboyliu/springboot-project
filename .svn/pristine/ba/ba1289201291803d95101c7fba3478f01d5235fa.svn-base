@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.MzVisitMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.MzVisit" >
+    <id column="id" property="visitId" jdbcType="BIGINT" />
+    <result column="mz_code" property="mzCode" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="self_flag" property="selfFlag" jdbcType="INTEGER" />
+    <result column="patient_id" property="patientId" jdbcType="BIGINT" />
+    <result column="times" property="times" jdbcType="INTEGER" />
+    <result column="visit_time" property="visitTime" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="VARCHAR" />
+    <result column="doctor_id" property="doctorId" jdbcType="BIGINT" />
+    <result column="end_time" property="endTime" jdbcType="VARCHAR" />
+    <result column="service_cost" property="serviceCost" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="VISIT_DEPT" property="visitDept" jdbcType="VARCHAR" />
+    <result column="AGE" property="age" jdbcType="VARCHAR" />
+    <result column="visit_type" property="visitType" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="r_start_time" property="rStartTime" jdbcType="VARCHAR" />
+    <result column="r_end_time" property="rEndTime" jdbcType="VARCHAR" />
+    <result column="reservation_num" property="reservationNum" jdbcType="INTEGER" />
+    <result column="reservation_task" property="reservationTask" jdbcType="INTEGER" />
+    <result column="task_cid" property="taskCid" jdbcType="BIGINT" />
+    <result column="task_time" property="taskTime" jdbcType="VARCHAR" />
+    <result column="reservation_id" property="reservationId" jdbcType="BIGINT" />
+    <result column="illness_describe" property="illnessDescribe" jdbcType="VARCHAR" />
+    <result column="deal_state" property="dealState" jdbcType="INTEGER" />
+    <result column="old_visit_id" property="oldVisitId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, mz_code, user_id, member_id, self_flag, patient_id, times, visit_time, start_time, 
+    doctor_id, end_time, service_cost, status, VISIT_DEPT, AGE, visit_type, create_time, 
+    r_start_time, r_end_time, reservation_num, reservation_task, task_cid, task_time, 
+    reservation_id, illness_describe, deal_state, old_visit_id
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.MzVisitCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mz_visit
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mz_visit
+    where id = #{visitId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mz_visit
+    where id = #{visitId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.MzVisitCriteria" >
+    delete from mz_visit
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.MzVisit" useGeneratedKeys="true" keyProperty="visitId" >
+    insert into mz_visit (id, mz_code, user_id, 
+      member_id, self_flag, patient_id, 
+      times, visit_time, start_time, 
+      doctor_id, end_time, service_cost, 
+      status, VISIT_DEPT, AGE, 
+      visit_type, create_time, r_start_time, 
+      r_end_time, reservation_num, reservation_task, 
+      task_cid, task_time, reservation_id, 
+      illness_describe, deal_state, old_visit_id
+      )
+    values (#{visitId,jdbcType=BIGINT}, #{mzCode,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{memberId,jdbcType=BIGINT}, #{selfFlag,jdbcType=INTEGER}, #{patientId,jdbcType=BIGINT}, 
+      #{times,jdbcType=INTEGER}, #{visitTime,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, 
+      #{doctorId,jdbcType=BIGINT}, #{endTime,jdbcType=VARCHAR}, #{serviceCost,jdbcType=DECIMAL}, 
+      #{status,jdbcType=INTEGER}, #{visitDept,jdbcType=VARCHAR}, #{age,jdbcType=VARCHAR}, 
+      #{visitType,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR}, #{rStartTime,jdbcType=VARCHAR}, 
+      #{rEndTime,jdbcType=VARCHAR}, #{reservationNum,jdbcType=INTEGER}, #{reservationTask,jdbcType=INTEGER}, 
+      #{taskCid,jdbcType=BIGINT}, #{taskTime,jdbcType=VARCHAR}, #{reservationId,jdbcType=BIGINT}, 
+      #{illnessDescribe,jdbcType=VARCHAR}, #{dealState,jdbcType=INTEGER}, #{oldVisitId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.MzVisit" >
+    insert into mz_visit
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="visitId != null" >
+        id,
+      </if>
+      <if test="mzCode != null" >
+        mz_code,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="selfFlag != null" >
+        self_flag,
+      </if>
+      <if test="patientId != null" >
+        patient_id,
+      </if>
+      <if test="times != null" >
+        times,
+      </if>
+      <if test="visitTime != null" >
+        visit_time,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="doctorId != null" >
+        doctor_id,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="serviceCost != null" >
+        service_cost,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="visitDept != null" >
+        VISIT_DEPT,
+      </if>
+      <if test="age != null" >
+        AGE,
+      </if>
+      <if test="visitType != null" >
+        visit_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="rStartTime != null" >
+        r_start_time,
+      </if>
+      <if test="rEndTime != null" >
+        r_end_time,
+      </if>
+      <if test="reservationNum != null" >
+        reservation_num,
+      </if>
+      <if test="reservationTask != null" >
+        reservation_task,
+      </if>
+      <if test="taskCid != null" >
+        task_cid,
+      </if>
+      <if test="taskTime != null" >
+        task_time,
+      </if>
+      <if test="reservationId != null" >
+        reservation_id,
+      </if>
+      <if test="illnessDescribe != null" >
+        illness_describe,
+      </if>
+      <if test="dealState != null" >
+        deal_state,
+      </if>
+      <if test="oldVisitId != null" >
+        old_visit_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="visitId != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="mzCode != null" >
+        #{mzCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="selfFlag != null" >
+        #{selfFlag,jdbcType=INTEGER},
+      </if>
+      <if test="patientId != null" >
+        #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="times != null" >
+        #{times,jdbcType=INTEGER},
+      </if>
+      <if test="visitTime != null" >
+        #{visitTime,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorId != null" >
+        #{doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceCost != null" >
+        #{serviceCost,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="visitDept != null" >
+        #{visitDept,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=VARCHAR},
+      </if>
+      <if test="visitType != null" >
+        #{visitType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="rStartTime != null" >
+        #{rStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="rEndTime != null" >
+        #{rEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="reservationNum != null" >
+        #{reservationNum,jdbcType=INTEGER},
+      </if>
+      <if test="reservationTask != null" >
+        #{reservationTask,jdbcType=INTEGER},
+      </if>
+      <if test="taskCid != null" >
+        #{taskCid,jdbcType=BIGINT},
+      </if>
+      <if test="taskTime != null" >
+        #{taskTime,jdbcType=VARCHAR},
+      </if>
+      <if test="reservationId != null" >
+        #{reservationId,jdbcType=BIGINT},
+      </if>
+      <if test="illnessDescribe != null" >
+        #{illnessDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="dealState != null" >
+        #{dealState,jdbcType=INTEGER},
+      </if>
+      <if test="oldVisitId != null" >
+        #{oldVisitId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.MzVisitCriteria" resultType="java.lang.Integer" >
+    select count(*) from mz_visit
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update mz_visit
+    <set >
+      <if test="record.visitId != null" >
+        id = #{record.visitId,jdbcType=BIGINT},
+      </if>
+      <if test="record.mzCode != null" >
+        mz_code = #{record.mzCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.memberId != null" >
+        member_id = #{record.memberId,jdbcType=BIGINT},
+      </if>
+      <if test="record.selfFlag != null" >
+        self_flag = #{record.selfFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.patientId != null" >
+        patient_id = #{record.patientId,jdbcType=BIGINT},
+      </if>
+      <if test="record.times != null" >
+        times = #{record.times,jdbcType=INTEGER},
+      </if>
+      <if test="record.visitTime != null" >
+        visit_time = #{record.visitTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.doctorId != null" >
+        doctor_id = #{record.doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="record.endTime != null" >
+        end_time = #{record.endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serviceCost != null" >
+        service_cost = #{record.serviceCost,jdbcType=DECIMAL},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.visitDept != null" >
+        VISIT_DEPT = #{record.visitDept,jdbcType=VARCHAR},
+      </if>
+      <if test="record.age != null" >
+        AGE = #{record.age,jdbcType=VARCHAR},
+      </if>
+      <if test="record.visitType != null" >
+        visit_type = #{record.visitType,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rStartTime != null" >
+        r_start_time = #{record.rStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rEndTime != null" >
+        r_end_time = #{record.rEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reservationNum != null" >
+        reservation_num = #{record.reservationNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.reservationTask != null" >
+        reservation_task = #{record.reservationTask,jdbcType=INTEGER},
+      </if>
+      <if test="record.taskCid != null" >
+        task_cid = #{record.taskCid,jdbcType=BIGINT},
+      </if>
+      <if test="record.taskTime != null" >
+        task_time = #{record.taskTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reservationId != null" >
+        reservation_id = #{record.reservationId,jdbcType=BIGINT},
+      </if>
+      <if test="record.illnessDescribe != null" >
+        illness_describe = #{record.illnessDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dealState != null" >
+        deal_state = #{record.dealState,jdbcType=INTEGER},
+      </if>
+      <if test="record.oldVisitId != null" >
+        old_visit_id = #{record.oldVisitId,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update mz_visit
+    set id = #{record.visitId,jdbcType=BIGINT},
+      mz_code = #{record.mzCode,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      member_id = #{record.memberId,jdbcType=BIGINT},
+      self_flag = #{record.selfFlag,jdbcType=INTEGER},
+      patient_id = #{record.patientId,jdbcType=BIGINT},
+      times = #{record.times,jdbcType=INTEGER},
+      visit_time = #{record.visitTime,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=VARCHAR},
+      doctor_id = #{record.doctorId,jdbcType=BIGINT},
+      end_time = #{record.endTime,jdbcType=VARCHAR},
+      service_cost = #{record.serviceCost,jdbcType=DECIMAL},
+      status = #{record.status,jdbcType=INTEGER},
+      VISIT_DEPT = #{record.visitDept,jdbcType=VARCHAR},
+      AGE = #{record.age,jdbcType=VARCHAR},
+      visit_type = #{record.visitType,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=VARCHAR},
+      r_start_time = #{record.rStartTime,jdbcType=VARCHAR},
+      r_end_time = #{record.rEndTime,jdbcType=VARCHAR},
+      reservation_num = #{record.reservationNum,jdbcType=INTEGER},
+      reservation_task = #{record.reservationTask,jdbcType=INTEGER},
+      task_cid = #{record.taskCid,jdbcType=BIGINT},
+      task_time = #{record.taskTime,jdbcType=VARCHAR},
+      reservation_id = #{record.reservationId,jdbcType=BIGINT},
+      illness_describe = #{record.illnessDescribe,jdbcType=VARCHAR},
+      deal_state = #{record.dealState,jdbcType=INTEGER},
+      old_visit_id = #{record.oldVisitId,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.MzVisit" >
+    update mz_visit
+    <set >
+      <if test="mzCode != null" >
+        mz_code = #{mzCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="selfFlag != null" >
+        self_flag = #{selfFlag,jdbcType=INTEGER},
+      </if>
+      <if test="patientId != null" >
+        patient_id = #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="times != null" >
+        times = #{times,jdbcType=INTEGER},
+      </if>
+      <if test="visitTime != null" >
+        visit_time = #{visitTime,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorId != null" >
+        doctor_id = #{doctorId,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceCost != null" >
+        service_cost = #{serviceCost,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="visitDept != null" >
+        VISIT_DEPT = #{visitDept,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        AGE = #{age,jdbcType=VARCHAR},
+      </if>
+      <if test="visitType != null" >
+        visit_type = #{visitType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="rStartTime != null" >
+        r_start_time = #{rStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="rEndTime != null" >
+        r_end_time = #{rEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="reservationNum != null" >
+        reservation_num = #{reservationNum,jdbcType=INTEGER},
+      </if>
+      <if test="reservationTask != null" >
+        reservation_task = #{reservationTask,jdbcType=INTEGER},
+      </if>
+      <if test="taskCid != null" >
+        task_cid = #{taskCid,jdbcType=BIGINT},
+      </if>
+      <if test="taskTime != null" >
+        task_time = #{taskTime,jdbcType=VARCHAR},
+      </if>
+      <if test="reservationId != null" >
+        reservation_id = #{reservationId,jdbcType=BIGINT},
+      </if>
+      <if test="illnessDescribe != null" >
+        illness_describe = #{illnessDescribe,jdbcType=VARCHAR},
+      </if>
+      <if test="dealState != null" >
+        deal_state = #{dealState,jdbcType=INTEGER},
+      </if>
+      <if test="oldVisitId != null" >
+        old_visit_id = #{oldVisitId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{visitId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.MzVisit" >
+    update mz_visit
+    set mz_code = #{mzCode,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      member_id = #{memberId,jdbcType=BIGINT},
+      self_flag = #{selfFlag,jdbcType=INTEGER},
+      patient_id = #{patientId,jdbcType=BIGINT},
+      times = #{times,jdbcType=INTEGER},
+      visit_time = #{visitTime,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=VARCHAR},
+      doctor_id = #{doctorId,jdbcType=BIGINT},
+      end_time = #{endTime,jdbcType=VARCHAR},
+      service_cost = #{serviceCost,jdbcType=DECIMAL},
+      status = #{status,jdbcType=INTEGER},
+      VISIT_DEPT = #{visitDept,jdbcType=VARCHAR},
+      AGE = #{age,jdbcType=VARCHAR},
+      visit_type = #{visitType,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      r_start_time = #{rStartTime,jdbcType=VARCHAR},
+      r_end_time = #{rEndTime,jdbcType=VARCHAR},
+      reservation_num = #{reservationNum,jdbcType=INTEGER},
+      reservation_task = #{reservationTask,jdbcType=INTEGER},
+      task_cid = #{taskCid,jdbcType=BIGINT},
+      task_time = #{taskTime,jdbcType=VARCHAR},
+      reservation_id = #{reservationId,jdbcType=BIGINT},
+      illness_describe = #{illnessDescribe,jdbcType=VARCHAR},
+      deal_state = #{dealState,jdbcType=INTEGER},
+      old_visit_id = #{oldVisitId,jdbcType=BIGINT}
+    where id = #{visitId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.MzVisitCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mz_visit
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <insert id="insertReservationForVisit" parameterType="com.huatuo.customer.domain.MzVisit" >
+		<selectKey keyProperty="visitId" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into mz_visit (mz_code, user_id, member_id,
+		self_flag, patient_id, times,
+		visit_time, start_time, doctor_id,
+		end_time, service_cost, status,
+		VISIT_DEPT, AGE, visit_type,
+		create_time, reservation_num,
+		reservation_task,reservation_id,
+		r_start_time, r_end_time, task_cid,
+		task_time, illness_describe, deal_state, old_visit_id
+		)
+		values (#{mzCode,jdbcType=OTHER}, #{userId,jdbcType=OTHER},
+		#{memberId,jdbcType=OTHER},
+		#{selfFlag,jdbcType=OTHER}, #{patientId,jdbcType=OTHER}, #{times,jdbcType=OTHER},
+		#{visitTime,jdbcType=OTHER}, #{startTime,jdbcType=OTHER},
+		#{doctorId,jdbcType=OTHER},
+		#{endTime,jdbcType=OTHER}, #{serviceCost,jdbcType=OTHER}, #{status,jdbcType=OTHER},
+		#{visitDept,jdbcType=OTHER}, #{age,jdbcType=OTHER},
+		#{visitType,jdbcType=OTHER},
+		#{createTime,jdbcType=OTHER}, (
+		<![CDATA[
+		(select 
+			ifnull(max(reservation_num) + 1,1) 
+			from mz_visit mvb
+				where mvb.r_start_time > #{tempStime,jdbcType=OTHER} and mvb.r_end_time < #{tempEtime,jdbcType=OTHER}
+			 	and mvb.reservation_id = #{reservationId,jdbcType=OTHER})
+		]]>
+		),
+		#{reservationTask,jdbcType=OTHER}, #{reservationId,jdbcType=OTHER},
+		#{rStartTime,jdbcType=OTHER}, #{rEndTime,jdbcType=OTHER},
+		#{taskCid,jdbcType=OTHER}, #{taskTime,jdbcType=OTHER}, #{illnessDescribe,jdbcType=OTHER},
+		#{dealState,jdbcType=OTHER},#{oldVisitId,jdbcType=OTHER}
+		)
+	</insert>
+	  <select id="selectVIsitCountByReservationId" parameterType="com.huatuo.customer.query.VisitQuery" resultType="int">
+  	select 
+  		count(id)
+  	from mz_visit 
+  	where reservation_id = #{reservationId,jdbcType=BIGINT}
+  		and r_start_time >= #{startTime,jdbcType=VARCHAR}
+  		<![CDATA[
+  		and r_end_time <= #{endTime,jdbcType=VARCHAR}
+		]]>
+  		and status != 10
+  		and status != 20
+  </select>
+  <cache />
+</mapper>

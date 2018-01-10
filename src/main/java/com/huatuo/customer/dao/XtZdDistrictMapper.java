@@ -1,0 +1,44 @@
+package com.huatuo.customer.dao;
+
+import java.util.List;
+
+import com.huatuo.customer.domain.RegionForBaidu;
+import com.huatuo.customer.domain.XtZdDistrict;
+import com.huatuo.customer.query.AddressQuery;
+
+public interface XtZdDistrictMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(XtZdDistrict record);
+
+    int insertSelective(XtZdDistrict record);
+
+    XtZdDistrict selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(XtZdDistrict record);
+
+    int updateByPrimaryKey(XtZdDistrict record);
+    
+    List<XtZdDistrict> selectXtZdDistrictByGrade(AddressQuery addressQuery);
+    
+    /**
+     * 分级或者父子级查询地址区域信息
+     * @param addressQuery
+     * @return
+     */
+    List<XtZdDistrict> selectDistrictByGradeOrParentId(AddressQuery addressQuery);
+    
+    /**
+     * 根据百度地图的地区信息匹配数据库对应信息
+     * @param regionForBaidu
+     * @return
+     */
+    XtZdDistrict selectDistrictByRegionNameAndParentId(RegionForBaidu regionForBaidu);
+    
+    /**
+     * 根据定位省份名信息查询地域对象
+     * @param provinceName
+     * @return
+     */
+    XtZdDistrict selectDistrictByLocationData(String provinceName);
+}

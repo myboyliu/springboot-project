@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtPregnantMomDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtPregnantMomDetail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="pregnant_mom_id" property="pregnantMomId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="antenatal_explain" property="antenatalExplain" jdbcType="VARCHAR" />
+    <result column="antenatal_care_date" property="antenatalCareDate" jdbcType="VARCHAR" />
+    <result column="antenatal_care_org_name" property="antenatalCareOrgName" jdbcType="VARCHAR" />
+    <result column="antenatal_care_project_ids" property="antenatalCareProjectIds" jdbcType="VARCHAR" />
+    <result column="is_looked_by_doctor" property="isLookedByDoctor" jdbcType="INTEGER" />
+    <result column="has_new_reply" property="hasNewReply" jdbcType="INTEGER" />
+    <result column="is_del" property="isDel" jdbcType="INTEGER" />
+    <result column="is_additional" property="isAdditional" jdbcType="INTEGER" />
+    <result column="doctor_team_id" property="doctorTeamId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, pregnant_mom_id, create_time, record_time, content, antenatal_explain, antenatal_care_date, 
+    antenatal_care_org_name, antenatal_care_project_ids, is_looked_by_doctor, has_new_reply, 
+    is_del, is_additional, doctor_team_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_pregnant_mom_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from xt_pregnant_mom_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtPregnantMomDetail" >
+    insert into xt_pregnant_mom_detail (id, pregnant_mom_id, create_time, 
+      record_time, content, antenatal_explain, 
+      antenatal_care_date, antenatal_care_org_name, 
+      antenatal_care_project_ids, is_looked_by_doctor, 
+      has_new_reply, is_del, is_additional, 
+      doctor_team_id)
+    values (#{id,jdbcType=BIGINT}, #{pregnantMomId,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, 
+      #{recordTime,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{antenatalExplain,jdbcType=VARCHAR}, 
+      #{antenatalCareDate,jdbcType=VARCHAR}, #{antenatalCareOrgName,jdbcType=VARCHAR}, 
+      #{antenatalCareProjectIds,jdbcType=VARCHAR}, #{isLookedByDoctor,jdbcType=INTEGER}, 
+      #{hasNewReply,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER}, #{isAdditional,jdbcType=INTEGER}, 
+      #{doctorTeamId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtPregnantMomDetail" >
+    insert into xt_pregnant_mom_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="pregnantMomId != null" >
+        pregnant_mom_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="antenatalExplain != null" >
+        antenatal_explain,
+      </if>
+      <if test="antenatalCareDate != null" >
+        antenatal_care_date,
+      </if>
+      <if test="antenatalCareOrgName != null" >
+        antenatal_care_org_name,
+      </if>
+      <if test="antenatalCareProjectIds != null" >
+        antenatal_care_project_ids,
+      </if>
+      <if test="isLookedByDoctor != null" >
+        is_looked_by_doctor,
+      </if>
+      <if test="hasNewReply != null" >
+        has_new_reply,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+      <if test="isAdditional != null" >
+        is_additional,
+      </if>
+      <if test="doctorTeamId != null" >
+        doctor_team_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="pregnantMomId != null" >
+        #{pregnantMomId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="antenatalExplain != null" >
+        #{antenatalExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="antenatalCareDate != null" >
+        #{antenatalCareDate,jdbcType=VARCHAR},
+      </if>
+      <if test="antenatalCareOrgName != null" >
+        #{antenatalCareOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="antenatalCareProjectIds != null" >
+        #{antenatalCareProjectIds,jdbcType=VARCHAR},
+      </if>
+      <if test="isLookedByDoctor != null" >
+        #{isLookedByDoctor,jdbcType=INTEGER},
+      </if>
+      <if test="hasNewReply != null" >
+        #{hasNewReply,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=INTEGER},
+      </if>
+      <if test="isAdditional != null" >
+        #{isAdditional,jdbcType=INTEGER},
+      </if>
+      <if test="doctorTeamId != null" >
+        #{doctorTeamId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtPregnantMomDetail" >
+    update xt_pregnant_mom_detail
+    <set >
+      <if test="pregnantMomId != null" >
+        pregnant_mom_id = #{pregnantMomId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="antenatalExplain != null" >
+        antenatal_explain = #{antenatalExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="antenatalCareDate != null" >
+        antenatal_care_date = #{antenatalCareDate,jdbcType=VARCHAR},
+      </if>
+      <if test="antenatalCareOrgName != null" >
+        antenatal_care_org_name = #{antenatalCareOrgName,jdbcType=VARCHAR},
+      </if>
+      <if test="antenatalCareProjectIds != null" >
+        antenatal_care_project_ids = #{antenatalCareProjectIds,jdbcType=VARCHAR},
+      </if>
+      <if test="isLookedByDoctor != null" >
+        is_looked_by_doctor = #{isLookedByDoctor,jdbcType=INTEGER},
+      </if>
+      <if test="hasNewReply != null" >
+        has_new_reply = #{hasNewReply,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=INTEGER},
+      </if>
+      <if test="isAdditional != null" >
+        is_additional = #{isAdditional,jdbcType=INTEGER},
+      </if>
+      <if test="doctorTeamId != null" >
+        doctor_team_id = #{doctorTeamId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtPregnantMomDetail" >
+    update xt_pregnant_mom_detail
+    set pregnant_mom_id = #{pregnantMomId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      record_time = #{recordTime,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      antenatal_explain = #{antenatalExplain,jdbcType=VARCHAR},
+      antenatal_care_date = #{antenatalCareDate,jdbcType=VARCHAR},
+      antenatal_care_org_name = #{antenatalCareOrgName,jdbcType=VARCHAR},
+      antenatal_care_project_ids = #{antenatalCareProjectIds,jdbcType=VARCHAR},
+      is_looked_by_doctor = #{isLookedByDoctor,jdbcType=INTEGER},
+      has_new_reply = #{hasNewReply,jdbcType=INTEGER},
+      is_del = #{isDel,jdbcType=INTEGER},
+      is_additional = #{isAdditional,jdbcType=INTEGER},
+      doctor_team_id = #{doctorTeamId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+    <select id="selectPregnantMomDetailsByUserId" parameterType="com.huatuo.customer.query.PregnantMomQuery" resultMap="BaseResultMap">
+  	select 
+  		xd.id, xd.pregnant_mom_id, xd.create_time, xd.content, xd.antenatal_care_date, xd.antenatal_care_org_name, 
+    	xd.antenatal_care_project_ids, xd.is_looked_by_doctor, xd.has_new_reply, xd.is_del,xd.is_additional
+  	from xt_pregnant_mom_detail xd
+  		left join xt_pregnant_mom xm on xd.pregnant_mom_id = xm.pregnant_mom_id
+  	<where>
+  		<if test="userId != null">
+  			and xm.user_id = #{userId,jdbcType=VARCHAR}
+  		</if>
+  		<if test="seachDate != null">
+  			and xd.record_time like '%' #{seachDate,jdbcType=VARCHAR} '%' 
+  		</if>
+  	</where>
+  	order by xd.create_time desc
+  </select> 
+  
+  
+  <cache />
+</mapper>

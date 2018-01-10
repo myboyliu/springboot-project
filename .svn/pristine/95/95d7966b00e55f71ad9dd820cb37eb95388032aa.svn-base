@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtUserMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtUser" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="pay_pwd" property="payPwd" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="ture_name" property="tureName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="use_amount" property="useAmount" jdbcType="DECIMAL" />
+    
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="address_id" property="addressId" jdbcType="BIGINT" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="birthdate" property="birthDate" jdbcType="VARCHAR" />
+    <result column="birth_place" property="birthPlace" jdbcType="VARCHAR" />
+    <result column="oid" property="occupationId" jdbcType="INTEGER" />
+    <result column="oname" property="occupationName" jdbcType="VARCHAR" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="allergic_history" property="allergicHistory" jdbcType="VARCHAR" />
+    <result column="marry" property="marry" jdbcType="INTEGER" />
+    <result column="social_id" property="socialId" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="province_code" property="provinceCode" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="county" property="county" jdbcType="VARCHAR" />
+    <result column="road" property="road" jdbcType="VARCHAR" />
+    <result column="pid" property="personId" jdbcType="BIGINT" />
+  </resultMap>
+  
+   <resultMap id="LoginResultMap" type="com.huatuo.register.domain.XtUser" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="pay_pwd" property="payPwd" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="ture_name" property="tureName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="use_amount" property="useAmount" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_name, pwd, pay_pwd, name, ture_name, sex, mobile, email, user_type, org_id, 
+    state, amount, use_amount
+  </sql>
+  <select id="selectByPrimaryKey" resultType="com.huatuo.customer.domain.XtUser" parameterType="java.lang.Long" >
+    select 
+    user.id id, user.user_name userName, user.pwd pwd, user.pay_pwd payPwd, user.name name, user.ture_name tureName, 
+    user.sex sex, user.mobile mobile, user.email email, user.user_type userType, user.org_id orgId, 
+    person.age personAge,address.address address,person.birthdate birthDate,person.birth_place birthPlace,person.id personId,person.nation nation,person.marry marry,
+    person.social_id socialId,person.allergic_history allergicHistory,occupation.id occupationId,occupation.name occupationName,
+    address.province province,address.province_code provinceCode,address.city city,address.county county,address.road road,person.address_id addressId,
+    user.state state, user.amount amount,user.use_amount useAmount
+    from xt_user user
+    left join xt_person person
+    on person.user_id = user.id
+    left join xt_address address
+    on address.address_id = person.address_id
+    left join xt_zd_occupation occupation
+    on occupation.id = person.occupation_id
+    where user.id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByPrimaryKeyForLogin" resultMap="LoginResultMap" parameterType="java.lang.Long" >
+    select 
+    	<include refid="Base_Column_List"/>
+    from xt_user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from xt_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtUser" >
+    insert into xt_user (id, user_name, pwd, 
+      pay_pwd, name, ture_name, 
+      sex, mobile, email, 
+      user_type, org_id, state, 
+      amount, use_amount)
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, 
+      #{payPwd,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{tureName,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=INTEGER}, #{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{userType,jdbcType=VARCHAR}, #{orgId,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, 
+      #{amount,jdbcType=DECIMAL}, #{useAmount,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtUser" >
+    insert into xt_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="pwd != null" >
+        pwd,
+      </if>
+      <if test="payPwd != null" >
+        pay_pwd,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="tureName != null" >
+        ture_name,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="useAmount != null" >
+        use_amount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="payPwd != null" >
+        #{payPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="tureName != null" >
+        #{tureName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="useAmount != null" >
+        #{useAmount,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtUser" >
+    update xt_user
+    <set >
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="payPwd != null" >
+        pay_pwd = #{payPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="tureName != null" >
+        ture_name = #{tureName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="useAmount != null" >
+        use_amount = #{useAmount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtUser" >
+    update xt_user
+    set user_name = #{userName,jdbcType=VARCHAR},
+      pwd = #{pwd,jdbcType=VARCHAR},
+      pay_pwd = #{payPwd,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ture_name = #{tureName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      user_type = #{userType,jdbcType=VARCHAR},
+      org_id = #{orgId,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DECIMAL},
+      use_amount = #{useAmount,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

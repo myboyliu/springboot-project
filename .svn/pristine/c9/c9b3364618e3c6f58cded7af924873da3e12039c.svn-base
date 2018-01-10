@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtAddressMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtAddress" >
+    <id column="address_id" property="addressId" jdbcType="BIGINT" />
+    <result column="province_code" property="provinceCode" jdbcType="INTEGER" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city_code" property="cityCode" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="county_code" property="countyCode" jdbcType="INTEGER" />
+    <result column="county" property="county" jdbcType="VARCHAR" />
+    <result column="road_code" property="roadCode" jdbcType="INTEGER" />
+    <result column="road" property="road" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="position_code" property="positionCode" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="LoginResultMap" type="com.huatuo.register.domain.XtAddress" >
+    <id column="address_id" property="addressId" jdbcType="BIGINT" />
+    <result column="province_code" property="provinceCode" jdbcType="INTEGER" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city_code" property="cityCode" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="county_code" property="countyCode" jdbcType="INTEGER" />
+    <result column="county" property="county" jdbcType="VARCHAR" />
+    <result column="road_code" property="roadCode" jdbcType="INTEGER" />
+    <result column="road" property="road" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="position_code" property="positionCode" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    address_id, province_code, province, city_code, city, county_code, county, road_code, 
+    road, address, position_code
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtAddressCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from xt_address
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_address
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </select>
+    <select id="selectByPrimaryKeyForLogin" resultMap="LoginResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_address
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAllAddressInfo" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from xt_address
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from xt_address
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.XtAddressCriteria" >
+    delete from xt_address
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtAddress" useGeneratedKeys="true" keyProperty="addressId" >
+    insert into xt_address (address_id, province_code, province, 
+      city_code, city, county_code, 
+      county, road_code, road, 
+      address, position_code)
+    values (#{addressId,jdbcType=BIGINT}, #{provinceCode,jdbcType=INTEGER}, #{province,jdbcType=VARCHAR}, 
+      #{cityCode,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}, #{countyCode,jdbcType=INTEGER}, 
+      #{county,jdbcType=VARCHAR}, #{roadCode,jdbcType=INTEGER}, #{road,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{positionCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtAddress"
+  useGeneratedKeys="true" keyProperty="addressId">
+    insert into xt_address
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="addressId != null" >
+        address_id,
+      </if>
+      <if test="provinceCode != null" >
+        province_code,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="cityCode != null" >
+        city_code,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="countyCode != null" >
+        county_code,
+      </if>
+      <if test="county != null" >
+        county,
+      </if>
+      <if test="roadCode != null" >
+        road_code,
+      </if>
+      <if test="road != null" >
+        road,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="positionCode != null" >
+        position_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="addressId != null" >
+        #{addressId,jdbcType=BIGINT},
+      </if>
+      <if test="provinceCode != null" >
+        #{provinceCode,jdbcType=INTEGER},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        #{cityCode,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="countyCode != null" >
+        #{countyCode,jdbcType=INTEGER},
+      </if>
+      <if test="county != null" >
+        #{county,jdbcType=VARCHAR},
+      </if>
+      <if test="roadCode != null" >
+        #{roadCode,jdbcType=INTEGER},
+      </if>
+      <if test="road != null" >
+        #{road,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="positionCode != null" >
+        #{positionCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.XtAddressCriteria" resultType="java.lang.Integer" >
+    select count(*) from xt_address
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update xt_address
+    <set >
+      <if test="record.addressId != null" >
+        address_id = #{record.addressId,jdbcType=BIGINT},
+      </if>
+      <if test="record.provinceCode != null" >
+        province_code = #{record.provinceCode,jdbcType=INTEGER},
+      </if>
+      <if test="record.province != null" >
+        province = #{record.province,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cityCode != null" >
+        city_code = #{record.cityCode,jdbcType=INTEGER},
+      </if>
+      <if test="record.city != null" >
+        city = #{record.city,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countyCode != null" >
+        county_code = #{record.countyCode,jdbcType=INTEGER},
+      </if>
+      <if test="record.county != null" >
+        county = #{record.county,jdbcType=VARCHAR},
+      </if>
+      <if test="record.roadCode != null" >
+        road_code = #{record.roadCode,jdbcType=INTEGER},
+      </if>
+      <if test="record.road != null" >
+        road = #{record.road,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.positionCode != null" >
+        position_code = #{record.positionCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update xt_address
+    set address_id = #{record.addressId,jdbcType=BIGINT},
+      province_code = #{record.provinceCode,jdbcType=INTEGER},
+      province = #{record.province,jdbcType=VARCHAR},
+      city_code = #{record.cityCode,jdbcType=INTEGER},
+      city = #{record.city,jdbcType=VARCHAR},
+      county_code = #{record.countyCode,jdbcType=INTEGER},
+      county = #{record.county,jdbcType=VARCHAR},
+      road_code = #{record.roadCode,jdbcType=INTEGER},
+      road = #{record.road,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      position_code = #{record.positionCode,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtAddress" >
+    update xt_address
+    <set >
+      <if test="provinceCode != null" >
+        province_code = #{provinceCode,jdbcType=INTEGER},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        city_code = #{cityCode,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="countyCode != null" >
+        county_code = #{countyCode,jdbcType=INTEGER},
+      </if>
+      <if test="county != null" >
+        county = #{county,jdbcType=VARCHAR},
+      </if>
+      <if test="roadCode != null" >
+        road_code = #{roadCode,jdbcType=INTEGER},
+      </if>
+      <if test="road != null" >
+        road = #{road,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="positionCode != null" >
+        position_code = #{positionCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtAddress" >
+    update xt_address
+    set province_code = #{provinceCode,jdbcType=INTEGER},
+      province = #{province,jdbcType=VARCHAR},
+      city_code = #{cityCode,jdbcType=INTEGER},
+      city = #{city,jdbcType=VARCHAR},
+      county_code = #{countyCode,jdbcType=INTEGER},
+      county = #{county,jdbcType=VARCHAR},
+      road_code = #{roadCode,jdbcType=INTEGER},
+      road = #{road,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      position_code = #{positionCode,jdbcType=VARCHAR}
+    where address_id = #{addressId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtAddressCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from xt_address
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="selectJsonAddressInfo" resultType="java.util.Map">
+     select  
+     province_code,province
+     from
+     xt_address
+     where
+     province_code!=0
+     GROUP BY
+     province_code
+  </select>
+
+  <select id="getJsonCityInfoByProCode" parameterType="int" resultType="java.util.Map">
+     select  
+     city_code,city
+     from
+     xt_address
+     where 
+     1=1
+     <if test="provinceCode != null" >
+       and province_code = #{provinceCode,jdbcType=INTEGER}
+     </if>
+  </select> 
+  
+  <select id="getJsonCountyInfoByCityCode" parameterType="int" resultType="java.util.Map">
+     select  
+     county_code,county
+     from
+     xt_address
+     where 
+     1=1
+     <if test="cityCode != null" >       
+       and city_code = #{cityCode,jdbcType=INTEGER}
+     </if>
+  </select>
+  
+  
+</mapper>

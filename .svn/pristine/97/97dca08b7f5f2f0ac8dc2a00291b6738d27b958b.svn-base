@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huatuo.customer.dao.DtPackageMapper">
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.DtPackage">
+    <id column="team_package_id" jdbcType="VARCHAR" property="teamPackageId" />
+    <result column="doctor_team_id" jdbcType="VARCHAR" property="doctorTeamId" />
+    <result column="package_name" jdbcType="VARCHAR" property="packageName" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="package_type" jdbcType="INTEGER" property="packageType" />
+    <result column="package_price" jdbcType="DECIMAL" property="packagePrice" />
+    <result column="charge_mode" jdbcType="INTEGER" property="chargeMode" />
+    <result column="package_cycle" jdbcType="INTEGER" property="packageCycle" />
+    <result column="start_use_time" jdbcType="VARCHAR" property="startUseTime" />
+    <result column="sync_time" jdbcType="VARCHAR" property="syncTime" />
+    <result column="uses" jdbcType="INTEGER" property="uses" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+    <result column="package_kind" jdbcType="INTEGER" property="packageKind" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    team_package_id, doctor_team_id, package_name, description, package_type, package_price, 
+    charge_mode, package_cycle, start_use_time, sync_time, uses, del_flag, package_kind
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dt_package
+    where team_package_id = #{teamPackageId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dt_package
+    where team_package_id = #{teamPackageId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.DtPackage">
+    insert into dt_package (team_package_id, doctor_team_id, package_name, 
+      description, package_type, package_price, 
+      charge_mode, package_cycle, start_use_time, 
+      sync_time, uses, del_flag, 
+      package_kind)
+    values (#{teamPackageId,jdbcType=VARCHAR}, #{doctorTeamId,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{packageType,jdbcType=INTEGER}, #{packagePrice,jdbcType=DECIMAL}, 
+      #{chargeMode,jdbcType=INTEGER}, #{packageCycle,jdbcType=INTEGER}, #{startUseTime,jdbcType=VARCHAR}, 
+      #{syncTime,jdbcType=VARCHAR}, #{uses,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER}, 
+      #{packageKind,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.DtPackage">
+    insert into dt_package
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="teamPackageId != null">
+        team_package_id,
+      </if>
+      <if test="doctorTeamId != null">
+        doctor_team_id,
+      </if>
+      <if test="packageName != null">
+        package_name,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="packageType != null">
+        package_type,
+      </if>
+      <if test="packagePrice != null">
+        package_price,
+      </if>
+      <if test="chargeMode != null">
+        charge_mode,
+      </if>
+      <if test="packageCycle != null">
+        package_cycle,
+      </if>
+      <if test="startUseTime != null">
+        start_use_time,
+      </if>
+      <if test="syncTime != null">
+        sync_time,
+      </if>
+      <if test="uses != null">
+        uses,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+      <if test="packageKind != null">
+        package_kind,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="teamPackageId != null">
+        #{teamPackageId,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorTeamId != null">
+        #{doctorTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="packageName != null">
+        #{packageName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="packageType != null">
+        #{packageType,jdbcType=INTEGER},
+      </if>
+      <if test="packagePrice != null">
+        #{packagePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="chargeMode != null">
+        #{chargeMode,jdbcType=INTEGER},
+      </if>
+      <if test="packageCycle != null">
+        #{packageCycle,jdbcType=INTEGER},
+      </if>
+      <if test="startUseTime != null">
+        #{startUseTime,jdbcType=VARCHAR},
+      </if>
+      <if test="syncTime != null">
+        #{syncTime,jdbcType=VARCHAR},
+      </if>
+      <if test="uses != null">
+        #{uses,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="packageKind != null">
+        #{packageKind,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.DtPackage">
+    update dt_package
+    <set>
+      <if test="doctorTeamId != null">
+        doctor_team_id = #{doctorTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="packageName != null">
+        package_name = #{packageName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="packageType != null">
+        package_type = #{packageType,jdbcType=INTEGER},
+      </if>
+      <if test="packagePrice != null">
+        package_price = #{packagePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="chargeMode != null">
+        charge_mode = #{chargeMode,jdbcType=INTEGER},
+      </if>
+      <if test="packageCycle != null">
+        package_cycle = #{packageCycle,jdbcType=INTEGER},
+      </if>
+      <if test="startUseTime != null">
+        start_use_time = #{startUseTime,jdbcType=VARCHAR},
+      </if>
+      <if test="syncTime != null">
+        sync_time = #{syncTime,jdbcType=VARCHAR},
+      </if>
+      <if test="uses != null">
+        uses = #{uses,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="packageKind != null">
+        package_kind = #{packageKind,jdbcType=INTEGER},
+      </if>
+    </set>
+    where team_package_id = #{teamPackageId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.DtPackage">
+    update dt_package
+    set doctor_team_id = #{doctorTeamId,jdbcType=VARCHAR},
+      package_name = #{packageName,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      package_type = #{packageType,jdbcType=INTEGER},
+      package_price = #{packagePrice,jdbcType=DECIMAL},
+      charge_mode = #{chargeMode,jdbcType=INTEGER},
+      package_cycle = #{packageCycle,jdbcType=INTEGER},
+      start_use_time = #{startUseTime,jdbcType=VARCHAR},
+      sync_time = #{syncTime,jdbcType=VARCHAR},
+      uses = #{uses,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      package_kind = #{packageKind,jdbcType=INTEGER}
+    where team_package_id = #{teamPackageId,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+  <!-- 自定义 -->
+  <!-- 根据家医团队id查询套餐 -->
+  <select id="listByDtTeamId" parameterType="map" resultMap="BaseResultMap">
+	select *
+	from dt_package
+	where 1=1
+	<if test="dtTeamId != null">
+      and doctor_team_id = #{dtTeamId}
+    </if>
+    and uses = 1
+    and del_flag = 0
+  </select>
+  
+  <!-- 查询套餐信息 -->
+  <select id="getDtPackageByTeamPackageId" parameterType="map" resultType="com.huatuo.customer.domain.DtPackagePojo">
+	select 
+		team_package_id teamPackageId, doctor_team_id doctorTeamId, package_name packageName, 
+		description description, package_type packageType, package_price packagePrice, 
+		charge_mode chargeMode, package_cycle packageCycle, start_use_time startUseTime, 
+		sync_time syncTime 
+	from dt_package
+	where 1=1
+	<if test="teamPackageId != null">
+      and team_package_id = #{teamPackageId}
+    </if>
+    and uses = 1
+    and del_flag = 0
+  </select>
+  
+  <!-- 查询孕妈套餐信息(总数) -->
+  <select id="countPmpInfo" parameterType="map" resultType="int">
+	select count(*)
+	from dt_package dp
+	left join dt_team dt on(dp.doctor_team_id = dt.dt_team_id)
+	left join xt_doctor xd on(dt.admin_doctor_id = xd.id)
+	left join xt_zd_org xzo on(xd.zd_org_id = xzo.id)
+	where 1=1
+	<if test="packageName != null">
+      and dp.package_name = #{packageName}
+    </if>
+	<if test="packageKind != null">
+      and dp.package_kind = #{packageKind}
+    </if>
+	and dp.uses = 1
+	and dp.del_flag = 0
+	and dt.uses = 1
+	and dt.del_flg = 0
+  </select>
+  
+  <!-- 查询孕妈套餐信息 -->
+  <select id="queryPmpInfo" parameterType="map" resultType="com.huatuo.customer.domain.DtPackTeamPojo">
+	select 
+		dp.doctor_team_id dtTeamId, dt.team_name teamName, dt.admin_doctor_id adminDoctorId, xd.name adminDoctorName, 
+		xd.zd_org_id zdOrgId, xd.dept dept, xzo.name orgName, xd.picture picture, dp.team_package_id teamPackageId, 
+		dp.package_name packageName, dp.package_price packagePrice, dp.package_cycle packageCycle, 
+		xd.titles_clinical titlesClinical	
+	from dt_package dp
+	left join dt_team dt on(dp.doctor_team_id = dt.dt_team_id)
+	left join xt_doctor xd on(dt.admin_doctor_id = xd.id)
+	left join xt_zd_org xzo on(xd.zd_org_id = xzo.id)
+	where 1=1
+	<if test="packageName != null">
+      and dp.package_name = #{packageName}
+    </if>
+	<if test="packageKind != null">
+      and dp.package_kind = #{packageKind}
+    </if>
+	and dp.uses = 1
+	and dp.del_flag = 0
+	and dt.uses = 1
+	and dt.del_flg = 0
+	order by dp.package_price asc
+	<if test="start != null and pageSize != null">
+      limit #{start}, #{pageSize}
+    </if>
+  </select>
+</mapper>

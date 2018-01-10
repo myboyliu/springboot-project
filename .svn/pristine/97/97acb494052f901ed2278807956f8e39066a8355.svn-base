@@ -1,0 +1,331 @@
+package com.huatuo.customer.controller;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONObject;
+import com.huatuo.customer.base.enums.ServiceType;
+import com.huatuo.customer.base.response.BaseResponse;
+import com.huatuo.customer.base.util.ImageUploadUtil;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.domain.DtUserPackageRecord;
+import com.huatuo.customer.domain.TwConsultAnswer;
+import com.huatuo.customer.domain.TwConsultQuestion;
+import com.huatuo.customer.domain.XtCommonDisease;
+import com.huatuo.customer.domain.XtFile;
+import com.huatuo.customer.domain.XtMessageCenter;
+import com.huatuo.customer.domain.XtSpecialty;
+import com.huatuo.customer.response.XtSpecialtyResponse;
+import com.huatuo.customer.service.DtUserPackageRecordService;
+import com.huatuo.customer.service.SpecialtyService;
+import com.huatuo.customer.service.TwConsultAnswerService;
+import com.huatuo.customer.service.TwConsultQuestionService;
+/**
+ * 免费咨询
+ * @author ydj
+ *
+ */
+@RequestMapping(value = "free")
+@RestController
+public class FreeConsultationController {
+	
+	@Resource
+	private SpecialtyService  specialtyService;//科室服务
+	
+	@Resource
+	private TwConsultQuestionService  twConsultQuestionService;//图文咨询服务
+	
+//	private ImageUploadUtil imageup=new ImageUploadUtil();//图片上传
+	@Autowired
+	private TwConsultAnswerService twConsultAnswerServicel;//图文咨询问答服务
+	
+	@Autowired
+	private DtUserPackageRecordService recordService;
+	
+	private NsqController nsqController=new NsqController();//消息推送服务
+	
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger(FreeConsultationController.class);
+	
+	
+	@ApiOperation(value="获取科室名称")
+	@GetMapping(value="querySpecialty")
+	public XtSpecialtyResponse querySpecialtyList(HttpServletRequest request)throws Exception{
+		XtSpecialtyResponse response = new XtSpecialtyResponse();
+		List<XtSpecialty> list=specialtyService.querySpecialtyList();
+		response.setList(list);
+		return response;
+	}
+	
+	
+	@ApiOperation(value="根据科室id查询科室下面的常见疾病")
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "specialtyId", value = "科室id", paramType = "query", required = true, dataType = "string")
+	})
+	@GetMapping(value="queryDisease")
+	public XtSpecialtyResponse queryDiseaseList(HttpServletRequest request,String specialtyId)throws Exception{
+		XtSpecialtyResponse response = new XtSpecialtyResponse();
+		List<XtCommonDisease> list=specialtyService.queryDiseaseList(specialtyId);
+		response.setDisList(list);
+		return response;
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@ApiOperation(value = "发起咨询")
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "userId", value = "提问人id", paramType = "query", required = true, dataType = "int"),
+		@ApiImplicitParam(name = "memberId", value = "家庭成员id", paramType = "query", required = true, dataType = "int"),
+		@ApiImplicitParam(name = "countext", value = "提问内容", paramType = "query", required = true, dataType = "string"),
+		@ApiImplicitParam(name = "doctorUid", value = "医生id", paramType = "query", required = true, dataType = "int"),
+		@ApiImplicitParam(name = "doctorTeamId", value = "家庭医生团队id", paramType = "query", required = false, dataType = "string"),
+		@ApiImplicitParam(name = "disId", value = "常见病id", paramType = "query", required = false, dataType = "string"),
+		@ApiImplicitParam(name = "disName", value = "常见病名称", paramType = "query", required = true, dataType = "string"),
+		@ApiImplicitParam(name = "specialtyId", value = "专科id", paramType = "query", required = false, dataType = "string"),
+		@ApiImplicitParam(name = "specialtyName", value = "专科名称", paramType = "query", required = false, dataType = "string")
+	})
+	@PostMapping(value="save")
+	public BaseResponse save(HttpServletRequest request,
+			@RequestBody TwConsultQuestion dto)throws Exception{
+		BaseResponse rep = new BaseResponse();
+		//获取用户id
+		String userId = Utils.getUserIdByToken(request);
+		
+		List<String> urls=null;
+		String date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		dto.setCreateTime(date);
+		dto.setConsultState(0);
+		dto.setPrice(new BigDecimal(0));
+		dto.setIsRead(0);
+		if(null != dto.getDoctorTeamId()){//如果是家庭医生咨询为1，免费咨询为0.
+			dto.setAdvisoryType(1);
+		}else{
+			dto.setAdvisoryType(0);
+		}
+		//图文咨询保存
+		Long quertionId=twConsultQuestionService.save(dto);
+		List<String> files=dto.getFile();
+		//图片上传
+		if(null != files && files.size() > 0){
+			XtFile xtfile=new XtFile();
+			xtfile.setUploaderId(dto.getUserId());
+			Integer serviceType=null;
+			if(null != dto.getDoctorTeamId()){//如果是teamId不为空，则为家庭医生zx咨询
+				xtfile.setDescription("图文资讯上传");
+				serviceType=2;
+			}else{
+				xtfile.setDescription("免费咨询上传");
+				serviceType=8;
+			}
+		    urls=ImageUploadUtil.ImageUpload(files, quertionId, xtfile,serviceType,1);
+		    if(urls.size() > 0){
+		    	for (int i = 0; i < urls.size(); i++) {
+		    		TwConsultAnswer anDto=new TwConsultAnswer();
+			    	anDto.setCreateTime(date);
+			    	anDto.setIsRead(0);
+			    	anDto.setFormType(1);
+			    	anDto.setFormId(Long.valueOf(userId));
+			    	anDto.setConsultId(quertionId);
+			    	anDto.setCountext(urls.get(i));
+			    	anDto.setCountextType(1);
+					twConsultAnswerServicel.saveAnswer(anDto);// 图文咨询问答保存
+				}
+		    }
+		}
+		Map<Object,String>  map=new HashMap<Object,String>();
+		map.put("time", date);
+		map.put("consultId", String.valueOf(quertionId));
+		if(quertionId > 0){
+			String msg=dto.getMsg();
+			if(null != msg && msg.length() > 0){
+					//解析msg,放入图片url
+					XtMessageCenter reportDto = JSONObject.parseObject(msg,XtMessageCenter.class);// 将json字符串转换成javabean
+					String content=reportDto.getContent();
+					Map<String,Object> contentMap = JSONObject.parseObject(content,HashMap.class);
+					contentMap.put("question_id", quertionId);//设置问题id
+					if(null != urls && urls.size() > 0){
+						contentMap.put("img", urls);
+					}
+					reportDto.setContent(JSONObject.toJSONString(contentMap));
+					msg=reportDto.toJson();
+				 /**
+				  * 创建问题成功后推送消息
+				  */
+				 rep = nsqController.add(msg);
+			}else{
+				rep.setCode(BaseResponse.SUCCESS_CODE);
+				rep.setMessage(BaseResponse.SUCCESS_MESSAGE);
+			}
+			 rep.setObject(map);//返回咨询问题id和时间
+		}else{
+			 rep.setCode(BaseResponse.ERROR_CODE);
+			 rep.setMessage(BaseResponse.ERROR_MESSAGE);
+		}
+		
+//		logger.warn("咨询次数减1:	开始 :  dtTeamId = " + dto.getDoctorTeamId() + ";userId = " + userId);
+		//改变签约信息过时与否和订单的状态
+		DtUserPackageRecord dtUPRecord = recordService.getDtUPRecord(userId, dto.getDoctorTeamId(), ServiceType.PICTURECONSULTING.getIndex());
+		if(dtUPRecord != null){
+			//咨询次数减1
+			recordService.updateResidueDegree(dtUPRecord.getUserPackageRecordId());
+			
+//			logger.warn("咨询次数减1:	结束  = " + (row == 0? "失败" : "成功"));
+		}
+		
+		return rep;
+	}
+	
+	
+	/**
+	 * 患者免费咨询消息保存
+	 * @param request
+	 * @param dto
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@PostMapping(value="saveAnswer")
+	public BaseResponse saveAnswer(HttpServletRequest request,@RequestBody TwConsultAnswer dto) throws Exception{
+		BaseResponse rep = new BaseResponse();
+		List<String> file = new ArrayList<String>();
+		String userId = Utils.getUserIdByToken(request);
+		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		Map<Object, String> map = new HashMap<Object, String>();
+		List<String> urls = null;
+		String url=null;
+		Boolean flag = null;
+		
+		//通过主题id查询主题信息
+		TwConsultQuestion quertDto=twConsultQuestionService.queryQuestion(dto.getConsultId());
+		if (quertDto.getConsultState() == 2) {
+			// ConsultState=2，说明此主题一结束
+			flag = true;
+		} else {
+			flag = false;
+		}
+		
+		/**
+		 * 判断是图片还是文本
+		 */
+		if (null != dto.getFile() && dto.getFile().length() > 0) {
+			Integer serviceType=null;
+			if(quertDto.getAdvisoryType()==0){//快速提问
+				serviceType=8;
+			}else{
+				serviceType=2;
+			}
+			// 如果不为空，表示是图片，需要上传服务器
+			file.add(dto.getFile());
+			XtFile xtfile = new XtFile();
+			xtfile.setUploaderId(Long.valueOf(userId));
+			xtfile.setDescription("免费咨询患者消息");
+			urls = ImageUploadUtil.ImageUpload(file, dto.getConsultId(), xtfile,serviceType,1);
+			dto.setCountextType(1);
+			if (urls.size() > 0 && urls != null) {
+				url = urls.get(0);
+				dto.setCountext(url);// 患者发送图片一次只有一张
+			}
+		} else {
+			dto.setCountextType(0);
+		}
+		dto.setCreateTime(date);
+		dto.setIsRead(0);
+		dto.setFormType(1);
+		dto.setFormId(Long.valueOf(userId));
+		twConsultAnswerServicel.saveAnswer(dto);// 图文咨询问答保存
+		
+		/**
+		 * 判断是否接诊，确定是否推送消息(0表示未接诊,1表示已接诊)
+		 */
+		if (dto.getReceptionFlag() == 1 && null != dto.getMsg()
+				&& dto.getMsg().length() > 0) {
+			String msg = dto.getMsg();
+			if (null != urls && urls.size() > 0) {
+				// 解析msg,放入图片url
+				XtMessageCenter reportDto = JSONObject.parseObject(msg,
+						XtMessageCenter.class);// 将json字符串转换成javabean
+				String content = reportDto.getContent();
+				Map<String, Object> contentMap = JSONObject.parseObject(
+						content, HashMap.class);
+				contentMap.put("img", urls);
+				reportDto.setContent(JSONObject.toJSONString(contentMap));
+				msg = reportDto.toJson();
+			}
+			if(!flag){//只有在主题未结束时才推送消息
+				rep = nsqController.add(msg);
+			}
+		}
+
+		// 返回主题是否结束的状态
+		if (!flag) {
+			map.put("state", "0");
+		} else {// 结束主题则返回结束状态
+			map.put("state", "1");
+		}
+		
+		rep.setObject(map);// 返回发送消息时间
+		rep.setCode(BaseResponse.SUCCESS_CODE);
+		rep.setMessage(BaseResponse.SUCCESS_MESSAGE);
+		map.put("date", date);
+		return rep;
+	} 
+	
+	
+	
+	/**
+	 * 结束咨询
+	 * @param request
+	 * @param dto
+	 * @return
+	 * @throws Exception
+	 */
+	@PostMapping(value="endConsult")
+	public BaseResponse endConsult(HttpServletRequest request,
+			@RequestBody TwConsultQuestion dto)throws Exception{
+		BaseResponse rep = new BaseResponse();
+		
+		dto.setEndTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));		
+		dto.setConsultState(2);//设置问题状态为结束
+		//结束咨询
+		int i=twConsultQuestionService.endConsult(dto);
+		if(i > 0 ){
+			 if(null !=dto.getMsg() && dto.getMsg().length() > 0){
+				 /**
+				  * 结束咨询成功后推送消息
+				  */
+				 rep = nsqController.add(dto.getMsg());
+			 }else{
+				 rep.setCode(BaseResponse.SUCCESS_CODE);
+				 rep.setMessage(BaseResponse.SUCCESS_MESSAGE);
+			 }
+		}else{
+			 rep.setCode(BaseResponse.ERROR_CODE);
+			 rep.setMessage(BaseResponse.ERROR_MESSAGE);
+		}
+		return rep;
+	}
+	
+	
+}

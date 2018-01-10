@@ -1,0 +1,324 @@
+package com.huatuo.customer.service.impl;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.github.pagehelper.StringUtil;
+import com.huatuo.customer.base.enums.ServiceState;
+import com.huatuo.customer.base.enums.ServiceType;
+import com.huatuo.customer.base.page.Page;
+import com.huatuo.customer.base.redis.RedisSupport;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.dao.CmsRegionResourceMapper;
+import com.huatuo.customer.dao.DoctorMapper;
+import com.huatuo.customer.dao.DtPackageMapper;
+import com.huatuo.customer.dao.MzOrderMapper;
+import com.huatuo.customer.dao.MzVisitMapper;
+import com.huatuo.customer.dao.XtReservationMapper;
+import com.huatuo.customer.dao.XtZdDistrictMapper;
+import com.huatuo.customer.domain.CmsRegionResource;
+import com.huatuo.customer.domain.Doctor;
+import com.huatuo.customer.domain.DtPackagePojo;
+import com.huatuo.customer.domain.MzOrder;
+import com.huatuo.customer.domain.MzVisit;
+import com.huatuo.customer.domain.RegionForBaidu;
+import com.huatuo.customer.domain.XtReservation;
+import com.huatuo.customer.domain.XtZdDistrict;
+import com.huatuo.customer.query.VisitQuery;
+import com.huatuo.customer.request.VisitForm;
+import com.huatuo.customer.service.MzVisitService;
+
+@Service
+@Transactional
+public class MzVisitServiceImpl implements MzVisitService{
+
+	@Autowired
+	private MzVisitMapper mzVisitMapper;
+
+	@Autowired
+	private DoctorMapper doctorMapper;
+
+	@Autowired
+	private XtReservationMapper xtReservationMapper;
+	
+	@Autowired
+	private DtPackageMapper dtPackageMapper;
+	
+	@Autowired
+	private RedisSupport redisSupport;
+	
+	@Autowired
+	private XtZdDistrictMapper xtZdDistrictMapper;
+	
+	@Autowired
+	private CmsRegionResourceMapper cmsRegionResourceMapper;
+	
+	@Autowired
+	private MzOrderMapper mzOrderMapper;
+	
+	private String nsqKeyForReservation = "reservationCount";
+	
+	private static final Logger logger = LoggerFactory.getLogger(MzVisitServiceImpl.class);
+	
+	@Override
+	public MzVisit saveVisitByVisitForm(VisitForm visitForm) throws Exception {
+		/**
+		 * 若是普通订单，
+		 * 则先检查当前登录用户最新的一条普通订单是否已结束问诊
+		 */
+//		if(visitForm.getReservationId() == null){
+//			VisitQuery visitQuery = new VisitQuery();
+//			visitQuery.setUserId(visitForm.getUserId());
+//			visitQuery.setMemberId(visitForm.getMemberId());
+//			visitQuery.setVisitType(ServiceType.VIDEOINTERROGATION.getIndex());
+//			visitQuery.setDoctorId(visitForm.getDoctorId());
+//			MzVisit mzVisit = mzVisitMapper.selectMzVisitByUserIdAndMemberId(visitQuery);
+//			if(mzVisit != null){
+//				return mzVisit;
+//			}
+//		}
+		List<String> effectiveReservationDates = new ArrayList<String>();
+		for (int i = 1; i < 8; i++) {
+			effectiveReservationDates.add(Utils.addAnyDay(Utils.getTodayOrYestorday(true), "yyyy-MM-dd", i));
+		}
+		MzVisit mzVisit = new MzVisit();
+		mzVisit.setMzCode("0");
+		mzVisit.setTimes(0);
+		mzVisit.setUserId(visitForm.getUserId());
+		mzVisit.setMemberId(visitForm.getMemberId());
+		mzVisit.setSelfFlag(visitForm.getSelfFlag());
+		mzVisit.setPatientId(visitForm.getPatientId());
+		mzVisit.setVisitTime(Utils.getNowTime());
+		mzVisit.setDoctorId(visitForm.getDoctorId());
+		Doctor doctor = doctorMapper.selectDoctorById(visitForm.getDoctorId());
+		mzVisit.setVisitDept(doctor.getDept());
+		mzVisit.setAge(Utils.getAge(visitForm.getBirthdate()) + "");
+		mzVisit.setStatus(ServiceState.NOTPAY.getIndex());
+		/**
+		 * 区别是预约问诊还是普通问诊
+		 */
+		if(visitForm.getServiceType() != null){
+			mzVisit.setServiceCost(getFamilydoctorPrice(visitForm));
+		}else{
+			mzVisit.setServiceCost(visitForm.getReservationId() == null ? doctor.getSpPrice() : doctor.getYyPrice());
+		}
+		
+		mzVisit.setVisitType(visitForm.getServiceType() == null ? ServiceType.VIDEOINTERROGATION.getIndex() : visitForm.getServiceType());
+		
+		mzVisit.setCreateTime(Utils.getNowTime());
+		mzVisit.setReservationId(visitForm.getReservationId() == null ? null : visitForm.getReservationId());
+		mzVisit.setReservationTask(0);
+		
+		/**
+		 * 预约时间判断
+		 */
+		if(visitForm.getReservationId() != null){
+			String reservationStartDate = visitForm.getrStartTime().substring(0, 10);
+			String reservationEndDate = visitForm.getrEndTime().substring(0, 10);
+			if(!effectiveReservationDates.contains(reservationStartDate) || 
+					!effectiveReservationDates.contains(reservationEndDate)){
+				throw new RuntimeException("预约就诊预约开始日期或者预约结束日期错误");
+			}
+		}
+		
+		mzVisit.setrStartTime(visitForm.getrStartTime());
+		mzVisit.setrEndTime(visitForm.getrEndTime());
+		
+		mzVisit.setIllnessDescribe(visitForm.getIllnessDescribe());
+		mzVisit.setDealState(visitForm.getReservationId() == null ? null : 0);
+		mzVisit.setTempStime(Utils.getNowDayBeginOrEnd(false));
+		mzVisit.setTempEtime(Utils.getDateBeforeHour(Utils.getNowDayBeginOrEnd(true), 24 * 8));
+		Integer saveCode = null;
+		if(visitForm.getReservationId() == null){
+			saveCode = mzVisitMapper.insert(mzVisit);
+		}else{
+			/**
+			 * 同步线程，防止高并发带来的问题
+			 */
+			synchronized (this) {
+				/**
+				 * 在存储之前先进行查询判断余号数是否为0了
+				 */
+				VisitQuery visitQuery = new VisitQuery();
+				visitQuery.setStartTime(Utils.addAnyDay(Utils.getNowTime(), "yyyy-MM-dd", 1) + " 00:00:00");
+				visitQuery.setEndTime(Utils.addAnyDay(Utils.getNowTime(), "yyyy-MM-dd", 7) + " 23:59:59");
+				visitQuery.setReservationId(mzVisit.getReservationId());
+				Integer visitCount = mzVisitMapper.selectVIsitCountByReservationId(visitQuery);
+				XtReservation xtReservation = xtReservationMapper.selectByPrimaryKey(mzVisit.getReservationId());
+				/**
+				 * 若还有余号数，再进行增加visit操作
+				 */
+				if(visitCount < xtReservation.getyCount()){
+					saveCode = mzVisitMapper.insertReservationForVisit(mzVisit);
+				}else{
+					throw new RuntimeException("该医生预约服务时段已约满");
+				}
+			}
+		}
+		if(saveCode > 0){
+			/**
+			 * 保存业务订单成功之后
+			 * 判断是否增加提取码
+			 */
+			if(!StringUtil.isEmpty(visitForm.getDistrictJsonStr())){
+				this.isInsertExtractedCode(visitForm.getDistrictJsonStr(), mzVisit);
+			}
+			return mzVisit;
+		}
+		return null;
+	}
+
+	@Override
+	public MzVisit selectVisitById(Long visitId) {
+		return mzVisitMapper.selectByPrimaryKey(visitId);
+	}
+	
+	/**
+	 * 获得家庭医生团队的价格
+	 * @return
+	 */
+	private BigDecimal getFamilydoctorPrice(VisitForm visitForm){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("teamPackageId", visitForm.getTeamPackageId());
+		DtPackagePojo dtPackagePojo = dtPackageMapper.getDtPackageByTeamPackageId(map);
+		return dtPackagePojo == null ? null : dtPackagePojo.getPackagePrice();
+	}
+
+	@Override
+	public Integer updateMzVisit(MzVisit mzVisit) {
+		return mzVisitMapper.updateByPrimaryKeySelective(mzVisit);
+	}
+
+	@Override
+	public Page<MzVisit> getServiceRecordByPatient(VisitQuery query) {
+		int total = mzVisitMapper.getTotal(query.getPatientId());
+		Page<MzVisit> page = new Page<MzVisit>(total, query.getCurrentPage(), query.getPageSize());
+		query.setStart(page.getStart());//起始位置
+		List<MzVisit> list = mzVisitMapper.getServiceRecordByPatient(query);
+		if (list.size()>0) {
+			for (MzVisit mzVisit : list) {//获取医生姓名
+				Doctor doctor = doctorMapper.selectDoctorById(mzVisit.getDoctorId());
+				mzVisit.setDoctorName(doctor.getName());
+			}
+		}
+		page.setList(list);
+		return page;
+	}
+
+	@Override
+	public List<MzVisit> selectReservationVisitCountForTay(String nowDate, String userId){
+		List<MzVisit> visitZoreList = new ArrayList<MzVisit>();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("nowDate", nowDate);
+		map.put("userId", Long.parseLong(userId));
+		List<MzVisit> visitList = mzVisitMapper.selectReservationVisitCountForTay(map);
+//		redisSupport.delete(userId + nsqKeyForReservation);
+		Serializable serializable = redisSupport.get(userId + nsqKeyForReservation);
+		if(serializable == null){
+			redisSupport.set(userId + nsqKeyForReservation, nowDate, Integer.MAX_VALUE);
+			return visitList;
+		}else{
+			String toDayDate = (String) serializable;
+			if(toDayDate.equals(nowDate)){
+				return visitZoreList;
+			}else{
+				redisSupport.set(userId + nsqKeyForReservation, nowDate, Integer.MAX_VALUE);
+				return visitList;
+			}
+		}
+	}
+	
+	/**
+	 * 判断是否添加提取码
+	 * @param districtJsonStr
+	 * @return
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
+	 */
+	private void isInsertExtractedCode(String districtJsonStr, MzVisit mzVisit) throws Exception{
+		RegionForBaidu regionForBaidu = Utils.jsonStrToObject(districtJsonStr, RegionForBaidu.class);
+		regionForBaidu.setRegionName(regionForBaidu.getProvince());
+		XtZdDistrict provinceDistrict = xtZdDistrictMapper.selectDistrictByRegionNameAndParentId(regionForBaidu);
+		if(provinceDistrict == null){
+			logger.info("百度地图信息查省份获取失败，"+regionForBaidu.getProvince()+"不生成提取码");
+			return;
+		}
+		CmsRegionResource provinceResource = cmsRegionResourceMapper.selectRegionResourceByRegionId(provinceDistrict.getId());
+		if(provinceResource== null || provinceResource.getRecipeEncryption().equals(0)){
+			logger.info(regionForBaidu.getProvince() + "未设置处方加密，不生成提取码");
+		}else{
+			insertExtractedCode(mzVisit);
+			return;
+		}
+		regionForBaidu.setParentId(provinceDistrict.getId());
+		regionForBaidu.setRegionName(regionForBaidu.getCity());
+		XtZdDistrict cityDistrict = xtZdDistrictMapper.selectDistrictByRegionNameAndParentId(regionForBaidu);
+		if(cityDistrict == null){
+			logger.info("百度地图信息查城市获取失败，不生成提取码");
+			return;
+		}
+		CmsRegionResource cityResource = cmsRegionResourceMapper.selectRegionResourceByRegionId(cityDistrict.getId());
+		if(cityResource == null || cityResource.getRecipeEncryption().equals(0)){
+			logger.info(regionForBaidu.getCity() + "未设置处方加密，不生成提取码");
+		}else{
+			insertExtractedCode(mzVisit);
+			return;
+		}
+		regionForBaidu.setParentId(cityDistrict.getId());
+		regionForBaidu.setRegionName(regionForBaidu.getDistrict());
+		XtZdDistrict xtZdDistrict = xtZdDistrictMapper.selectDistrictByRegionNameAndParentId(regionForBaidu);
+		if(xtZdDistrict == null){
+			logger.info("百度地图信息查区县获取失败，不生成提取码");
+			return;
+		}
+		CmsRegionResource cmsRegionResource = cmsRegionResourceMapper.selectRegionResourceByRegionId(xtZdDistrict.getId());
+		if(cmsRegionResource == null || cmsRegionResource.getRecipeEncryption().equals(0)){
+			logger.info("未设置处方加密，不生成提取码");
+			return;
+		}else{
+			logger.info("已设置处方加密，生成提取码");
+			insertExtractedCode(mzVisit);
+			return;
+		}
+	}
+	
+	/**
+	 * 添加提取码到业务订单
+	 * @param mzVisit
+	 */
+	private void insertExtractedCode(MzVisit mzVisit){
+		String extractedCode = Utils.createExtractedCode();
+		if(mzVisitMapper.selectMzVisitByExtractedCode(extractedCode) == null){
+			mzVisit.setExtractedCode(extractedCode);
+			mzVisitMapper.updateByPrimaryKeySelective(mzVisit);
+		}else{
+			insertExtractedCode(mzVisit);
+		}
+	}
+
+	@Override
+	public void handleMzVisitForExtractedCode(String visitId) {
+		List<MzOrder> mzOrders = mzOrderMapper.getListByVisitId(Long.parseLong(visitId));
+		if(mzOrders.size() == 0){
+			MzVisit mzVisit = mzVisitMapper.selectByPrimaryKey(Long.parseLong(visitId));
+			mzVisit.setExtractedCode(null);
+			mzVisit.setExtractedCodeSize(0);
+			mzVisitMapper.updateByPrimaryKeySelective(mzVisit);
+		}
+	}
+}

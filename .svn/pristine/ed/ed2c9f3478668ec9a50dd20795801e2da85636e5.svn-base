@@ -1,0 +1,99 @@
+package com.huatuo.customer.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import com.huatuo.customer.domain.MzVisit;
+import com.huatuo.customer.domain.MzVisitCriteria;
+import com.huatuo.customer.query.VisitQuery;
+
+public interface MzVisitMapper {
+    int countByExample(MzVisitCriteria example);
+
+    int deleteByExample(MzVisitCriteria example);
+
+    int deleteByPrimaryKey(Long id);
+
+    int insert(MzVisit record);
+
+    int insertSelective(MzVisit record);
+
+    List<MzVisit> selectByExampleWithRowbounds(MzVisitCriteria example, RowBounds rowBounds);
+
+    List<MzVisit> selectByExample(MzVisitCriteria example);
+
+    MzVisit selectByPrimaryKey(Long id);
+
+    int updateByExampleSelective(@Param("record") MzVisit record, @Param("example") MzVisitCriteria example);
+
+    int updateByExample(@Param("record") MzVisit record, @Param("example") MzVisitCriteria example);
+
+    int updateByPrimaryKeySelective(MzVisit record);
+
+    int updateByPrimaryKey(MzVisit record);
+    
+    Integer insertReservationForVisit(MzVisit mzVisit);
+    
+    Integer selectVIsitCountByReservationId(VisitQuery visitQuery);
+    /**
+     * 查询患者下的服务记录总数
+     * @param patientId
+     * @return
+     */
+    Integer getTotal(Long patientId);
+    /**
+     * 查询患者下分页记录数
+     * @param patientId
+     * @return
+     */
+	List<MzVisit> getServiceRecordByPatient(VisitQuery query);
+	
+	/**
+	 * 检查当前用户最新的一条普通订单是否已结束问诊
+	 * @param visitQuery
+	 * @return
+	 */
+	MzVisit selectMzVisitByUserIdAndMemberId(VisitQuery visitQuery);
+	/**
+	 * 查询最新的一条就诊记录
+	 * @param patientId
+	 * @return
+	 */
+	MzVisit getNewestVisit(Long patientId);
+	
+	/**
+	 * 查询当天预约订单数目
+	 * @param nowDate
+	 * @return
+	 */
+	List<MzVisit> selectReservationVisitCountForTay(Map<String, Object> map);
+	
+	/**
+	 * 根据提取码查询业务订单
+	 * @param extractedCode
+	 * @return
+	 */
+	MzVisit selectMzVisitByExtractedCode(String extractedCode);
+
+	/**
+	 * 修改家医业务状态
+	 * @param visitIds	业务id集合
+	 * @param nowTime	当前时间
+	 * @param status	业务状态
+	 * @return
+	 */
+	int updateByVisitIds(@Param("visitIds") List<Long> visitIds, 
+						 @Param("nowTime") String nowTime, 
+						 @Param("status") Integer status);
+
+	
+	/**
+	 * 查询医生服务人数
+	 * @param doctorId
+	 * @return
+	 */
+	Integer selectDoctorServiceCount(Long doctorId);
+}

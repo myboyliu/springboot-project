@@ -1,0 +1,119 @@
+package com.huatuo.customer.service.impl;
+
+import java.text.ParseException;
+import java.util.List;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.dao.XtPregnantMomDetailMapper;
+import com.huatuo.customer.dao.XtPregnantMomMapper;
+import com.huatuo.customer.dao.XtZdPregnantingStageSuggestionMapper;
+import com.huatuo.customer.domain.XtPregnantMom;
+import com.huatuo.customer.domain.XtPregnantMomDetail;
+import com.huatuo.customer.query.PregnantMomQuery;
+import com.huatuo.customer.response.PregnantMomResponse;
+import com.huatuo.customer.service.XtPregnantMomService;
+@Service
+@Transactional
+public class XtPregnantMomServiceImpl implements XtPregnantMomService {
+
+	@Autowired
+	private XtPregnantMomMapper mapper;
+	
+	@Autowired
+	private XtZdPregnantingStageSuggestionMapper xtZdPregnantingStageSuggestionMapper;
+	
+	@Autowired
+	private XtPregnantMomDetailMapper xtPregnantMomDetailMapper;
+	
+	@Override
+	public XtPregnantMom selectByUid(String userId) {
+		return mapper.selectByUid(userId);
+	}
+
+	@Override
+	public int saveRecord(XtPregnantMom pregnantMom) throws ParseException {
+		int insertNum = 0;
+		
+		pregnantMom.setPregnantMomId(UUID.randomUUID()+"");
+		//计算末次月经期或者预产期
+		String preProductionDate = pregnantMom.getPreProductionDate();
+		String lastMenstrualDate = "";
+		if(StringUtils.isEmpty(preProductionDate)){
+			//计算预产期
+			preProductionDate = Utils.getPreProductionOrLastMenstrualDate(pregnantMom.getLastMenstrualDate(), 280);
+			pregnantMom.setPreProductionDate(preProductionDate);
+		}else{
+			//计算末次月经期
+			lastMenstrualDate = Utils.getPreProductionOrLastMenstrualDate(pregnantMom.getPreProductionDate(), -280);
+			pregnantMom.setLastMenstrualDate(lastMenstrualDate);
+		}
+
+		insertNum = mapper.insert(pregnantMom);
+		return insertNum;
+	}
+
+	@Override
+	public int updateRecord(XtPregnantMom pregnantMom) throws ParseException {
+		int updateNum = 0;
+		
+		//计算末次月经期或者预产期
+		String preProductionDate = pregnantMom.getPreProductionDate();
+		String lastMenstrualDate = "";
+		if(StringUtils.isEmpty(preProductionDate)){
+			//计算预产期
+			preProductionDate = Utils.getPreProductionOrLastMenstrualDate(pregnantMom.getLastMenstrualDate(), 280);
+			pregnantMom.setPreProductionDate(preProductionDate);
+		}else{
+			//计算末次月经期
+			lastMenstrualDate = Utils.getPreProductionOrLastMenstrualDate(pregnantMom.getPreProductionDate(), -280);
+			pregnantMom.setLastMenstrualDate(lastMenstrualDate);
+		}
+		updateNum = mapper.updateByPrimaryKeySelective(pregnantMom);
+		
+		return updateNum;
+	}
+
+	@Override
+	public PregnantMomResponse selectPregnantMomIndexData(String userId) throws Exception {
+		PregnantMomResponse pregnantMomResponse = null;
+		XtPregnantMom xtPregnantMom = this.selectByUid(userId);
+		if(xtPregnantMom != null){
+			PregnantMomQuery pregnantMomQuery = new PregnantMomQuery();
+			pregnantMomQuery.setUserId(userId);
+			pregnantMomQuery.setNowDate(Utils.getNowDate());
+			pregnantMomResponse = Utils.calculatePregnantData(xtPregnantMom.getLastMenstrualDate(), xtPregnantMom.getPreProductionDate(), Utils.getNowDate());
+			pregnantMomResponse.setIsWriteTodayContent((xtPregnantMomDetailMapper.selectPregnantMomDetailsByUserId(pregnantMomQuery).size() == 0) ? 1 : 2);
+			pregnantMomResponse.setIsDredgePregnantMom(2);
+			pregnantMomResponse.setPregnantingSuggestion(xtZdPregnantingStageSuggestionMapper.selectPregnantingStageSuggestionByStage(
+					(Integer.parseInt(pregnantMomResponse.getPregnantWeek()) / 4) + 1).getContent());
+		}else{
+			pregnantMomResponse = new PregnantMomResponse();
+			pregnantMomResponse.setIsDredgePregnantMom(1);
+		}
+		
+		return pregnantMomResponse;
+	}
+
+	@Override
+	public PregnantMomResponse checkUserTakeNotesBasicInfoAndTodayInfo(
+			String userId) {
+		PregnantMomResponse pregnantMomResponse = new PregnantMomResponse();
+		XtPregnantMom xtPregnantMom = this.selectByUid(userId);
+		PregnantMomQuery pregnantMomQuery = new PregnantMomQuery();
+		pregnantMomQuery.setUserId(userId);
+		pregnantMomQuery.setNowDate(Utils.getNowDate());
+		List<XtPregnantMomDetail> pregnantMomDetails = xtPregnantMomDetailMapper.selectPregnantMomDetailsByUserId(pregnantMomQuery);
+		pregnantMomResponse.setXtPregnantMomDetails(pregnantMomDetails);
+		pregnantMomResponse.setIsWriteTodayContent((pregnantMomDetails.size() == 0) ? 1 : 2);
+		pregnantMomResponse.setIsDredgePregnantMom(xtPregnantMom == null ? 1 : 2);
+		return pregnantMomResponse;
+	}
+
+}

@@ -1,0 +1,17 @@
+package com.huatuo.customer.dao;
+
+import com.huatuo.customer.domain.XtPregnantMomDetailReply;
+
+public interface XtPregnantMomDetailReplyMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(XtPregnantMomDetailReply record);
+
+    int insertSelective(XtPregnantMomDetailReply record);
+
+    XtPregnantMomDetailReply selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(XtPregnantMomDetailReply record);
+
+    int updateByPrimaryKey(XtPregnantMomDetailReply record);
+}

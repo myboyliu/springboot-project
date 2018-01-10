@@ -1,0 +1,22 @@
+package com.huatuo.customer.dao;
+
+import java.util.List;
+
+import com.huatuo.customer.domain.XtReservation;
+
+public interface XtReservationMapper {
+    int deleteByPrimaryKey(Long reservationId);
+
+    int insert(XtReservation record);
+
+    int insertSelective(XtReservation record);
+
+    XtReservation selectByPrimaryKey(Long reservationId);
+
+    int updateByPrimaryKeySelective(XtReservation record);
+
+    int updateByPrimaryKey(XtReservation record);
+    
+    List<XtReservation> selectReservationsByDoctorUid(Long doctorUid);
+    
+}

@@ -1,0 +1,418 @@
+package com.huatuo.customer.service.impl;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
+
+import com.alibaba.fastjson.JSON;
+import com.huatuo.customer.base.enums.PayOrderState;
+import com.huatuo.customer.base.enums.PayStae;
+import com.huatuo.customer.base.enums.ServiceState;
+import com.huatuo.customer.base.enums.ServiceType;
+import com.huatuo.customer.base.enums.TitlesClinicalType;
+import com.huatuo.customer.base.enums.TitlesTeachType;
+import com.huatuo.customer.base.page.Page;
+import com.huatuo.customer.base.redis.CommonDao;
+import com.huatuo.customer.base.util.ConfigProperites;
+import com.huatuo.customer.base.util.HttpConnection;
+import com.huatuo.customer.base.util.HttpUrl;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.dao.DoctorMapper;
+import com.huatuo.customer.dao.MzVisitMapper;
+import com.huatuo.customer.dao.PayInfoMapper;
+import com.huatuo.customer.dao.PayOrderMapper;
+import com.huatuo.customer.dao.XtAddressMapper;
+import com.huatuo.customer.dao.XtUserMapper;
+import com.huatuo.customer.dao.ZdOrgMapper;
+import com.huatuo.customer.domain.Doctor;
+import com.huatuo.customer.domain.MzPatient;
+import com.huatuo.customer.domain.MzVisit;
+import com.huatuo.customer.domain.OrderResult;
+import com.huatuo.customer.domain.PayInfo;
+import com.huatuo.customer.domain.PayOrder;
+import com.huatuo.customer.domain.XtAddress;
+import com.huatuo.customer.domain.XtUser;
+import com.huatuo.customer.domain.ZdOrg;
+import com.huatuo.customer.query.OrderQuery;
+import com.huatuo.customer.request.VisitForm;
+import com.huatuo.customer.service.PayOrderService;
+import com.huatuo.db.pojo.FlexVisitQueuePojo;
+
+@Service
+@Transactional
+public class PayOrderServiceImpl implements PayOrderService{
+
+	@Autowired
+	private PayOrderMapper payOrderMapper;
+
+	@Autowired
+	private DoctorMapper doctorMapper;
+	
+	@Autowired
+	private ZdOrgMapper zdOrgMapper;
+	
+	@Autowired
+	private XtAddressMapper xtAddressMapper;
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Autowired
+	private PayInfoMapper payInfoMapper;
+	
+	@Autowired
+	private MzVisitMapper mzVisitMapper;
+	
+	@Autowired
+	private XtUserMapper xtUserMapper;
+	
+	@Autowired
+	private CommonDao commonDao;
+	
+	private static final Logger logger = LoggerFactory.getLogger(PayOrderService.class);
+	
+	@Override
+	public Integer savePayOrder(PayOrder payOrder) {
+		return payOrderMapper.insert(payOrder);
+	}
+
+	@Override
+	public Page<OrderResult> selectOrdersByPage(OrderQuery orderQuery) {
+		Integer count = payOrderMapper.selectOrdersCount(orderQuery);
+		if(count > 0){
+			Page<OrderResult> page = new Page<>(count, orderQuery.getCurrentPage(), orderQuery.getPageSize());
+			orderQuery.setStart(page.getStart());
+			List<OrderResult> list = payOrderMapper.selectOrdersList(orderQuery);
+			for (OrderResult orderResult : list) {
+				if(orderResult.getDoctorId() != null){
+					FlexVisitQueuePojo flexVisitQueuePojo = commonDao.getFlexVisitQueuePojo(orderResult.getDoctorId());
+					if(flexVisitQueuePojo != null){
+						orderResult.setDoctorIsOnline(flexVisitQueuePojo.isOnline());
+					}
+				}
+			}
+			page.setList(list);
+			return page;
+		}
+		return null;
+	}
+
+	@Override
+	public OrderResult selectOrderDetailsByOrderNo(OrderQuery orderQuery) {
+		OrderResult orderResult = payOrderMapper.selectOrderDetailsByOrderNo(orderQuery);
+		if(orderResult.getDoctorId() != null){
+			FlexVisitQueuePojo flexVisitQueuePojo = commonDao.getFlexVisitQueuePojo(orderResult.getDoctorId());
+			if(flexVisitQueuePojo != null){
+				orderResult.setDoctorIsOnline(flexVisitQueuePojo.isOnline());
+			}
+		}
+		return orderResult;
+	}
+
+	@Override
+	public PayOrder savePayOrderByVisitForm(VisitForm visitForm, MzVisit mzVisit, MzPatient mzPatient) throws Exception {
+		/**
+		 * 先查询是否为上次未结束的普通问诊
+		 */
+//		if(mzVisit.getReservationId() == null){
+//			PayOrder payOrder = payOrderMapper.selectPayOrderByVisitId(mzVisit.getVisitId());
+//			if(payOrder != null){
+//				return payOrder;
+//			}
+//		}
+		Doctor doctor = doctorMapper.selectDoctorById(visitForm.getDoctorId());
+		/**
+		 *	支付订单的生成
+		 */
+		ZdOrg zdOrg = zdOrgMapper.selectOrgByOrgId(doctor.getZdOrgId());
+		PayOrder payOrder = new PayOrder();
+		payOrder.setOrderNo(Utils.getOrderNo(visitForm.getServiceType() == ServiceType.FAMILYDOCTOR.getIndex() ? 
+				ServiceType.FAMILYDOCTOR.getIndex() : ServiceType.VIDEOINTERROGATION.getIndex()));
+		payOrder.setPrice(mzVisit.getServiceCost());
+		payOrder.setCreateTime(Utils.getNowTime());
+		payOrder.setMakeTime(StringUtils.isEmpty(mzVisit.getrStartTime()) ? "" : mzVisit.getrStartTime());
+		/**
+		 * 区别是预约问诊还是普通问诊
+		 */
+		payOrder.setMode(visitForm.getReservationId() == null ? 0 : 1);
+		payOrder.setOrderState(PayOrderState.WAITPAY.getIndex());
+		payOrder.setServiceId(mzVisit.getVisitId());
+		payOrder.setServiceType(visitForm.getServiceType() == null ? ServiceType.VIDEOINTERROGATION.getIndex()
+				: visitForm.getServiceType());
+		payOrder.setPayType(1);
+		payOrder.setPatientId(mzVisit.getPatientId());
+		payOrder.setUserId(visitForm.getUserId());
+		payOrder.setDoctorId(visitForm.getDoctorId());
+		payOrder.setDoctorName(doctor.getName());
+		payOrder.setDoctorDept(doctor.getDept());
+		payOrder.setDoctorTitlesTeach(doctor.getTitlesTeach());
+		payOrder.setDoctorTitlesClinical(doctor.getTitlesClinical());
+		payOrder.setOrgId(doctor.getZdOrgId());
+		payOrder.setServiceState(ServiceState.NOTPAY.getIndex());
+		payOrder.setCustomerRemark(this.createCustomerRemark(mzPatient, mzVisit));
+		payOrder.setGoodsRemark(this.createGoodsRemark(doctor, zdOrg));
+		Integer saveCode = payOrderMapper.insert(payOrder);
+		if(saveCode > 0){
+			if(payOrder.getPrice().compareTo(new BigDecimal(0)) == 0){
+				/**
+				 * 如果是0元订单不产生支付信息,
+				 * 并将订单信息修改为已支付的状态
+				 */
+				PayInfo payInfo = new PayInfo();
+				payInfo.setPayNo(UUID.randomUUID().toString());
+				payInfo.setUserId(payOrder.getUserId());
+				payInfo.setOrderNo(payOrder.getOrderNo());
+				payInfo.setPrice(payOrder.getPrice());
+				payInfo.setPayState(PayOrderState.PAID.getIndex());
+				payInfo.setCreateTime(Utils.getNowTime());
+				payInfo.setOrderType(payOrder.getServiceType());
+				payInfo.setOrderName(ServiceType.getName(payOrder.getServiceType()));
+				payInfoMapper.insert(payInfo);
+				payOrder.setOrderState(PayOrderState.PAID.getIndex());
+				payOrder.setServiceState(payOrder.getMode() == 0 ? ServiceState.WAITSERVICE.getIndex() : ServiceState.WAITAUDIT.getIndex());
+				payOrderMapper.updateByPrimaryKeySelective(payOrder);
+				if (payOrder.getMode().equals(0)) {
+					Map<String, Object> params = new HashMap<String, Object>();
+					params.put("orderNo", payOrder.getOrderNo());
+					params.put("visitId", payOrder.getServiceId());
+					params.put("rStartTime", payOrder.getCreateTime());
+					logger.warn("***待审核订单24小时后的状态改变***start:" + HttpUrl.TIMERPAYORDERSUB + "***");
+					HttpConnection.post(HttpUrl.TIMERPAYORDERSUB, params, "UTF-8");
+					logger.warn("***待审核订单24小时后的状态改变***end***");
+				}
+				MzVisit visit = mzVisitMapper.selectByPrimaryKey(payOrder.getServiceId());
+				if(visit.getVisitType().equals(ServiceType.FAMILYDOCTOR.getIndex())){
+					visit.setStatus(ServiceState.SERVICING.getIndex());
+				}else{
+					visit.setStatus(visit.getReservationId() == null ? ServiceState.WAITSERVICE.getIndex() : ServiceState.WAITAUDIT.getIndex());
+				}
+				mzVisitMapper.updateByPrimaryKeySelective(visit);
+			}else{
+				/**
+				 * 待付款非0元订单绑定时器
+				 */
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("orderNo", payOrder.getOrderNo());
+				params.put("visitId", payOrder.getServiceId());
+				HttpConnection.post(HttpUrl.TIMERPAYORDER, params, "UTF-8");
+			}
+			return payOrder;
+		}
+		return null;
+	}
+	
+	/**
+	 * 创建订单中消费者的附加信息<br />
+	 * 		姓名、性别、年龄、手机号码、地址、病情描述<br />
+	 * 		格式为json
+	 * 
+	 * @param patient 消费者 
+	 * @param visit 业务信息
+	 * @return
+	 * @throws ParseException 
+	 */
+	private String createCustomerRemark(MzPatient patient, MzVisit visit) throws ParseException {
+		if(patient == null){
+			return "";
+		}
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		String gender;
+		switch (patient.getSex()) {
+			case 0: gender = "男"; break;
+			case 1: gender = "女"; break;
+			default: gender = "保密"; break;
+		}
+		XtAddress xtAddress = xtAddressMapper.selectByPrimaryKey(patient.getAddressId());
+		
+		map.put("name", patient.getName());	// 姓名
+		map.put("gender", gender);			// 性别
+		map.put("age", Utils.getAge(patient.getBirthDate()));	// 年龄
+		String phone = patient.getRelateTel();
+		if (!StringUtils.isEmpty(phone) && phone.trim().length() >= 11) {
+			map.put("phone", phone);	// 手机号
+		}
+		map.put("address", getAddress(xtAddress));	// 地址
+		map.put("illnessDescribe", visit.getIllnessDescribe());	// 病情描述
+		map.put("uploadData", false);	// 是否上传资料
+		return JSON.toJSONString(map);
+	}
+	
+	/**
+	 * 创建订单中商品的附加信息<br />
+	 * 		图片（药品、医生、机构）<br />
+	 * 		名称（药品、机构、医生）<br />
+	 * 		别名（药品别名、医生职称、单位别名）<br />
+	 * 		所属单位（药品和医生所属单位）<br />
+	 * 		地址、电话、科室<br />
+	 * 		格式为json
+	 * 
+	 * @return
+	 */
+	private String createGoodsRemark(Doctor doctor, ZdOrg zdOrg) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		Integer titlesClinical = doctor.getTitlesClinical();
+		Integer titlesTeach = doctor.getTitlesTeach();
+		String titlesClinicalStr = TitlesClinicalType.getName(titlesClinical);
+		String titlesTeachStr = TitlesTeachType.getName(titlesTeach);
+		XtAddress xtAddress = xtAddressMapper.selectByPrimaryKey(zdOrg.getAddressId());
+		XtUser xtUser = xtUserMapper.selectByPrimaryKey(doctor.getUserId());
+		
+		map.put("doctorId", doctor.getId());
+		map.put("doctorPic", doctor.getPicture());
+		map.put("doctorName", doctor.getName());
+		map.put("titlesClinical", titlesClinicalStr);
+		map.put("titlesTeach", titlesTeachStr);
+		map.put("orgName", zdOrg.getName());
+		map.put("orgAddress", getAddress(xtAddress));
+		map.put("doctorPhone", xtUser.getMobile());
+		map.put("doctorDept", doctor.getDept());
+		return JSON.toJSONString(map);
+	}
+	
+	/**
+	 * 根据地址对象拼接地址字符串
+	 * 
+	 * @param xtAddress
+	 * @return
+	 */
+	private String getAddress(XtAddress xtAddress) {
+		StringBuffer addressDetails = new StringBuffer("");
+		if (xtAddress != null) {
+			if (!StringUtils.isEmpty(xtAddress.getProvince())) {
+				addressDetails.append(xtAddress.getProvince() + " ");
+			}
+			if (!StringUtils.isEmpty(xtAddress.getCity())) {
+				addressDetails.append(xtAddress.getCity() + " ");
+			}
+			if (!StringUtils.isEmpty(xtAddress.getCounty())) {
+				addressDetails.append(xtAddress.getCounty() + " ");
+			}
+			if (!StringUtils.isEmpty(xtAddress.getRoad())) {
+				addressDetails.append(xtAddress.getRoad() + " ");
+			}
+			if (!StringUtils.isEmpty(xtAddress.getAddress())) {
+				addressDetails.append(xtAddress.getAddress());
+			}
+		}
+		return addressDetails.toString();
+	}
+
+	@Override
+	public PayOrder getPayOrderByOrderNo(String orderNo) {
+		if(!StringUtils.isEmpty(orderNo)){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("orderNo", orderNo);
+			return payOrderMapper.getPayOrderByOrderNo(map);
+		}
+		return null;
+	}
+
+	@Override
+	public String createPayTrandInfo(String orderNo, Integer paySource, Integer payType){
+		ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+				ConfigProperites.getAssemblyPayParamForAlipay() + orderNo + "&paySource=" + paySource 
+				+ "&payType=" + payType, String.class);
+		return responseEntity.getBody();
+	}
+
+	@Override
+	public String payReturnInfoSend(String orderNo, String tradeStatus, String userId) throws Exception {
+		PayOrder payOrder = payOrderMapper.selectPayOrderByOrderNumber(orderNo);
+		List<Object> list = new ArrayList<Object>();
+		list.add("messageTo");
+		List<Map<String, Object>> target = new ArrayList<Map<String, Object>>();
+		Map<String, Object> targetMap = new HashMap<String, Object>();
+		targetMap.put("userId", userId);
+		target.add(targetMap);
+		list.add(target);
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		dataMap.put("msgType", "command");
+		dataMap.put("commandName", "payResult");
+		dataMap.put("commandData", tradeStatus);
+		dataMap.put("orderNo", payOrder.getOrderNo());
+		dataMap.put("visitId", payOrder.getServiceId());
+		list.add(dataMap);
+		String jsonStr = Utils.objectToJsonStr(list);
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		HttpEntity<String> formEntity = new HttpEntity<String>(jsonStr, headers);
+		String postForObject = restTemplate.postForObject(ConfigProperites.getPayAfterNoticeUrl(), formEntity, String.class);
+		logger.info(jsonStr);
+		logger.info("消息推送结果："+ postForObject);
+		return "SUCCESS";
+	}
+
+	@Override
+	public Integer updateOrderByOrderNo(PayOrder payOrder) {
+		return payOrderMapper.updateByPrimaryKeySelective(payOrder);
+	}
+
+	@Override
+	public Integer cacelOrderByOrderNo(String orderNo) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("orderNo", orderNo);
+		PayOrder payOrder = payOrderMapper.getPayOrderByOrderNo(map);
+		payOrder.setOrderState(PayOrderState.CANCELED.getIndex());
+		payOrder.setServiceState(ServiceState.CANCELED.getIndex());
+		payOrderMapper.updateByPrimaryKeySelective(payOrder);
+		PayInfo payInfo = payInfoMapper.selectPayInfoByOrderNo(orderNo);
+		payInfo.setPayState(PayStae.CANCELED.getIndex());
+		payInfoMapper.updateByPrimaryKeySelective(payInfo);
+		MzVisit mzVisit = mzVisitMapper.selectByPrimaryKey(payOrder.getServiceId());
+		mzVisit.setStatus(ServiceState.CANCELED.getIndex());
+		return mzVisitMapper.updateByPrimaryKeySelective(mzVisit);
+	}
+
+	@Override
+	public Integer updatePayOrderPayInfo(String orderNo, Integer paySource, Integer payType) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("orderNo", orderNo);
+		PayOrder payOrder = payOrderMapper.getPayOrderByOrderNo(map);
+		payOrder.setOrderState(PayOrderState.PAID.getIndex());
+		payOrder.setPayWay(2);
+		payOrder.setServiceState(ServiceState.WAITSERVICE.getIndex());
+		int updatePayOrderCode = payOrderMapper.updateByPrimaryKeySelective(payOrder);
+		PayInfo payInfo = new PayInfo();
+		payInfo.setPayNo(UUID.randomUUID().toString());
+		payInfo.setUserId(payOrder.getUserId());
+		payInfo.setOrderNo(payOrder.getOrderNo());
+		payInfo.setPrice(payOrder.getPrice());
+		payInfo.setPayState(PayOrderState.PAID.getIndex());
+		payInfo.setCreateTime(Utils.getNowTime());
+		payInfo.setPayTime(Utils.getNowTime());
+		payInfo.setOrderType(payOrder.getServiceType());
+		payInfo.setOrderName(ServiceType.getName(payOrder.getServiceType()));
+		payInfo.setPaySource(paySource);
+		payInfo.setPayType(payType);
+		int insertPayInfoCode = payInfoMapper.insert(payInfo);
+		MzVisit mzVisit = mzVisitMapper.selectByPrimaryKey(payOrder.getServiceId());
+		mzVisit.setStatus(ServiceState.WAITSERVICE.getIndex());
+		int updateMzVisitCode = mzVisitMapper.updateByPrimaryKeySelective(mzVisit);
+		return updatePayOrderCode + insertPayInfoCode +updateMzVisitCode;
+	}
+
+	@Override
+	public PayOrder selectPayOrderByServiceId(Long serviceId) {
+		return payOrderMapper.selectPayOrderByVisitId(serviceId);
+	}
+}

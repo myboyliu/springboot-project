@@ -1,0 +1,105 @@
+package com.huatuo.customer.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.huatuo.customer.base.enums.FileType;
+import com.huatuo.customer.base.util.ImageUploadUtil;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.dao.DtUserPackageMapper;
+import com.huatuo.customer.dao.XtPregnantMomDetailMapper;
+import com.huatuo.customer.dao.XtPregnantMomDetailReplyMapper;
+import com.huatuo.customer.dao.XtPregnantMomMapper;
+import com.huatuo.customer.dao.XtServiceFileMapper;
+import com.huatuo.customer.dao.XtZdPregnantCheckProjectMapper;
+import com.huatuo.customer.dao.XtZdPregnantingStageSuggestionMapper;
+import com.huatuo.customer.domain.XtFile;
+import com.huatuo.customer.domain.XtPregnantMom;
+import com.huatuo.customer.domain.XtPregnantMomDetail;
+import com.huatuo.customer.query.PregnantMomQuery;
+import com.huatuo.customer.query.ServiceFileQuery;
+import com.huatuo.customer.request.PregnantMomParam;
+import com.huatuo.customer.response.PregnantMomResponse;
+import com.huatuo.customer.service.XtPregnantMomDetailService;
+
+@Service
+@Transactional
+public class XtPregnantMomDetailServiceImpl implements XtPregnantMomDetailService{
+
+	@Autowired
+	private XtPregnantMomMapper xtPregnantMomMapper;
+	
+	@Autowired
+	private XtPregnantMomDetailMapper xtPregnantMomDetailMapper;
+	
+	@Autowired
+	private XtServiceFileMapper xtServiceFileMapper;
+	
+	@Autowired
+	private XtZdPregnantingStageSuggestionMapper xtZdPregnantingStageSuggestionMapper;
+	
+	@Autowired
+	private XtPregnantMomDetailReplyMapper xtPregnantMomDetailReplyMapper;
+	
+	@Autowired
+	private DtUserPackageMapper dtUserPackageMapper;
+	
+	@Autowired
+	private XtZdPregnantCheckProjectMapper xtZdPregnantCheckProjectMapper;
+	
+	@Override
+	public Integer insertPregnantMomDetail(
+			PregnantMomParam pregnantMomParam) throws Exception {
+		XtPregnantMomDetail xtPregnantMomDetail = pregnantMomParam.getXtPregnantMomDetail();
+		int insertCode = xtPregnantMomDetailMapper.insertSelective(xtPregnantMomDetail);
+		/**
+		 * 图片上传
+		 */
+		if(insertCode > 0){
+			XtFile xtfile=new XtFile();
+			xtfile.setUploaderId(Long.parseLong(pregnantMomParam.getUserId()));
+			xtfile.setDescription("孕妈心情记录");
+			return ImageUploadUtil.ImageUpload(pregnantMomParam.getFiles(), xtPregnantMomDetail.getId(), xtfile).size() + insertCode;
+		}
+		return null;
+	}
+
+	@Override
+	public PregnantMomResponse selectregnantMomDetailsByUserId(
+			PregnantMomQuery pregnantMomQuery) throws Exception {
+		XtPregnantMom xtPregnantMom = xtPregnantMomMapper.selectByUid(pregnantMomQuery.getUserId());
+		PregnantMomResponse pregnantMomResponse = Utils.calculatePregnantData(xtPregnantMom.getLastMenstrualDate(), 
+				xtPregnantMom.getPreProductionDate(), pregnantMomQuery.getNowDate());
+		pregnantMomResponse.setPregnantMom(xtPregnantMom);
+		List<XtPregnantMomDetail> list = xtPregnantMomDetailMapper.selectPregnantMomDetailsByUserId(pregnantMomQuery);
+		for (XtPregnantMomDetail xtPregnantMomDetail : list) {
+			ServiceFileQuery serviceFileQuery = new ServiceFileQuery();
+			serviceFileQuery.setTypeId(xtPregnantMomDetail.getId());
+			serviceFileQuery.setServiceType(FileType.PM.getIndex());
+			xtPregnantMomDetail.setXtServiceFiles(xtServiceFileMapper.selectXtServiceFilesByQuery(serviceFileQuery));
+			xtPregnantMomDetail.setXtPregnantMomDetailReplys(xtPregnantMomDetailReplyMapper.
+					selectPregnantMomDetailReplyByPregnantMomDetailId(xtPregnantMomDetail.getId()));
+			String[] projectIds = null;
+			if(xtPregnantMomDetail.getAntenatalCareProjectIds() != null){
+				projectIds = xtPregnantMomDetail.getAntenatalCareProjectIds().split(",");
+				List<String> productNames = new ArrayList<String>();
+				for (int i = 0; i < projectIds.length; i++) {
+					productNames.add(xtZdPregnantCheckProjectMapper.selectByPrimaryKey(projectIds[i]).getProjectName());
+				}
+				xtPregnantMomDetail.setProjectNames(productNames);
+			}
+		}
+		pregnantMomResponse.setXtPregnantMomDetails(list);
+		pregnantMomResponse.setPregnantingSuggestion(xtZdPregnantingStageSuggestionMapper.selectPregnantingStageSuggestionByStage(
+				Integer.parseInt(pregnantMomResponse.getPregnantWeek()) / 4).getContent());
+		pregnantMomResponse.setIsSignFamilyDoctor(
+				dtUserPackageMapper.selectUserPackagesByUserIdForPregnantMom(pregnantMomQuery.getUserId()) == 0 ? 1 : 2);
+		return pregnantMomResponse;
+	}
+	
+}

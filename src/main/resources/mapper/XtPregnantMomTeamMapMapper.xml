@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtPregnantMomTeamMapMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtPregnantMomTeamMapKey" >
+    <id column="pregnant_mom_id" property="pregnantMomId" jdbcType="VARCHAR" />
+    <id column="team_id" property="teamId" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="com.huatuo.customer.domain.XtPregnantMomTeamMapKey" >
+    delete from xt_pregnant_mom_team_map
+    where pregnant_mom_id = #{pregnantMomId,jdbcType=VARCHAR}
+      and team_id = #{teamId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtPregnantMomTeamMapKey" >
+    insert into xt_pregnant_mom_team_map (pregnant_mom_id, team_id)
+    values (#{pregnantMomId,jdbcType=VARCHAR}, #{teamId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtPregnantMomTeamMapKey" >
+    insert into xt_pregnant_mom_team_map
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pregnantMomId != null" >
+        pregnant_mom_id,
+      </if>
+      <if test="teamId != null" >
+        team_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pregnantMomId != null" >
+        #{pregnantMomId,jdbcType=VARCHAR},
+      </if>
+      <if test="teamId != null" >
+        #{teamId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <cache />
+</mapper>

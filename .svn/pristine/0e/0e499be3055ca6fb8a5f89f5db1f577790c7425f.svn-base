@@ -1,0 +1,51 @@
+package com.huatuo.customer.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import com.huatuo.customer.domain.DtPackage;
+import com.huatuo.customer.domain.DtPackageCriteria;
+import com.huatuo.customer.domain.DtPackagePojo;
+
+public interface DtPackageMapper {
+    int countByExample(DtPackageCriteria example);
+
+    int deleteByExample(DtPackageCriteria example);
+
+    int deleteByPrimaryKey(String teamPackageId);
+
+    int insert(DtPackage record);
+
+    int insertSelective(DtPackage record);
+
+    List<DtPackage> selectByExampleWithRowbounds(DtPackageCriteria example, RowBounds rowBounds);
+
+    List<DtPackage> selectByExample(DtPackageCriteria example);
+
+    DtPackage selectByPrimaryKey(String teamPackageId);
+
+    int updateByExampleSelective(@Param("record") DtPackage record, @Param("example") DtPackageCriteria example);
+
+    int updateByExample(@Param("record") DtPackage record, @Param("example") DtPackageCriteria example);
+
+    int updateByPrimaryKeySelective(DtPackage record);
+
+    int updateByPrimaryKey(DtPackage record);
+
+    /**
+     * 根据家医团队id查询套餐
+     * @param map 
+     * @return
+     */
+	List<DtPackage> listByDtTeamId(Map<String, Object> map);
+
+	/**
+	 * 查询套餐信息
+	 * @param map
+	 * @return
+	 */
+	DtPackagePojo getDtPackageByTeamPackageId(Map<String, Object> map);
+}

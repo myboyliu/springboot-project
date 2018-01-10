@@ -1,0 +1,53 @@
+# Server settings
+server:
+    port:8080
+    address:localhost
+
+# DATASOURCE
+spring.datasource.241:
+    dataSourceClassName: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+    url: jdbc:mysql://192.168.0.241:3306/huatuo?useUnicode=true&amp;characterEncoding=UTF-8
+    databaseName: test1
+    username: admin
+    password: admin!@22
+    cachePrepStmts: true
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+    useServerPrepStmts: true
+    
+spring.datasource.61:
+    dataSourceClassName: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+    url: jdbc:mysql://192.168.0.61:3306/huatuo?useUnicode=true&amp;characterEncoding=UTF-8
+    databaseName: test1
+    username: admin
+    password: admin!@22
+    cachePrepStmts: true
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+    useServerPrepStmts: true
+    
+spring.datasource.www:
+    dataSourceClassName: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+    url: jdbc:mysql://192.168.0.241:3306/huatuo?useUnicode=true&amp;characterEncoding=UTF-8
+    databaseName: test1
+    username: admin
+    password: admin!@22
+    cachePrepStmts: true
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+    useServerPrepStmts: true
+
+
+# SPRING PROFILES
+spring:       
+    # HTTP ENCODING
+    http:
+        encoding.charset: UTF-8
+        encoding.enable: true
+        encoding.force: true
+
+# MyBatis
+mybatis:
+    typeAliasesPackage: com.huatuo.register.domain
+    mapperLocations: classpath:/mapper/*.xml
+    configLocation: classpath:/mybatis-config.xml

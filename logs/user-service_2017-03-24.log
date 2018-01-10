@@ -1,0 +1,9 @@
+2017-03-24 09:58:36,194 INFO[restartedMain] Application:48 - Starting Application on HNHUATUO with PID 2896 (D:\workspace\huatuo-customer\target\classes started by 河南华佗在线 in D:\workspace\huatuo-customer)
+2017-03-24 09:58:36,210 DEBUG[restartedMain] Application:51 - Running with Spring Boot v1.4.0.RELEASE, Spring v4.3.2.RELEASE
+2017-03-24 09:58:36,210 INFO[restartedMain] Application:659 - No active profile set, falling back to default profiles: default
+2017-03-24 10:00:49,215 INFO[restartedMain] Application:48 - Starting Application on HNHUATUO with PID 4236 (D:\workspace\huatuo-customer\target\classes started by 河南华佗在线 in D:\workspace\huatuo-customer)
+2017-03-24 10:00:49,215 DEBUG[restartedMain] Application:51 - Running with Spring Boot v1.4.0.RELEASE, Spring v4.3.2.RELEASE
+2017-03-24 10:00:49,215 INFO[restartedMain] Application:659 - No active profile set, falling back to default profiles: default
+2017-03-24 10:03:33,179 INFO[restartedMain] Application:48 - Starting Application on HNHUATUO with PID 6920 (D:\workspace\huatuo-customer\target\classes started by 河南华佗在线 in D:\workspace\huatuo-customer)
+2017-03-24 10:03:33,195 DEBUG[restartedMain] Application:51 - Running with Spring Boot v1.4.0.RELEASE, Spring v4.3.2.RELEASE
+2017-03-24 10:03:33,195 INFO[restartedMain] Application:659 - No active profile set, falling back to default profiles: default

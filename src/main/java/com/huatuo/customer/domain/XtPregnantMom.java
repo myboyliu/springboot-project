@@ -1,0 +1,117 @@
+package com.huatuo.customer.domain;
+
+import java.io.Serializable;
+
+public class XtPregnantMom implements Serializable{
+	
+	private static final long serialVersionUID = 8548970058686308634L;
+
+	private String pregnantMomId;
+
+    private Long userId;
+
+    private String fetus;
+
+    private String lastMenstrualDate;
+
+    private String preProductionDate;
+
+    private String conceptionMode;
+
+    private Integer prePregnancyHeight;
+
+    private Float prePregnancyWeight;
+
+    private Integer validFlg;
+
+    public String getPregnantMomId() {
+        return pregnantMomId;
+    }
+
+    public void setPregnantMomId(String pregnantMomId) {
+        this.pregnantMomId = pregnantMomId == null ? null : pregnantMomId.trim();
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getFetus() {
+        return fetus;
+    }
+
+    public void setFetus(String fetus) {
+        this.fetus = fetus == null ? null : fetus.trim();
+    }
+
+    public String getLastMenstrualDate() {
+        return lastMenstrualDate;
+    }
+
+    public void setLastMenstrualDate(String lastMenstrualDate) {
+        this.lastMenstrualDate = lastMenstrualDate == null ? null : lastMenstrualDate.trim();
+    }
+
+    public String getPreProductionDate() {
+        return preProductionDate;
+    }
+
+    public void setPreProductionDate(String preProductionDate) {
+        this.preProductionDate = preProductionDate == null ? null : preProductionDate.trim();
+    }
+
+    public String getConceptionMode() {
+        return conceptionMode;
+    }
+
+    public void setConceptionMode(String conceptionMode) {
+        this.conceptionMode = conceptionMode == null ? null : conceptionMode.trim();
+    }
+
+    public Integer getPrePregnancyHeight() {
+        return prePregnancyHeight;
+    }
+
+    public void setPrePregnancyHeight(Integer prePregnancyHeight) {
+        this.prePregnancyHeight = prePregnancyHeight;
+    }
+
+    public Float getPrePregnancyWeight() {
+        return prePregnancyWeight;
+    }
+
+    public void setPrePregnancyWeight(Float prePregnancyWeight) {
+        this.prePregnancyWeight = prePregnancyWeight;
+    }
+
+    public Integer getValidFlg() {
+        return validFlg;
+    }
+
+    public void setValidFlg(Integer validFlg) {
+        this.validFlg = validFlg;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", pregnantMomId=").append(pregnantMomId);
+        sb.append(", userId=").append(userId);
+        sb.append(", fetus=").append(fetus);
+        sb.append(", lastMenstrualDate=").append(lastMenstrualDate);
+        sb.append(", preProductionDate=").append(preProductionDate);
+        sb.append(", conceptionMode=").append(conceptionMode);
+        sb.append(", prePregnancyHeight=").append(prePregnancyHeight);
+        sb.append(", prePregnancyWeight=").append(prePregnancyWeight);
+        sb.append(", validFlg=").append(validFlg);
+        sb.append("]");
+        return sb.toString();
+    }
+}

@@ -1,0 +1,101 @@
+package com.huatuo.customer.interceptor;
+
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.github.pagehelper.StringUtil;
+import com.huatuo.customer.base.response.BaseResponse;
+import com.huatuo.customer.base.util.HttpConnection;
+import com.huatuo.customer.base.util.JavaBeanUtil;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.config.SpringContextUtils;
+import com.huatuo.customer.response.WxPaymentResponse;
+import com.huatuo.customer.service.LoginService;
+import com.huatuo.register.domain.response.LoginDataResponse;
+
+/**
+ * 登录拦截器
+ * @author master
+ *
+ */
+@Component
+public class LoginInterceptor extends HandlerInterceptorAdapter {
+
+	@Autowired
+	private LoginService loginService;
+	
+//	private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
+	
+	@Override		
+	public void afterCompletion(HttpServletRequest request,
+			HttpServletResponse response, Object object, Exception e)
+			throws Exception {
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response,
+			Object object, ModelAndView modelAndView) throws Exception {
+	}
+
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+			Object object) throws Exception {
+		String handleUri = request.getRequestURI();
+		if(handleUri.equals("/order/payReturnInfoSend") || 
+				handleUri.equals("/error")){
+	        	return true;
+	    }
+		String token = Utils.getToken(request);
+		if(StringUtil.isEmpty(token)){
+			response.setCharacterEncoding("UTF-8");  
+		    response.setContentType("application/json; charset=utf-8");
+			PrintWriter out = response.getWriter();
+	        out.print("{\"code\" : \""+ BaseResponse.LOGIN_OVER_TIME_CODE +"\", \"message\" : \""+ BaseResponse.LOGIN_OVER_TIME +"\"}");
+			return false;
+		}
+		loginService = (LoginService) SpringContextUtils.getBean("loginServiceImpl");
+		LoginDataResponse loginDataResponse = loginService.getUserInfoByLogin(token);
+		if(loginDataResponse == null || loginDataResponse.getXtPerson() == null){
+			response.setCharacterEncoding("UTF-8");  
+		    response.setContentType("application/json; charset=utf-8");
+			PrintWriter out = response.getWriter();
+	        out.print("{\"code\" : \""+ BaseResponse.LOGIN_OVER_TIME_CODE +"\", \"message\" : \""+ BaseResponse.LOGIN_OVER_TIME +"\"}");
+	        return false;
+		}
+		loginService.setUserInfoByLogin(token, loginDataResponse, LoginService.LOGIN_USER_CACHE_TIME);
+		return true;
+	}
+	
+//	public static void main(String[] args) {
+//	String xmlPost = HttpConnection.xmlPost("https://api.mch.weixin.qq.com/pay/unifiedorder"
+//			, "<xml>" +
+//					"<appid>wx5e1d5aeae9cea165</appid>" +
+//					"<body>华佗快线-订单支付</body>" +
+//					"<mch_id>1326184301</mch_id>" +
+//					"<nonce_str>F2CAF929E3714B6F8AED741E5B442154</nonce_str>" +
+//					"<notify_url>http://www.noswag.online/web/alipay/wxPayReturn</notify_url>" +
+//					"<out_trade_no>000035564266</out_trade_no>" +
+//					"<spbill_create_ip>182.140.221.28</spbill_create_ip>" +
+//					"<total_fee>1</total_fee>" +
+//					"<trade_type>APP</trade_type>" +
+//					"<sign>CC8466D08BCED8892CC4AD1ADFC39139</sign>" +
+//					"</xml>");	
+//	System.out.println(JavaBeanUtil.xml2Bean(WxPaymentResponse.class, xmlPost));
+//	String xmlPost2 = HttpConnection.xmlPost("https://api.mch.weixin.qq.com/pay/orderquery"
+//			, "<xml>" +
+//					"<appid>wx5e1d5aeae9cea165</appid>" +
+//					"<mch_id>1326184301</mch_id>" +
+//					"<nonce_str>F2CAF929E3714B6F8AED741E5B442154</nonce_str>" +
+//					"<out_trade_no>000035564266</out_trade_no>" +
+//					"<sign>839E646BDD7540B4B3A9B3B3467E2F5A</sign>" +
+//					"</xml>");	
+//	System.out.println(JavaBeanUtil.xml2Bean(WxPaymentResponse.class, xmlPost2));
+//}
+}

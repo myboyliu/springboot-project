@@ -1,0 +1,33 @@
+package com.huatuo.customer.dao;
+
+import com.huatuo.customer.domain.DtMember;
+import com.huatuo.customer.domain.DtMemberCriteria;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+public interface DtMemberMapper {
+    int countByExample(DtMemberCriteria example);
+
+    int deleteByExample(DtMemberCriteria example);
+
+    int deleteByPrimaryKey(String dtMemberId);
+
+    int insert(DtMember record);
+
+    int insertSelective(DtMember record);
+
+    List<DtMember> selectByExampleWithRowbounds(DtMemberCriteria example, RowBounds rowBounds);
+
+    List<DtMember> selectByExample(DtMemberCriteria example);
+
+    DtMember selectByPrimaryKey(String dtMemberId);
+
+    int updateByExampleSelective(@Param("record") DtMember record, @Param("example") DtMemberCriteria example);
+
+    int updateByExample(@Param("record") DtMember record, @Param("example") DtMemberCriteria example);
+
+    int updateByPrimaryKeySelective(DtMember record);
+
+    int updateByPrimaryKey(DtMember record);
+}

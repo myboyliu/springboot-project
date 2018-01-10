@@ -1,0 +1,60 @@
+package com.huatuo.customer.service.impl;
+
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.huatuo.customer.base.util.ImageUploadUtil;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.dao.XtFeedbackMapper;
+import com.huatuo.customer.dao.XtPersonMapper;
+import com.huatuo.customer.domain.XtFeedback;
+import com.huatuo.customer.domain.XtFile;
+import com.huatuo.customer.domain.XtPerson;
+import com.huatuo.customer.request.PersonParam;
+import com.huatuo.customer.service.XtFeedBackService;
+
+@Service
+@Transactional
+public class XtFeedBackServiceImpl implements XtFeedBackService{
+
+	@Autowired
+	private XtFeedbackMapper xtFeedbackMapper;
+	
+	@Autowired
+	private XtPersonMapper xtPersonMapper;
+
+	/**
+	 * 图片上传
+	 */
+//	private ImageUploadUtil imageUploadUtil = new ImageUploadUtil();
+	
+	@Override
+	public List<String> insertUserFeedBack(PersonParam personParam) throws Exception {
+		/**
+		 * 保存反馈信息
+		 */
+		XtFeedback xtFeedback = new XtFeedback();
+		XtPerson xtPerson = xtPersonMapper.selectPersonByUserId(personParam.getUserId());
+		xtFeedback.setName(xtPerson.getName());
+		xtFeedback.setMobile(personParam.getRelationInfo());
+		xtFeedback.setCreateDate(Utils.getNowTime());
+		xtFeedback.setCountext(personParam.getSuggestions());
+		int insertCode = xtFeedbackMapper.insert(xtFeedback);
+		/**
+		 * 图片上传
+		 */
+		if(insertCode > 0){
+			XtFile xtfile=new XtFile();
+			xtfile.setUploaderId(personParam.getUserId());
+			xtfile.setDescription("意见反馈图片上传");
+			return ImageUploadUtil.ImageUpload(personParam.getFiles(), xtFeedback.getId(), xtfile);
+		}
+		return null;
+	}
+
+}

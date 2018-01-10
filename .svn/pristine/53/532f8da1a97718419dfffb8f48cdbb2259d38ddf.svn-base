@@ -1,0 +1,66 @@
+package com.huatuo.customer.service.impl;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.huatuo.customer.dao.TwConsultAnswerMapper;
+import com.huatuo.customer.dao.TwConsultQuestionMapper;
+import com.huatuo.customer.dao.XtServiceFileMapper;
+import com.huatuo.customer.domain.TwConsultAnswer;
+import com.huatuo.customer.domain.TwConsultQuestion;
+import com.huatuo.customer.domain.TwConsultQuestionCriteria;
+import com.huatuo.customer.domain.XtServiceFile;
+import com.huatuo.customer.service.TwConsultQuestionService;
+
+@Service
+@Transactional
+public class TwConsultQuestionServiceImpl implements TwConsultQuestionService{	
+	
+	@Autowired
+	private TwConsultQuestionMapper twConsultQuestionMapper;
+	
+	@Autowired
+	private TwConsultAnswerMapper twConsultAnswerMapper;
+	
+	@Autowired
+	private XtServiceFileMapper xtServiceFileMapper;
+
+	@Override
+	public TwConsultQuestion getListByVisitId(Long visitId) {
+		//图文主题
+		TwConsultQuestion tw = twConsultQuestionMapper.getListByVisitId(visitId);
+		if (tw != null) {
+//			//图文主题图片和音频
+			List<XtServiceFile> files = xtServiceFileMapper.getFilesByConsultId(tw.getId());
+			tw.setFiles(files);
+			//图文聊天记录详情
+			List<TwConsultAnswer> list = twConsultAnswerMapper.getListByConsultId(tw.getId());
+			tw.setAnswers(list);
+		}
+		return tw;
+	}
+
+	@Override
+	public Long save(TwConsultQuestion dto) {
+		 twConsultQuestionMapper.insert(dto);
+		 return dto.getId();
+				
+	}
+
+	@Override
+	public int endConsult(TwConsultQuestion dto) {
+		TwConsultQuestionCriteria example =new TwConsultQuestionCriteria();
+		example.createCriteria().andIdEqualTo(dto.getId());
+		return twConsultQuestionMapper.updateByExampleSelective(dto, example);
+	}
+
+	@Override
+	public TwConsultQuestion queryQuestion(Long consultId) {
+		return twConsultQuestionMapper.selectByPrimaryKey(consultId);
+	}
+
+}

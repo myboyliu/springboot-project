@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.TwConsultAnswerMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.TwConsultAnswer" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="consult_id" property="consultId" jdbcType="BIGINT" />
+    <result column="form_id" property="formId" jdbcType="BIGINT" />
+    <result column="form_type" property="formType" jdbcType="INTEGER" />
+    <result column="countext" property="countext" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="countext_type" property="countextType" jdbcType="INTEGER" />
+    <result column="is_read" property="isRead" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, consult_id, form_id, form_type, countext, create_time, countext_type, is_read
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.TwConsultAnswerCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tw_consult_answer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tw_consult_answer
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tw_consult_answer
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.TwConsultAnswerCriteria" >
+    delete from tw_consult_answer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.TwConsultAnswer" >
+    insert into tw_consult_answer (id, consult_id, form_id, 
+      form_type, countext, create_time, 
+      countext_type, is_read)
+    values (#{id,jdbcType=BIGINT}, #{consultId,jdbcType=BIGINT}, #{formId,jdbcType=BIGINT}, 
+      #{formType,jdbcType=INTEGER}, #{countext,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, 
+      #{countextType,jdbcType=INTEGER}, #{isRead,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.TwConsultAnswer" >
+    insert into tw_consult_answer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="consultId != null" >
+        consult_id,
+      </if>
+      <if test="formId != null" >
+        form_id,
+      </if>
+      <if test="formType != null" >
+        form_type,
+      </if>
+      <if test="countext != null" >
+        countext,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="countextType != null" >
+        countext_type,
+      </if>
+      <if test="isRead != null" >
+        is_read,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="consultId != null" >
+        #{consultId,jdbcType=BIGINT},
+      </if>
+      <if test="formId != null" >
+        #{formId,jdbcType=BIGINT},
+      </if>
+      <if test="formType != null" >
+        #{formType,jdbcType=INTEGER},
+      </if>
+      <if test="countext != null" >
+        #{countext,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="countextType != null" >
+        #{countextType,jdbcType=INTEGER},
+      </if>
+      <if test="isRead != null" >
+        #{isRead,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.TwConsultAnswerCriteria" resultType="java.lang.Integer" >
+    select count(*) from tw_consult_answer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tw_consult_answer
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.consultId != null" >
+        consult_id = #{record.consultId,jdbcType=BIGINT},
+      </if>
+      <if test="record.formId != null" >
+        form_id = #{record.formId,jdbcType=BIGINT},
+      </if>
+      <if test="record.formType != null" >
+        form_type = #{record.formType,jdbcType=INTEGER},
+      </if>
+      <if test="record.countext != null" >
+        countext = #{record.countext,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countextType != null" >
+        countext_type = #{record.countextType,jdbcType=INTEGER},
+      </if>
+      <if test="record.isRead != null" >
+        is_read = #{record.isRead,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tw_consult_answer
+    set id = #{record.id,jdbcType=BIGINT},
+      consult_id = #{record.consultId,jdbcType=BIGINT},
+      form_id = #{record.formId,jdbcType=BIGINT},
+      form_type = #{record.formType,jdbcType=INTEGER},
+      countext = #{record.countext,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=VARCHAR},
+      countext_type = #{record.countextType,jdbcType=INTEGER},
+      is_read = #{record.isRead,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.TwConsultAnswer" >
+    update tw_consult_answer
+    <set >
+      <if test="consultId != null" >
+        consult_id = #{consultId,jdbcType=BIGINT},
+      </if>
+      <if test="formId != null" >
+        form_id = #{formId,jdbcType=BIGINT},
+      </if>
+      <if test="formType != null" >
+        form_type = #{formType,jdbcType=INTEGER},
+      </if>
+      <if test="countext != null" >
+        countext = #{countext,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="countextType != null" >
+        countext_type = #{countextType,jdbcType=INTEGER},
+      </if>
+      <if test="isRead != null" >
+        is_read = #{isRead,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.TwConsultAnswer" >
+    update tw_consult_answer
+    set consult_id = #{consultId,jdbcType=BIGINT},
+      form_id = #{formId,jdbcType=BIGINT},
+      form_type = #{formType,jdbcType=INTEGER},
+      countext = #{countext,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      countext_type = #{countextType,jdbcType=INTEGER},
+      is_read = #{isRead,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.TwConsultAnswerCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tw_consult_answer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <cache />
+  <!--  通过主题id拿取聊天记录 -->
+  <resultMap id="getListByConsultIdMap" type="com.huatuo.customer.domain.TwConsultAnswer" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="consult_id" property="consultId" jdbcType="BIGINT" />
+    <result column="form_id" property="formId" jdbcType="BIGINT" />
+    <result column="form_type" property="formType" jdbcType="INTEGER" />
+    <result column="countext" property="countext" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="countext_type" property="countextType" jdbcType="INTEGER" />
+    <result column="is_read" property="isRead" jdbcType="INTEGER" />
+    
+    <result column="fileExt" property="fileExt" jdbcType="VARCHAR" />
+    <result column="fileName" property="fileName" jdbcType="VARCHAR" />
+    <result column="fileUrl" property="fileUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getListByConsultId" parameterType="long" resultMap="getListByConsultIdMap">
+  	SELECT a.*,fi.file_url fileUrl,fi.file_name fileName,fi.file_ext fileExt FROM tw_consult_answer a
+		LEFT JOIN xt_service_file f ON(a.id = f.type_id)
+		LEFT JOIN xt_file fi ON(fi.id = f.file_id)
+		WHERE a.consult_id = #{consultId}
+		ORDER BY create_time 
+  </select>
+</mapper>

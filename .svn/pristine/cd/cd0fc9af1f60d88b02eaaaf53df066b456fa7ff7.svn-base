@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.MzZdFrequencyMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.MzZdFrequency" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="print_name" property="printName" jdbcType="VARCHAR" />
+    <result column="day_or_week" property="dayOrWeek" jdbcType="INTEGER" />
+    <result column="times" property="times" jdbcType="DOUBLE" />
+    <result column="py_code" property="pyCode" jdbcType="VARCHAR" />
+    <result column="d_code" property="dCode" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, print_name, day_or_week, times, py_code, d_code, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from mz_zd_frequency
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from mz_zd_frequency
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.MzZdFrequency" >
+    insert into mz_zd_frequency (id, name, print_name, 
+      day_or_week, times, py_code, 
+      d_code, del_flag)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{printName,jdbcType=VARCHAR}, 
+      #{dayOrWeek,jdbcType=INTEGER}, #{times,jdbcType=DOUBLE}, #{pyCode,jdbcType=VARCHAR}, 
+      #{dCode,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.MzZdFrequency" >
+    insert into mz_zd_frequency
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="printName != null" >
+        print_name,
+      </if>
+      <if test="dayOrWeek != null" >
+        day_or_week,
+      </if>
+      <if test="times != null" >
+        times,
+      </if>
+      <if test="pyCode != null" >
+        py_code,
+      </if>
+      <if test="dCode != null" >
+        d_code,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="printName != null" >
+        #{printName,jdbcType=VARCHAR},
+      </if>
+      <if test="dayOrWeek != null" >
+        #{dayOrWeek,jdbcType=INTEGER},
+      </if>
+      <if test="times != null" >
+        #{times,jdbcType=DOUBLE},
+      </if>
+      <if test="pyCode != null" >
+        #{pyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dCode != null" >
+        #{dCode,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.MzZdFrequency" >
+    update mz_zd_frequency
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="printName != null" >
+        print_name = #{printName,jdbcType=VARCHAR},
+      </if>
+      <if test="dayOrWeek != null" >
+        day_or_week = #{dayOrWeek,jdbcType=INTEGER},
+      </if>
+      <if test="times != null" >
+        times = #{times,jdbcType=DOUBLE},
+      </if>
+      <if test="pyCode != null" >
+        py_code = #{pyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dCode != null" >
+        d_code = #{dCode,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.MzZdFrequency" >
+    update mz_zd_frequency
+    set name = #{name,jdbcType=VARCHAR},
+      print_name = #{printName,jdbcType=VARCHAR},
+      day_or_week = #{dayOrWeek,jdbcType=INTEGER},
+      times = #{times,jdbcType=DOUBLE},
+      py_code = #{pyCode,jdbcType=VARCHAR},
+      d_code = #{dCode,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <cache />
+</mapper>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huatuo.customer.dao.DtUserTeamMapper">
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.DtUserTeam">
+    <id column="user_team_id" jdbcType="VARCHAR" property="userTeamId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="doctor_team_id" jdbcType="VARCHAR" property="doctorTeamId" />
+    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+    <result column="sync_time" jdbcType="VARCHAR" property="syncTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_team_id, user_id, user_name, doctor_team_id, start_time, end_time, del_flag, 
+    sync_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dt_user_team
+    where user_team_id = #{userTeamId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dt_user_team
+    where user_team_id = #{userTeamId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.DtUserTeam">
+    insert into dt_user_team (user_team_id, user_id, user_name, 
+      doctor_team_id, start_time, end_time, 
+      del_flag, sync_time)
+    values (#{userTeamId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{doctorTeamId,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER}, #{syncTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.DtUserTeam">
+    insert into dt_user_team
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userTeamId != null">
+        user_team_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="doctorTeamId != null">
+        doctor_team_id,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+      <if test="syncTime != null">
+        sync_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userTeamId != null">
+        #{userTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorTeamId != null">
+        #{doctorTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="syncTime != null">
+        #{syncTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.DtUserTeam">
+    update dt_user_team
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorTeamId != null">
+        doctor_team_id = #{doctorTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="syncTime != null">
+        sync_time = #{syncTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_team_id = #{userTeamId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.DtUserTeam">
+    update dt_user_team
+    set user_id = #{userId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      doctor_team_id = #{doctorTeamId,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=VARCHAR},
+      end_time = #{endTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      sync_time = #{syncTime,jdbcType=VARCHAR}
+    where user_team_id = #{userTeamId,jdbcType=VARCHAR}
+  </update>
+  <cache />
+  
+  
+  
+  <!-- 自定义 -->
+  <!-- 保存用户和家医团队的签约信息 -->
+  <insert id="saveDtUserTeam" parameterType="com.huatuo.customer.domain.DtUserTeam">
+    insert into dt_user_team (user_team_id, user_id, user_name, 
+      doctor_team_id, start_time, end_time, 
+      del_flag, sync_time)
+    values (#{userTeamId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{doctorTeamId,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER}, #{syncTime,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 查询医生团队和用户的中间表关系 -->
+  <select id="getDtUserTean" parameterType="map" resultMap="BaseResultMap">
+    select *
+    from dt_user_team
+    where 1=1
+    <if test="dtTeamId != null">
+      and doctor_team_id = #{dtTeamId}
+    </if>
+    <if test="userId != null">
+      and user_id = #{userId}
+    </if>
+  </select>
+  
+  
+  <!-- 修改用户和家医团队中间表状态(要保证条件不为null) -->
+  <update id="updateToDelflag" parameterType="map">
+    update dt_user_team
+    set 
+        del_flag = #{delFlag},
+        sync_time = #{nowTime}
+    where 
+    	  del_flag = 0
+    	  and user_id = #{userId}
+	      and doctor_team_id = #{dtTeamId}
+	      and #{nowTime} > end_time
+  </update>
+</mapper>

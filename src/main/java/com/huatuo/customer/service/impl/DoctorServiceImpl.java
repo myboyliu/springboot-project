@@ -1,0 +1,420 @@
+package com.huatuo.customer.service.impl;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.huatuo.customer.base.page.Page;
+import com.huatuo.customer.base.redis.CommonDao;
+import com.huatuo.customer.base.util.ComparatorObjectAsc;
+import com.huatuo.customer.base.util.ComparatorObjectDesc;
+import com.huatuo.customer.dao.DoctorMapper;
+import com.huatuo.customer.dao.MzVisitMapper;
+import com.huatuo.customer.dao.XtSpecialtyMapper;
+import com.huatuo.customer.domain.Doctor;
+import com.huatuo.customer.domain.XtSpecialty;
+import com.huatuo.customer.service.DoctorService;
+import com.huatuo.customer.service.SpecialtyService;
+import com.huatuo.db.pojo.FlexVisitQueuePojo;
+import com.huatuo.db.redis.pojo.DoctorTypePojo;
+
+@Service
+@Transactional
+public class DoctorServiceImpl implements DoctorService{
+
+	@Autowired
+	private DoctorMapper doctorMapper;
+	
+	@Autowired
+	private CommonDao commonDao;
+
+	@Autowired
+	private XtSpecialtyMapper xtSpecialtyMapper;
+	
+	@Autowired
+	private MzVisitMapper mzVisitMapper;
+	
+	@Autowired
+	private SpecialtyService specialtyService;
+	
+//	private static final Logger logger = LoggerFactory.getLogger(DoctorServiceImpl.class);
+	
+	@SuppressWarnings({ "unchecked", "null", "unused" })
+	@Override
+	public Page<Doctor> getDoctorInfo(Integer provinceCode, Integer cityCode,
+			Integer countyCode, Integer roadCode,Integer currentPage,Integer pageSize,
+			Integer orgId,Integer specialtyId,Integer option,Integer queuingNumber) {
+		List<FlexVisitQueuePojo> list = commonDao.getFlexVisitQueuePojo();
+		Map<String,Object> map = new HashMap<String, Object>();
+		if(null!=provinceCode){
+			if(provinceCode>1){
+				map.put("provinceCode", provinceCode);
+				//加入城市code
+				if(null!=cityCode){
+					if(cityCode!=0){
+						map.put("cityCode", cityCode);
+						//加入区/县code
+						if(null!=countyCode){
+							if(countyCode!=0){
+								map.put("countyCode", countyCode);
+								//加入街道code
+								if(null!=roadCode){
+									if(roadCode!=0){
+										map.put("roadCode", roadCode);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if(null!=orgId&&orgId!=0){
+			map.put("zdOrgId", orgId);
+		}
+		if(null!=queuingNumber&&queuingNumber!=0){
+			map.put("queuingNumber", queuingNumber);  
+		}	
+		if(null!=option&&option==2){//可预约
+			map.put("isYy", option);  
+		}
+		if(null!=orgId&&orgId!=0){
+			map.put("zdOrgId", orgId);  
+		}
+		if(null!=specialtyId&&specialtyId!=0){
+			map.put("specialtyStr", this.getSpecialtyForSeach(specialtyId));  
+		}
+		int total = doctorMapper.count(map); //查询出总条数
+		List<Doctor>  doctorList = null;
+		if(total>0){	
+			//获取start  
+			Page<Doctor> pageBean = new Page<Doctor>(total,currentPage,pageSize);
+			if(null!=pageSize){
+				map.put("pageSize", pageSize);
+				map.put("start", pageBean.getStart());
+			}
+			//查询分页数据
+			doctorList = doctorMapper.selectDoctorInfo(map);
+			for(Doctor doctor:doctorList){
+				//查排队数
+			   FlexVisitQueuePojo flexVisitePojo = commonDao.getFlexVisitQueuePojo(doctor.getId());
+			   if(flexVisitePojo!=null){
+				   //排队人数
+				   doctor.setQueuingNumber(flexVisitePojo.getQueuingNumber());
+			       //是否在线
+				   doctor.setOnline(flexVisitePojo.isOnline());
+			   }
+			   //查余号数跟是否预约功能1：开通 0：未开通
+			   DoctorTypePojo doctorPojo = commonDao.getDoctorTypePojo(doctor.getId());	
+			   if(doctorPojo!=null){					   
+				   //余号数
+			       doctor.setSubscribeNum(doctorPojo.getNum());
+			       //是否预约
+			       doctor.setIsYy(doctorPojo.getIsYy());
+			       //是否预约满 (true已满,false没满)
+			       doctor.setSubscribeType(doctorPojo.getSubscribeType());
+			   }
+				String[] seatTitleStr=null;
+				if(doctor.getSeatTitle()!=null&&!doctor.getSeatTitle().equals("")){
+				if(doctor.getSeatTitle().contains(",")){
+				    seatTitleStr = doctor.getSeatTitle().split(",");
+				    for(int i=0;i<seatTitleStr.length;i++){
+				    	if(seatTitleStr[i].equals("1")){
+				    		seatTitleStr[i]="专家";
+				    	}else{
+				    		seatTitleStr[i]="名医";
+				    	}
+				    }
+					doctor.setSeatTitleStr(seatTitleStr);
+					}else{
+						seatTitleStr[0] = doctor.getSeatTitle();
+						if(seatTitleStr[0].equals("1")){
+				    		seatTitleStr[0]="专家";
+				    	}else{
+				    		seatTitleStr[0]="名医";
+				    	}
+						doctor.setSeatTitleStr(seatTitleStr);
+					}
+				}				
+			}						
+		   ComparatorObjectDesc comparatorDesc=new ComparatorObjectDesc();	
+		   ComparatorObjectAsc comparatorAsc = new ComparatorObjectAsc();
+		   if(queuingNumber!=null){
+	        	if(queuingNumber==1){//多到多
+	        		Collections.sort(doctorList, comparatorDesc);
+	        	}else{//少到多
+	        		Collections.sort(doctorList, comparatorAsc);
+	        	}
+	        }
+		   pageBean.setList(doctorList);
+		   return  pageBean;
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Page<Doctor> getOnlineDoctorInfo(Integer provinceCode, Integer cityCode,
+			Integer countyCode, Integer roadCode,Integer currentPage,Integer pageSize,
+			Integer orgId,Integer specialtyId,Integer option,Integer queuingNumber) {
+		List<FlexVisitQueuePojo> listResult = new ArrayList<FlexVisitQueuePojo>();
+		List<FlexVisitQueuePojo> list = commonDao.getFlexVisitQueuePojo();
+		List<XtSpecialty> xtSpecialties = xtSpecialtyMapper.selectSpecialtyInfoByIdOrParentId(specialtyId);
+		List<Integer> specialtyIds = specialtyService.createSpecialtyIds(xtSpecialties);
+		if(list!=null){
+			for(FlexVisitQueuePojo queue : list){
+				//所有医生
+				DoctorTypePojo doctorTypePojo = commonDao.getDoctorTypePojo(queue.getDoctorId());
+				if(null != doctorTypePojo){
+					queue.setSubscribeNum(doctorTypePojo.getNum());
+					queue.setSubscribeType(doctorTypePojo.getSubscribeType());
+					queue.setIsYy(doctorTypePojo.getIsYy());	
+				}
+				if(0==option){//离线
+					if((specialtyId == 0 || queue.getSpecialtyId() == specialtyId)
+							&&provinceCode == 1 || queue.getvDoctorDetail().getProvinceCode() == provinceCode){
+						listResult.add(queue);						
+					}
+			     }
+				else if(queue.isOnline() &&
+					(specialtyId == null || specialtyId == 0 || queue.getSpecialtyId() == specialtyId || specialtyIds.contains(queue.getvDoctorDetail().getSpecialtyId())) 
+					&& orgId == null 
+					&&(provinceCode == 1 || queue.getvDoctorDetail() != null && queue.getvDoctorDetail().getProvinceCode() == provinceCode)
+				){
+					if(1==option){//在线
+						if(specialtyId != null && !specialtyId.equals(0)){
+							if(queue.getvDoctorDetail().getSpecialtyId() == specialtyId ||
+									specialtyIds.contains(queue.getvDoctorDetail().getSpecialtyId())){
+								listResult.add(queue);
+							}
+						}else{
+							listResult.add(queue);
+						}
+					}
+				}
+				else if(orgId != null && option.equals(1)){
+					if(queue.isOnline()){
+						if(queue.getvDoctorDetail().getZdOrgId() == orgId){
+							if(specialtyId != null && !specialtyId.equals(0)){
+								if(queue.getvDoctorDetail().getSpecialtyId() == specialtyId ||
+										specialtyIds.contains(queue.getvDoctorDetail().getSpecialtyId())){
+									listResult.add(queue);
+								}
+							}else{
+								listResult.add(queue);
+							}
+						}
+					}
+				}
+			}
+		}		
+	    List<Doctor> doctorList =new ArrayList<Doctor>();
+		for(FlexVisitQueuePojo pojo:listResult){
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("doctorId", pojo.getDoctorId());	
+	    	Doctor doctor = doctorMapper.selectDoctorDetailById(map);
+	    	if(doctor!=null){
+	    		doctor.setQueuingNumber(pojo.getQueuingNumber());
+	    		doctor.setSubscribeNum(pojo.getSubscribeNum());
+	    		doctor.setOnline(pojo.isOnline());
+	    		doctor.setId(pojo.getDoctorId());
+	    		doctorList.add(doctor);    		    		
+	    	}
+	    }
+		//对在线医生分页
+		Page<Doctor> pageBean = new Page<Doctor>(doctorList.size(),currentPage,pageSize);
+//		int fromIndex = (currentPage-1) * pageSize; //开始
+//        int toIndex = currentPage * pageSize ; //结束
+//        if (toIndex >= doctorList.size()) {
+//            toIndex = doctorList.size();
+//        }	
+        //排队
+        ComparatorObjectDesc comparatorDesc=new ComparatorObjectDesc();	
+		ComparatorObjectAsc comparatorAsc = new ComparatorObjectAsc();
+        if(queuingNumber!=null){
+        	if(queuingNumber==1){//多到多
+        		Collections.sort(doctorList, comparatorDesc);
+        	}else{//少到多
+        		Collections.sort(doctorList, comparatorAsc);
+        	}
+        }
+		pageBean.setList(doctorList);
+		return pageBean;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Page<Doctor> getReservationDoctorInfo(Integer provinceCode, Integer cityCode,
+			Integer countyCode, Integer roadCode,Integer currentPage,Integer pageSize,
+			Integer orgId,Integer specialtyId,Integer option,Integer queuingNumber) {
+		Map<String,Object> map = new HashMap<String, Object>();
+		if(null!=provinceCode){
+			if(provinceCode>1){
+				map.put("provinceCode", provinceCode);
+				//加入城市code
+				if(null!=cityCode){
+					if(cityCode!=0){
+						map.put("cityCode", cityCode);
+						//加入区/县code
+						if(null!=countyCode){
+							if(countyCode!=0){
+								map.put("countyCode", countyCode);
+								//加入街道code
+								if(null!=roadCode){
+									if(roadCode!=0){
+										map.put("roadCode", roadCode);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if(null!=orgId&&orgId!=0){
+			map.put("zdOrgId", orgId);
+		}
+		if(null!=option){//可预约
+			map.put("isYy", 2);  
+		}
+		if(null!=orgId&&orgId!=0){
+			map.put("zdOrgId", orgId);  
+		}
+		if(null!=specialtyId&&specialtyId!=0){
+			map.put("specialtyId", specialtyId);  
+		}
+		int total = doctorMapper.count(map); //查询出总条数
+		List<Doctor>  doctorList = null;
+		if(total>0){
+			//按条件查询所有医生
+			doctorList = doctorMapper.selectDoctorInfo(map);
+			List<Doctor> doctorInfo = new ArrayList<Doctor>();
+			for(Doctor doctor:doctorList){
+				DoctorTypePojo pojo = commonDao.getDoctorTypePojo(doctor.getId());
+				if(pojo!=null){
+					doctor.setSubscribeType(pojo.getSubscribeType());
+					doctor.setSubscribeNum(pojo.getNum());
+					doctor.setIsYy(pojo.getIsYy());
+					if(doctor.getIsYy()==1&&doctor.getSubscribeNum()!=0){
+						doctorInfo.add(doctor);
+					}
+				}
+			}	
+			//对可预约医生分页
+			Page<Doctor> pageBean = new Page<Doctor>(doctorInfo.size(),currentPage,pageSize);
+			int fromIndex = (currentPage-1)*pageSize; //开始
+	 
+	        int toIndex = currentPage*pageSize ; //结束
+	        if (toIndex >= doctorInfo.size()) {
+	            toIndex = doctorInfo.size();
+	        }	
+	        //排队
+	        ComparatorObjectDesc comparatorDesc=new ComparatorObjectDesc();	
+			ComparatorObjectAsc comparatorAsc = new ComparatorObjectAsc();
+	        if(queuingNumber!=null){
+	        	if(queuingNumber==1){//多到多
+	        		Collections.sort(doctorInfo, comparatorDesc);
+	        	}else{//少到多
+	        		Collections.sort(doctorInfo, comparatorAsc);
+	        	}
+	        }       
+			pageBean.setList(doctorInfo.subList(fromIndex, toIndex));
+			return pageBean;
+		}		
+		return null;
+	}
+	
+
+	@SuppressWarnings("null")
+	@Override
+	public Doctor getDoctorDetail(Long doctorId) {
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("doctorId", doctorId);	
+		//通过id查出数据库对应的医生信息
+		Doctor doctor =  doctorMapper.selectDoctorDetailById(map);
+		if(doctor!=null){
+			String[] seatTitleStr=null;
+			if(doctor.getSeatTitle()!=null&&!doctor.getSeatTitle().equals("")){
+			if(doctor.getSeatTitle().contains(",")){
+			    seatTitleStr = doctor.getSeatTitle().split(",");
+			    for(int i=0;i<seatTitleStr.length;i++){
+			    	if(seatTitleStr[i].equals("1")){
+			    		seatTitleStr[i]="专家";
+			    	}else{
+			    		seatTitleStr[i]="名医";
+			    	}
+			    }
+				doctor.setSeatTitleStr(seatTitleStr);
+				}else{
+					seatTitleStr[0] = doctor.getSeatTitle();
+					if(seatTitleStr[0].equals("1")){
+			    		seatTitleStr[0]="专家";
+			    	}else{
+			    		seatTitleStr[0]="名医";
+			    	}
+					doctor.setSeatTitleStr(seatTitleStr);
+				}
+			}
+			//查排队数s
+		   FlexVisitQueuePojo flexVisitePojo = commonDao.getFlexVisitQueuePojo(doctorId);
+		   if(flexVisitePojo!=null){
+			   doctor.setQueuingNumber(flexVisitePojo.getQueuingNumber());
+			   doctor.setOnline(flexVisitePojo.isOnline());
+		   }
+		   //查余号数
+		   DoctorTypePojo doctorPojo = commonDao.getDoctorTypePojo(doctorId);	
+		   if(doctorPojo!=null){					   
+			   //余号数
+		       doctor.setSubscribeNum(doctorPojo.getNum());
+		       //是否预约
+		       doctor.setIsYy(doctorPojo.getIsYy());
+		       //是否预约满
+		       doctor.setSubscribeType(doctorPojo.getSubscribeType());
+		   }
+		}	
+		/**
+		 * 设置医生服务人数
+		 */
+		doctor.setServicePerson(mzVisitMapper.selectDoctorServiceCount(doctorId));	
+		return doctor;
+	}
+
+	@Override
+	public Doctor selectDoctorById(Long doctorId) {
+		Doctor doctor = doctorMapper.selectDoctorById(doctorId);
+		FlexVisitQueuePojo flexVisitQueuePojo = commonDao.getFlexVisitQueuePojo(doctor.getId());
+		if(flexVisitQueuePojo != null){
+			doctor.setOnline(flexVisitQueuePojo.isOnline());
+		}
+		return doctor;
+	}
+
+	@Override
+	public String getSpecialtyForSeach(Integer specialtyId) {
+		String specialtyStr = "(" + specialtyId.toString();
+		List<XtSpecialty> list = xtSpecialtyMapper.selectSubsetSpecialtys(specialtyId);
+		if(list.size() > 0){
+			for (XtSpecialty xtSpecialty : list) {
+				specialtyStr = specialtyStr + "," +xtSpecialty.getId().toString();
+			}
+		}
+		specialtyStr = specialtyStr +")";
+		return specialtyStr;
+	}
+
+	@Override
+	public void updateDoctorSubscribeNumber(Long doctorId) {
+		DoctorTypePojo doctorTypePojo = commonDao.getDoctorTypePojo(doctorId);
+		if(doctorTypePojo != null){
+			doctorTypePojo.setNum(doctorTypePojo.getNum() - 1);
+			commonDao.setDoctorTypePojo(doctorId, doctorTypePojo);
+		}
+	}
+}

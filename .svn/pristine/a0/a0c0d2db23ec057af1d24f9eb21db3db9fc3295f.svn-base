@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.ZdOrgMapper" >
+	<resultMap type="com.huatuo.customer.domain.ZdOrg" id="BaseResultMap">
+		<id column="id" property="id"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="name" property="name"/>
+		<result column="py_code" property="pyCode"/>
+		<result column="alias_name" property="aliasName"/>
+		<result column="org_kind" property="orgKind"/>
+		<result column="org_address_id" property="addressId"/>
+		<result column="setup_type" property="setUpType"/>
+		<result column="org_type" property="orgType"/>
+		<result column="scale" property="scale"/>
+		<result column="telephone" property="telephone"/>
+		<result column="email" property="email"/>
+		<result column="description" property="description"/>
+		<result column="d_code" property="dCode"/>
+		<result column="del_flag" property="delFlag"/>
+		<result column="is_open" property="isOpen"/>
+		<result column="url" property="url"/>
+		<result column="org_apply_id" property="orgApplyId"/>
+		<result column="org_company_id" property="orgCompanyId"/>
+		<result column="is_task" property="isTask"/>
+		<result column="authorizes" property="authorizes"/>
+		<result column="org_img" property="orgImg"/>
+		<result column="create_time" property="createTime"/>
+		<result column="province_code" property="provinceCode"/>
+		<result column="city_code" property="cityCode"/>
+		<result column="county_code" property="countCode"/>
+		<result column="road_code" property="roadCode"/>
+		<result column="province" property="province"/>
+		<result column="city" property="city"/>
+		<result column="county" property="county"/>
+		<result column="road" property="road"/>
+		<result column="address" property="address"/>
+	</resultMap>
+	
+	<sql id="BaseColumn">
+		id, parent_id, name, py_code, alias_name, org_kind, setup_type, org_type, scale, 
+		telephone, email, description, d_code, del_flag, is_open, url, org_apply_id, org_company_id, 
+		is_task, authorizes, org_img, create_time, province_code, city_code, county_code, road_code, 
+		province, city, county, road, address
+	</sql>
+	<select id="seachOrgList" parameterType="com.huatuo.customer.query.ZdOrgQuery" resultMap="BaseResultMap">
+		select 
+			<include refid="BaseColumn"/>
+			, xzo.address_id org_address_id
+		from xt_zd_org xzo left
+			join xt_address xa on xzo.address_id = xa.address_id
+		<where>
+			<if test="keyWord != null">
+				and xzo.name like #{keyWord,jdbcType=OTHER}
+			</if>
+			<if test="provinceCode != null">
+				and `xa`.province_code = #{provinceCode,jdbcType=OTHER}
+			</if>
+			<if test="cityCode != null">
+				and `xa`.city_code = #{cityCode,jdbcType=OTHER}
+			</if>
+		</where>
+		limit #{start,jdbcType=OTHER}, #{pageSize,jdbcType=OTHER}
+	</select>
+	
+	<select id="seachOrgCount" parameterType="com.huatuo.customer.query.ZdOrgQuery" resultType="int">
+		select count(xzo.id)
+		from xt_zd_org xzo left
+			join xt_address xa on xzo.address_id = xa.address_id
+		<where>
+			<if test="keyWord != null">
+				and xzo.name like #{keyWord,jdbcType=OTHER}
+			</if>
+			<if test="provinceCode != null">
+				and `xa`.province_code = #{provinceCode,jdbcType=OTHER}
+			</if>
+			<if test="cityCode != null">
+				and `xa`.city_code = #{cityCode,jdbcType=OTHER}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectOrgDetailsById" parameterType="com.huatuo.customer.query.ZdOrgQuery" resultMap="BaseResultMap">
+		select 
+			<include refid="BaseColumn"/>
+			, xzo.address_id org_address_id
+		from xt_zd_org xzo left
+			join xt_address xa on xzo.address_id = xa.address_id
+		<where>
+			<if test="orgId != null">
+				and `xzo`.id = #{orgId,jdbcType=OTHER}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectDoctorCountByOrgId" parameterType="com.huatuo.customer.query.ZdOrgQuery" resultType="int">
+		select count(id)
+		from xt_doctor 
+		where zd_org_id = #{orgId,jdbcType=OTHER}
+	</select>
+	
+	<select id="selectDoctorCountForSpecialist" parameterType="com.huatuo.customer.query.ZdOrgQuery" resultType="int">
+		select count(id)
+		from xt_doctor 
+		where zd_org_id = #{orgId,jdbcType=OTHER}
+		and seat_title like '%2%'
+	</select>
+	
+	<select id="selectOrgByOrgId" parameterType="int" resultMap="BaseResultMap">
+		select 
+			<include refid="BaseColumn"/>
+		, xzo.address_id org_address_id
+		from xt_zd_org xzo
+			left join xt_address xa on xzo.address_id = xa.address_id
+		where id = #{orgId,jdbcType=OTHER}
+	</select>
+	
+	<!-- 自定义 -->
+	<select id="listOrgs" parameterType="map" resultType="int">
+		select id
+		from xt_zd_org xzo
+		left join xt_address xta
+		on(xzo.address_id = xta.address_id)
+		where 1=1
+		<if test="provinceCode != null">
+			and xta.province_code = #{provinceCode}
+		</if>
+		<if test="cityCode != null">
+			and xta.city_code = #{cityCode}
+		</if>
+		<if test="countyCode != null">
+			and xta.county_code = #{countyCode}
+		</if>
+	</select>
+	
+	
+	
+	
+	
+	
+</mapper>

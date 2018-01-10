@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtHealthSportMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtHealthSport" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="steps" property="steps" jdbcType="VARCHAR" />
+    <result column="distance" property="distance" jdbcType="DOUBLE" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, steps, distance, user_id, record_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_health_sport
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    sport.id, sport.steps, sport.distance, sport.user_id, sport.record_time
+    from xt_health_sport sport
+    left join xt_user user
+    on user.id = sport.user_id
+    where 1=1
+    <if test="userId != null" >
+        and sport.user_id = #{userId,jdbcType=VARCHAR}
+    </if>
+    <if test="recordTime != null" >
+        and sport.record_time = #{recordTime,jdbcType=VARCHAR}
+    </if>
+  </select>
+  
+  
+  
+  
+  
+  <select id="selectToday" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtHealthSport" >
+    select 
+   	<include refid="Base_Column_List"/>
+    from xt_health_sport sport
+    where 1=1
+    <if test="userId != null" >
+        and sport.user_id = #{userId,jdbcType=VARCHAR}
+    </if>
+    <if test="recordTime != null" >
+        and date(sport.record_time) = date(#{recordTime,jdbcType=VARCHAR})
+    </if>
+  </select>
+  
+  
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from xt_health_sport
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtHealthSport" >
+    insert into xt_health_sport (id, steps, distance, 
+      user_id, record_time)
+    values (#{id,jdbcType=VARCHAR}, #{steps,jdbcType=VARCHAR}, #{distance,jdbcType=DOUBLE}, 
+      #{userId,jdbcType=VARCHAR}, #{recordTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtHealthSport" >
+    insert into xt_health_sport
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="steps != null" >
+        steps,
+      </if>
+      <if test="distance != null" >
+        distance,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="steps != null" >
+        #{steps,jdbcType=VARCHAR},
+      </if>
+      <if test="distance != null" >
+        #{distance,jdbcType=DOUBLE},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtHealthSport" >
+    update xt_health_sport
+    <set >
+      <if test="steps != null" >
+        steps = #{steps,jdbcType=VARCHAR},
+      </if>
+      <if test="distance != null" >
+        distance = #{distance,jdbcType=DOUBLE},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtHealthSport" >
+    update xt_health_sport
+    set steps = #{steps,jdbcType=VARCHAR},
+      distance = #{distance,jdbcType=DOUBLE},
+      user_id = #{userId,jdbcType=VARCHAR},
+      record_time = #{recordTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <cache />
+</mapper>

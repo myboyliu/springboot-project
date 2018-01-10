@@ -1,0 +1,68 @@
+package com.huatuo.customer.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.huatuo.customer.domain.DtUserPackage;
+import com.huatuo.customer.domain.PaymentInfoPojo;
+
+public interface DtUserPackageMapper {
+    int deleteByPrimaryKey(String userPackageId);
+
+    int insert(DtUserPackage record);
+
+    int insertSelective(DtUserPackage record);
+
+    DtUserPackage selectByPrimaryKey(String userPackageId);
+
+    int updateByPrimaryKeySelective(DtUserPackage record);
+
+    int updateByPrimaryKey(DtUserPackage record);
+    
+    
+    //自定义
+    /**
+     * 保存用户和套餐的签约信息
+     * @param userPackage
+     * @return
+     */
+	int saveDtUserPackage(DtUserPackage userPackage);
+
+	/**
+	 * 查询套餐和用户的关系(按结束时间从大到小排序查询)
+	 * @param map
+	 * @return
+	 */
+	List<DtUserPackage> getDtUserPackage(Map<String, Object> map);
+
+	/**
+	 * 修改超时的套餐用户关系状态
+	 * @param userId		用户id
+	 * @param dtTeamId		团队id
+	 * @param teamPackageId	套餐id
+	 * @param nowTime		当前时间	
+	 * @param delFlag 		是否过期: 0.否, 1.是
+	 * @return
+	 */
+	int updateToDelflag(@Param("userId") String userId, 
+						@Param("dtTeamId") String dtTeamId,
+						@Param("teamPackageId") String teamPackageId, 
+						@Param("nowTime") String nowTime, 
+						@Param("delFlag") Integer delFlag);
+	
+	/**
+	 * 查询用户的孕妈家庭套餐
+	 * @param userId
+	 * @return
+	 */
+	DtUserPackage selectUserPackagesByUserIdForPregnantMom(String userId);
+
+	/**
+	 * 孕妈套餐付款信息
+	 * @param orderNo		订单号
+	 * @return
+	 */
+	PaymentInfoPojo queryPaymentInfo(@Param("orderNo") String orderNo);
+}

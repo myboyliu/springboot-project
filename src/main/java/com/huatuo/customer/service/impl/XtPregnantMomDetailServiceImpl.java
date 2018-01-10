@@ -1,0 +1,148 @@
+package com.huatuo.customer.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.huatuo.customer.base.enums.FileType;
+import com.huatuo.customer.base.util.ImageUploadUtil;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.dao.DtUserPackageMapper;
+import com.huatuo.customer.dao.XtPregnantMomDetailMapper;
+import com.huatuo.customer.dao.XtPregnantMomDetailReplyMapper;
+import com.huatuo.customer.dao.XtPregnantMomMapper;
+import com.huatuo.customer.dao.XtPregnantMomTeamMapMapper;
+import com.huatuo.customer.dao.XtServiceFileMapper;
+import com.huatuo.customer.dao.XtZdPregnantCheckProjectMapper;
+import com.huatuo.customer.dao.XtZdPregnantingStageSuggestionMapper;
+import com.huatuo.customer.domain.DtUserPackage;
+import com.huatuo.customer.domain.XtFile;
+import com.huatuo.customer.domain.XtPregnantMom;
+import com.huatuo.customer.domain.XtPregnantMomDetail;
+import com.huatuo.customer.domain.XtPregnantMomTeamMapKey;
+import com.huatuo.customer.domain.XtZdPregnantingStageSuggestion;
+import com.huatuo.customer.query.PregnantMomQuery;
+import com.huatuo.customer.query.ServiceFileQuery;
+import com.huatuo.customer.request.PregnantMomParam;
+import com.huatuo.customer.response.PregnantMomResponse;
+import com.huatuo.customer.service.XtPregnantMomDetailService;
+
+@Service
+@Transactional
+public class XtPregnantMomDetailServiceImpl implements XtPregnantMomDetailService {
+	@Autowired
+	private XtPregnantMomMapper xtPregnantMomMapper;
+
+	@Autowired
+	private XtPregnantMomDetailMapper xtPregnantMomDetailMapper;
+
+	@Autowired
+	private XtServiceFileMapper xtServiceFileMapper;
+
+	@Autowired
+	private XtZdPregnantingStageSuggestionMapper xtZdPregnantingStageSuggestionMapper;
+
+	@Autowired
+	private XtPregnantMomDetailReplyMapper xtPregnantMomDetailReplyMapper;
+
+	@Autowired
+	private DtUserPackageMapper dtUserPackageMapper;
+
+	@Autowired
+	private XtZdPregnantCheckProjectMapper xtZdPregnantCheckProjectMapper;
+	
+	@Autowired
+	private XtPregnantMomTeamMapMapper mapMapper;
+
+	@Override
+	public Integer insertPregnantMomDetail(PregnantMomParam pregnantMomParam) throws Exception {
+		XtPregnantMomDetail xtPregnantMomDetail = pregnantMomParam.getXtPregnantMomDetail();
+		// 判断是否补录
+		if (StringUtils.isEmpty(xtPregnantMomDetail.getRecordTime())) {
+			xtPregnantMomDetail.setRecordTime(Utils.getNowDate());
+			// 不是补录
+			xtPregnantMomDetail.setIsAdditional(1);
+		} else {
+			xtPregnantMomDetail.setIsAdditional(0);
+		}
+		xtPregnantMomDetail.setIsLookedByDoctor(1);
+		xtPregnantMomDetail.setHasNewReply(1);
+		//保存
+		int insertCode = xtPregnantMomDetailMapper.insertSelective(xtPregnantMomDetail);
+		//得到用户购买的套餐信息对应的医生团队id列表
+		List<String> ids = dtUserPackageMapper.getDoctorTeamIds(xtPregnantMomDetail.getPregnantMomId());
+		//放中间表
+		String pregnantMomId = xtPregnantMomDetail.getId()+"";
+		for (int i = 0; i < ids.size(); i++) {
+			XtPregnantMomTeamMapKey record = new XtPregnantMomTeamMapKey();
+			record.setPregnantMomId(pregnantMomId);
+			record.setTeamId(ids.get(i));
+			mapMapper.insertSelective(record);
+		}
+		/**
+		 * 图片上传
+		 */
+		if (insertCode > 0 && pregnantMomParam.getFiles().size() > 0) {
+			XtFile xtfile = new XtFile();
+			xtfile.setUploaderId(Long.parseLong(pregnantMomParam.getUserId()));
+			xtfile.setDescription("孕妈心情记录");
+			return ImageUploadUtil.ImageUpload(pregnantMomParam.getFiles(), xtPregnantMomDetail.getId(), xtfile,
+					FileType.PM.getIndex(), 1).size() + insertCode;
+		}
+		return insertCode;
+	}
+
+	@Override
+	public PregnantMomResponse selectregnantMomDetailsByUserId(PregnantMomQuery pregnantMomQuery) throws Exception {
+		XtPregnantMom xtPregnantMom = xtPregnantMomMapper.selectByUid(pregnantMomQuery.getUserId());
+		PregnantMomResponse pregnantMomResponse = Utils.calculatePregnantData(xtPregnantMom.getLastMenstrualDate(),
+				xtPregnantMom.getPreProductionDate(), pregnantMomQuery.getNowDate());
+		pregnantMomResponse.setPregnantMom(xtPregnantMom);
+
+		//孕妈记录列表
+		List<XtPregnantMomDetail> list = xtPregnantMomDetailMapper.selectPregnantMomDetailsByUserId(pregnantMomQuery);
+		for (XtPregnantMomDetail xtPregnantMomDetail : list) {
+			ServiceFileQuery serviceFileQuery = new ServiceFileQuery();
+			serviceFileQuery.setTypeId(xtPregnantMomDetail.getId());
+			serviceFileQuery.setServiceType(FileType.PM.getIndex());
+			xtPregnantMomDetail.setXtServiceFiles(xtServiceFileMapper.selectXtServiceFilesByQuery(serviceFileQuery));
+			//放入评论
+			xtPregnantMomDetail.setXtPregnantMomDetailReplys(xtPregnantMomDetailReplyMapper
+					.selectPregnantMomDetailReplyByPregnantMomDetailId(xtPregnantMomDetail.getId()));
+			String[] projectIds = null;
+			if (xtPregnantMomDetail.getAntenatalCareProjectIds().length() > 0) {
+				projectIds = xtPregnantMomDetail.getAntenatalCareProjectIds().split(",");
+				List<String> productNames = new ArrayList<String>();
+				for (int i = 0; i < projectIds.length; i++) {
+					productNames.add(xtZdPregnantCheckProjectMapper.selectByPrimaryKey(projectIds[i]).getProjectName());
+				}
+				xtPregnantMomDetail.setProjectNames(productNames);
+			}
+		}
+		pregnantMomResponse.setXtPregnantMomDetails(list);
+		XtZdPregnantingStageSuggestion xtZdPregnantingStageSuggestion = xtZdPregnantingStageSuggestionMapper
+				.selectPregnantingStageSuggestionByStage(Integer.parseInt(pregnantMomResponse.getPregnantWeek()) / 4);
+		if (xtZdPregnantingStageSuggestion != null) {
+			pregnantMomResponse.setPregnantingSuggestion(xtZdPregnantingStageSuggestion.getContent());
+		}
+		pregnantMomResponse.setPregnantingSuggestion(XtPregnantMomServiceImpl.s[Integer.parseInt(pregnantMomResponse.getPregnantWeek())]);
+		DtUserPackage dto = dtUserPackageMapper.selectUserPackagesByUserIdForPregnantMom(pregnantMomQuery.getUserId());
+		int isSignFamilyDoctor;// 用于孕妈套餐状态判断，(0:未购买套餐，1:已购买套餐 ，2:套餐过期)
+		if (null == dto) {
+			isSignFamilyDoctor = 0;
+		} else if (dto.getDelFlag() == 1) {
+			isSignFamilyDoctor = 2;
+		} else {
+			isSignFamilyDoctor = 1;
+		}
+		pregnantMomResponse.setIsSignFamilyDoctor(isSignFamilyDoctor);
+		return pregnantMomResponse;
+	}
+
+}

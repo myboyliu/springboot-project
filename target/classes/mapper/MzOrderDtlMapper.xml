@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.MzOrderDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.MzOrderDtl" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_id" property="orderId" jdbcType="BIGINT" />
+    <result column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="is_parent" property="isParent" jdbcType="INTEGER" />
+    <result column="drug_id" property="drugId" jdbcType="BIGINT" />
+    <result column="drug_name" property="drugName" jdbcType="VARCHAR" />
+    <result column="drug_type" property="drugType" jdbcType="INTEGER" />
+    <result column="specification" property="specification" jdbcType="VARCHAR" />
+    <result column="dose_once" property="doseOnce" jdbcType="DOUBLE" />
+    <result column="dose_unit" property="doseUnit" jdbcType="INTEGER" />
+    <result column="use_once" property="useOnce" jdbcType="DOUBLE" />
+    <result column="use_unit" property="useUnit" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="amount_unit" property="amountUnit" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="order_doctor" property="orderDoctor" jdbcType="BIGINT" />
+    <result column="order_time" property="orderTime" jdbcType="VARCHAR" />
+    <result column="confirm_doctor" property="confirmDoctor" jdbcType="BIGINT" />
+    <result column="confirm_time" property="confirmTime" jdbcType="VARCHAR" />
+    <result column="days" property="days" jdbcType="INTEGER" />
+    <result column="supply_id" property="supplyId" jdbcType="INTEGER" />
+    <result column="frequ_id" property="frequId" jdbcType="INTEGER" />
+    <result column="FIRM_ID" property="firmId" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.huatuo.customer.domain.MzOrderDtl" extends="BaseResultMap" >
+    <result column="order_explain" property="orderExplain" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_id, group_id, is_parent, drug_id, drug_name, drug_type, specification, 
+    dose_once, dose_unit, use_once, use_unit, amount, amount_unit, price, order_doctor, 
+    order_time, confirm_doctor, confirm_time, days, supply_id, frequ_id, FIRM_ID, ITEM_NO
+  </sql>
+  <sql id="Blob_Column_List" >
+    order_explain
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from mz_order_dtl
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mz_order_dtl
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.MzOrderDtl" >
+    insert into mz_order_dtl (id, order_id, group_id, 
+      is_parent, drug_id, drug_name, 
+      drug_type, specification, dose_once, 
+      dose_unit, use_once, use_unit, 
+      amount, amount_unit, price, 
+      order_doctor, order_time, confirm_doctor, 
+      confirm_time, days, supply_id, 
+      frequ_id, FIRM_ID, ITEM_NO, 
+      order_explain)
+    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{groupId,jdbcType=INTEGER}, 
+      #{isParent,jdbcType=INTEGER}, #{drugId,jdbcType=BIGINT}, #{drugName,jdbcType=VARCHAR}, 
+      #{drugType,jdbcType=INTEGER}, #{specification,jdbcType=VARCHAR}, #{doseOnce,jdbcType=DOUBLE}, 
+      #{doseUnit,jdbcType=INTEGER}, #{useOnce,jdbcType=DOUBLE}, #{useUnit,jdbcType=INTEGER}, 
+      #{amount,jdbcType=DOUBLE}, #{amountUnit,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, 
+      #{orderDoctor,jdbcType=BIGINT}, #{orderTime,jdbcType=VARCHAR}, #{confirmDoctor,jdbcType=BIGINT}, 
+      #{confirmTime,jdbcType=VARCHAR}, #{days,jdbcType=INTEGER}, #{supplyId,jdbcType=INTEGER}, 
+      #{frequId,jdbcType=INTEGER}, #{firmId,jdbcType=VARCHAR}, #{itemNo,jdbcType=INTEGER}, 
+      #{orderExplain,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.MzOrderDtl" >
+    insert into mz_order_dtl
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="groupId != null" >
+        group_id,
+      </if>
+      <if test="isParent != null" >
+        is_parent,
+      </if>
+      <if test="drugId != null" >
+        drug_id,
+      </if>
+      <if test="drugName != null" >
+        drug_name,
+      </if>
+      <if test="drugType != null" >
+        drug_type,
+      </if>
+      <if test="specification != null" >
+        specification,
+      </if>
+      <if test="doseOnce != null" >
+        dose_once,
+      </if>
+      <if test="doseUnit != null" >
+        dose_unit,
+      </if>
+      <if test="useOnce != null" >
+        use_once,
+      </if>
+      <if test="useUnit != null" >
+        use_unit,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="amountUnit != null" >
+        amount_unit,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="orderDoctor != null" >
+        order_doctor,
+      </if>
+      <if test="orderTime != null" >
+        order_time,
+      </if>
+      <if test="confirmDoctor != null" >
+        confirm_doctor,
+      </if>
+      <if test="confirmTime != null" >
+        confirm_time,
+      </if>
+      <if test="days != null" >
+        days,
+      </if>
+      <if test="supplyId != null" >
+        supply_id,
+      </if>
+      <if test="frequId != null" >
+        frequ_id,
+      </if>
+      <if test="firmId != null" >
+        FIRM_ID,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="orderExplain != null" >
+        order_explain,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=INTEGER},
+      </if>
+      <if test="isParent != null" >
+        #{isParent,jdbcType=INTEGER},
+      </if>
+      <if test="drugId != null" >
+        #{drugId,jdbcType=BIGINT},
+      </if>
+      <if test="drugName != null" >
+        #{drugName,jdbcType=VARCHAR},
+      </if>
+      <if test="drugType != null" >
+        #{drugType,jdbcType=INTEGER},
+      </if>
+      <if test="specification != null" >
+        #{specification,jdbcType=VARCHAR},
+      </if>
+      <if test="doseOnce != null" >
+        #{doseOnce,jdbcType=DOUBLE},
+      </if>
+      <if test="doseUnit != null" >
+        #{doseUnit,jdbcType=INTEGER},
+      </if>
+      <if test="useOnce != null" >
+        #{useOnce,jdbcType=DOUBLE},
+      </if>
+      <if test="useUnit != null" >
+        #{useUnit,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DOUBLE},
+      </if>
+      <if test="amountUnit != null" >
+        #{amountUnit,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="orderDoctor != null" >
+        #{orderDoctor,jdbcType=BIGINT},
+      </if>
+      <if test="orderTime != null" >
+        #{orderTime,jdbcType=VARCHAR},
+      </if>
+      <if test="confirmDoctor != null" >
+        #{confirmDoctor,jdbcType=BIGINT},
+      </if>
+      <if test="confirmTime != null" >
+        #{confirmTime,jdbcType=VARCHAR},
+      </if>
+      <if test="days != null" >
+        #{days,jdbcType=INTEGER},
+      </if>
+      <if test="supplyId != null" >
+        #{supplyId,jdbcType=INTEGER},
+      </if>
+      <if test="frequId != null" >
+        #{frequId,jdbcType=INTEGER},
+      </if>
+      <if test="firmId != null" >
+        #{firmId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=INTEGER},
+      </if>
+      <if test="orderExplain != null" >
+        #{orderExplain,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.MzOrderDtl" >
+    update mz_order_dtl
+    <set >
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null" >
+        group_id = #{groupId,jdbcType=INTEGER},
+      </if>
+      <if test="isParent != null" >
+        is_parent = #{isParent,jdbcType=INTEGER},
+      </if>
+      <if test="drugId != null" >
+        drug_id = #{drugId,jdbcType=BIGINT},
+      </if>
+      <if test="drugName != null" >
+        drug_name = #{drugName,jdbcType=VARCHAR},
+      </if>
+      <if test="drugType != null" >
+        drug_type = #{drugType,jdbcType=INTEGER},
+      </if>
+      <if test="specification != null" >
+        specification = #{specification,jdbcType=VARCHAR},
+      </if>
+      <if test="doseOnce != null" >
+        dose_once = #{doseOnce,jdbcType=DOUBLE},
+      </if>
+      <if test="doseUnit != null" >
+        dose_unit = #{doseUnit,jdbcType=INTEGER},
+      </if>
+      <if test="useOnce != null" >
+        use_once = #{useOnce,jdbcType=DOUBLE},
+      </if>
+      <if test="useUnit != null" >
+        use_unit = #{useUnit,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DOUBLE},
+      </if>
+      <if test="amountUnit != null" >
+        amount_unit = #{amountUnit,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="orderDoctor != null" >
+        order_doctor = #{orderDoctor,jdbcType=BIGINT},
+      </if>
+      <if test="orderTime != null" >
+        order_time = #{orderTime,jdbcType=VARCHAR},
+      </if>
+      <if test="confirmDoctor != null" >
+        confirm_doctor = #{confirmDoctor,jdbcType=BIGINT},
+      </if>
+      <if test="confirmTime != null" >
+        confirm_time = #{confirmTime,jdbcType=VARCHAR},
+      </if>
+      <if test="days != null" >
+        days = #{days,jdbcType=INTEGER},
+      </if>
+      <if test="supplyId != null" >
+        supply_id = #{supplyId,jdbcType=INTEGER},
+      </if>
+      <if test="frequId != null" >
+        frequ_id = #{frequId,jdbcType=INTEGER},
+      </if>
+      <if test="firmId != null" >
+        FIRM_ID = #{firmId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=INTEGER},
+      </if>
+      <if test="orderExplain != null" >
+        order_explain = #{orderExplain,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.huatuo.customer.domain.MzOrderDtl" >
+    update mz_order_dtl
+    set order_id = #{orderId,jdbcType=BIGINT},
+      group_id = #{groupId,jdbcType=INTEGER},
+      is_parent = #{isParent,jdbcType=INTEGER},
+      drug_id = #{drugId,jdbcType=BIGINT},
+      drug_name = #{drugName,jdbcType=VARCHAR},
+      drug_type = #{drugType,jdbcType=INTEGER},
+      specification = #{specification,jdbcType=VARCHAR},
+      dose_once = #{doseOnce,jdbcType=DOUBLE},
+      dose_unit = #{doseUnit,jdbcType=INTEGER},
+      use_once = #{useOnce,jdbcType=DOUBLE},
+      use_unit = #{useUnit,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DOUBLE},
+      amount_unit = #{amountUnit,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      order_doctor = #{orderDoctor,jdbcType=BIGINT},
+      order_time = #{orderTime,jdbcType=VARCHAR},
+      confirm_doctor = #{confirmDoctor,jdbcType=BIGINT},
+      confirm_time = #{confirmTime,jdbcType=VARCHAR},
+      days = #{days,jdbcType=INTEGER},
+      supply_id = #{supplyId,jdbcType=INTEGER},
+      frequ_id = #{frequId,jdbcType=INTEGER},
+      FIRM_ID = #{firmId,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=INTEGER},
+      order_explain = #{orderExplain,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.MzOrderDtl" >
+    update mz_order_dtl
+    set order_id = #{orderId,jdbcType=BIGINT},
+      group_id = #{groupId,jdbcType=INTEGER},
+      is_parent = #{isParent,jdbcType=INTEGER},
+      drug_id = #{drugId,jdbcType=BIGINT},
+      drug_name = #{drugName,jdbcType=VARCHAR},
+      drug_type = #{drugType,jdbcType=INTEGER},
+      specification = #{specification,jdbcType=VARCHAR},
+      dose_once = #{doseOnce,jdbcType=DOUBLE},
+      dose_unit = #{doseUnit,jdbcType=INTEGER},
+      use_once = #{useOnce,jdbcType=DOUBLE},
+      use_unit = #{useUnit,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DOUBLE},
+      amount_unit = #{amountUnit,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      order_doctor = #{orderDoctor,jdbcType=BIGINT},
+      order_time = #{orderTime,jdbcType=VARCHAR},
+      confirm_doctor = #{confirmDoctor,jdbcType=BIGINT},
+      confirm_time = #{confirmTime,jdbcType=VARCHAR},
+      days = #{days,jdbcType=INTEGER},
+      supply_id = #{supplyId,jdbcType=INTEGER},
+      frequ_id = #{frequId,jdbcType=INTEGER},
+      FIRM_ID = #{firmId,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <cache />
+  <!-- 根据处方id查询处方详情 -->
+  <select id="getListByOrderId" parameterType="long" resultMap="BaseResultMap">
+  	SELECT * FROM mz_order_dtl WHERE order_id = #{orderId}
+  </select>
+</mapper>

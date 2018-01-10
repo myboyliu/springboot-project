@@ -1,0 +1,238 @@
+package com.huatuo.customer.controller;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.huatuo.customer.base.enums.ServiceType;
+import com.huatuo.customer.base.response.BaseResponse;
+import com.huatuo.customer.base.util.Utils;
+import com.huatuo.customer.domain.Doctor;
+import com.huatuo.customer.domain.MzPatient;
+import com.huatuo.customer.domain.MzVisit;
+import com.huatuo.customer.domain.PayOrder;
+import com.huatuo.customer.domain.XtPerson;
+import com.huatuo.customer.domain.XtReservation;
+import com.huatuo.customer.query.ReservationQuery;
+import com.huatuo.customer.query.ZdOrgQuery;
+import com.huatuo.customer.request.VisitForm;
+import com.huatuo.customer.response.MzVisitResponse;
+import com.huatuo.customer.response.ReservationResponse;
+import com.huatuo.customer.service.AddressService;
+import com.huatuo.customer.service.DoctorService;
+import com.huatuo.customer.service.DtTeamService;
+import com.huatuo.customer.service.LoginService;
+import com.huatuo.customer.service.MzVisitService;
+import com.huatuo.customer.service.PatientService;
+import com.huatuo.customer.service.PayOrderService;
+import com.huatuo.customer.service.PersonFamilyService;
+import com.huatuo.customer.service.PersonService;
+import com.huatuo.customer.service.SpecialtyService;
+import com.huatuo.customer.service.XtReservationService;
+import com.huatuo.customer.service.ZdOrgService;
+import com.huatuo.register.domain.response.LoginDataResponse;
+
+@RequestMapping(value = "visit")
+@RestController
+/**
+ * 业务订单模块
+ * @author master
+ *
+ */
+public class MzVisitController {
+	
+	@Autowired
+	private MzVisitService mzVisitService;
+	
+	@Autowired
+	private AddressService addressService;
+	
+	@Autowired
+	private PersonService personService;
+	
+	@Autowired
+	private PersonFamilyService personFamilyService;
+	
+	@Autowired
+	private PatientService patientService;
+	
+	@Autowired
+	private PayOrderService payOrderService;
+	
+	@Autowired
+	private DoctorService doctorService;
+	
+	@Autowired
+	private ZdOrgService zdOrgService;
+	
+	@Autowired
+	private SpecialtyService specialtyService;
+	
+	@Autowired
+	private XtReservationService xtReservationService;
+	
+	@Autowired
+	private LoginService loginService;
+	
+	@Autowired
+	private DtTeamService dtTeamService;
+	
+//	private static final Logger logger = LoggerFactory.getLogger(MzVisitController.class);
+	
+	/**查询医生预约服务设置
+	 * @param reservationQuery
+	 * @return
+	 * @throws Exception 
+	 */
+	@PostMapping(value = "selectReservationsByDoctorUid")
+	public Object selectReservationsByDoctorUid(
+			@RequestBody ReservationQuery reservationQuery) throws Exception{
+		ReservationResponse reservationResponse = new ReservationResponse();
+		reservationQuery.setDoctorUid(reservationQuery.getDoctorUid());
+		List<XtReservation> reservations = xtReservationService.selectReservationsByDoctorUid(reservationQuery);
+		reservationResponse.setReservations(reservations);
+		reservationResponse.setCurrentDate(Utils.getTodayOrYestorday(true));
+		reservationResponse.setCode(BaseResponse.SUCCESS_CODE);
+		reservationResponse.setMessage(BaseResponse.SUCCESS_MESSAGE);
+		return reservationResponse;
+	}
+	
+	/**
+	 * 保存一条业务流程所涉及到的信息
+	 * @return
+	 * @throws Exception 
+	 */
+	@PostMapping(value = "saveVisit")
+	public Object saveVisit(
+			@RequestBody VisitForm visitForm, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		MzVisitResponse mzVisitResponse = new MzVisitResponse();
+		Boolean isFamilydoctor = false;
+		isFamilydoctor = visitForm.getServiceType() != null ? visitForm.getServiceType().equals(ServiceType.FAMILYDOCTOR.getIndex()) : false;
+		LoginDataResponse loginDataResponse =  loginService.getUserInfoByLogin(Utils.getToken(request));
+		//获取userId
+		Long userId = Long.parseLong(loginDataResponse.getXtUser().getUserId());
+		visitForm.setUserId(userId);
+		XtPerson xtPerson = personService.selectPersonByUserId(userId);
+		Long addressId = isFamilydoctor ? xtPerson.getAddressId() : addressService.saveXtAddress(visitForm);
+		if(addressId != null){
+			visitForm.setAddressId(addressId);
+			if(visitForm.getSelfFlag() == 0){
+				personService.updatePerson(visitForm);
+			}else{
+				if(!isFamilydoctor){
+					personFamilyService.updatePersonFamilyByVisitFrom(visitForm);
+				}
+			}
+			MzPatient mzPatient = null;
+			if(isFamilydoctor){
+				visitForm.setPatientName(xtPerson.getName());
+				visitForm.setSex(xtPerson.getSex());
+				visitForm.setMobile(xtPerson.getHomeTel());
+				visitForm.setBirthdate(xtPerson.getBirthdate());
+				visitForm.setSocialId(xtPerson.getSocialId());
+				visitForm.setAllergicHistory(xtPerson.getAllergicHistory());
+				mzPatient = patientService.savePatientByVisitForm(visitForm);
+			}else{
+				mzPatient = patientService.savePatientByVisitForm(visitForm);
+			}
+			if(mzPatient.getPatientId() > 0L){
+				visitForm.setPatientId(mzPatient == null ? 0 : mzPatient.getPatientId());
+				MzVisit mzVisit = mzVisitService.saveVisitByVisitForm(visitForm);
+				if(mzVisit != null){
+					PayOrder payOrder = payOrderService.savePayOrderByVisitForm(visitForm, mzVisit, mzPatient);
+					if(payOrder != null){
+						Doctor doctor = doctorService.selectDoctorById(visitForm.getDoctorId());
+						mzVisitResponse.setOrderNo(payOrder.getOrderNo());
+						mzVisitResponse.setDoctor(doctor);
+						MzVisit visit = mzVisitService.selectVisitById(payOrder.getServiceId());
+						mzVisitResponse.setMzVisit(visit);
+						ZdOrgQuery zdOrgQuery = new ZdOrgQuery();
+						zdOrgQuery.setOrgId(doctor.getZdOrgId());
+						mzVisitResponse.setOrgName(zdOrgService.selectOrgDetailsById(zdOrgQuery).getName());
+						mzVisitResponse.setSpecialtyName(specialtyService.selectSpecialtyById(doctor.getSpecialtyId()).getName());
+						mzVisitResponse.setServicePrice(payOrder.getPrice());
+						mzVisitResponse.setCode(BaseResponse.SUCCESS_CODE);
+						mzVisitResponse.setMessage(BaseResponse.SUCCESS_MESSAGE);
+						doctorService.updateDoctorSubscribeNumber(visitForm.getDoctorId());
+						return mzVisitResponse;
+					}else{
+						throw new RuntimeException("支付订单保存失败");
+					}
+				}else{
+					throw new RuntimeException("业务订单保存失败");
+				}
+			}else{
+				throw new RuntimeException("患者保存失败");
+			}
+		}else{
+			throw new RuntimeException("地址保存失败");
+		}
+	}
+	
+	/**
+	 * 修改业务订单
+	 * @param mzVisit
+	 * @return
+	 */
+	@PostMapping(value = "updateVisit")
+	public Object updateVisit(
+			@RequestBody MzVisit mzVisit){
+		MzVisitResponse mzVisitResponse = new MzVisitResponse();
+		if(mzVisitService.updateMzVisit(mzVisit)  > 0){
+			mzVisitResponse.setCode(BaseResponse.SUCCESS_CODE);
+			mzVisitResponse.setMessage(BaseResponse.SUCCESS_MESSAGE);
+		}else{
+			mzVisitResponse.setCode(BaseResponse.ERROR_CODE);
+			mzVisitResponse.setMessage(BaseResponse.ERROR_MESSAGE);
+		}
+		return mzVisitResponse;
+	}
+	
+	
+	
+	@ApiOperation(value = "免费咨询创建订单")
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "patientId", value = "患者id", paramType = "query", required = true, dataType = "int"),
+		@ApiImplicitParam(name = "specialtyName", value = "科室名称", paramType = "query", required = true, dataType = "String"),
+		@ApiImplicitParam(name = "describe", value = "描述", paramType = "query", required = true, dataType = "String")
+	})
+	@GetMapping(value="saveOrder")
+	public BaseResponse save(HttpServletRequest request,Long patientId,String specialtyName,String describe)throws Exception{
+		BaseResponse rep = new BaseResponse();
+		MzVisit  visit=new MzVisit();
+		visit.setPatientId(patientId);
+		LoginDataResponse loginDataResponse =  loginService.getUserInfoByLogin(Utils.getToken(request));
+		//获取userId
+		Long userId = Long.parseLong(loginDataResponse.getXtUser().getUserId());
+		visit.setUserId(userId);
+		visit.setVisitDept(specialtyName);
+		XtPerson xtPerson = personService.selectPersonByUserId(patientId);//查询出患者信息
+		//组装订单数据
+		if(null != xtPerson){
+			visit.setPatientId(patientId);
+			visit.setAge(String.valueOf(xtPerson.getAge()));
+			visit.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+			visit.setVisitType(1);
+			visit.setReservationNum(1);
+			visit.setReservationTask(0);
+			visit.setIllnessDescribe(describe);
+			visit.setSelfFlag(0);
+			visit.setMzCode("0");
+		}
+		return rep;
+	}
+}

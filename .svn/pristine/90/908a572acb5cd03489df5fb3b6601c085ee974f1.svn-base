@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.DtUserPackageRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.DtUserPackageRecord" >
+    <id column="user_package_record_id" property="userPackageRecordId" jdbcType="VARCHAR" />
+    <result column="package_name" property="packageName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="residue_degree" property="residueDegree" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="VARCHAR" />
+    <result column="end_time" property="endTime" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="dt_team_id" property="dtTeamId" jdbcType="VARCHAR" />
+    <result column="package_type" property="packageType" jdbcType="INTEGER" />
+    <result column="team_package_id" property="teamPackageId" jdbcType="VARCHAR" />
+    <result column="team_package_dtl_id" property="teamPackageDtlId" jdbcType="VARCHAR" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_package_record_id, package_name, description, residue_degree, start_time, end_time, 
+    state, user_id, dt_team_id, package_type, team_package_id, team_package_dtl_id, record_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from dt_user_package_record
+    where user_package_record_id = #{userPackageRecordId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from dt_user_package_record
+    where user_package_record_id = #{userPackageRecordId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.DtUserPackageRecord" >
+    insert into dt_user_package_record (user_package_record_id, package_name, 
+      description, residue_degree, start_time, 
+      end_time, state, user_id, 
+      dt_team_id, package_type, team_package_id, 
+      team_package_dtl_id, record_time)
+    values (#{userPackageRecordId,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{residueDegree,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, 
+      #{endTime,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, 
+      #{dtTeamId,jdbcType=VARCHAR}, #{packageType,jdbcType=INTEGER}, #{teamPackageId,jdbcType=VARCHAR}, 
+      #{teamPackageDtlId,jdbcType=VARCHAR}, #{recordTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.DtUserPackageRecord" >
+    insert into dt_user_package_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userPackageRecordId != null" >
+        user_package_record_id,
+      </if>
+      <if test="packageName != null" >
+        package_name,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="residueDegree != null" >
+        residue_degree,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="dtTeamId != null" >
+        dt_team_id,
+      </if>
+      <if test="packageType != null" >
+        package_type,
+      </if>
+      <if test="teamPackageId != null" >
+        team_package_id,
+      </if>
+      <if test="teamPackageDtlId != null" >
+        team_package_dtl_id,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userPackageRecordId != null" >
+        #{userPackageRecordId,jdbcType=VARCHAR},
+      </if>
+      <if test="packageName != null" >
+        #{packageName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="residueDegree != null" >
+        #{residueDegree,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="dtTeamId != null" >
+        #{dtTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="packageType != null" >
+        #{packageType,jdbcType=INTEGER},
+      </if>
+      <if test="teamPackageId != null" >
+        #{teamPackageId,jdbcType=VARCHAR},
+      </if>
+      <if test="teamPackageDtlId != null" >
+        #{teamPackageDtlId,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.DtUserPackageRecord" >
+    update dt_user_package_record
+    <set >
+      <if test="packageName != null" >
+        package_name = #{packageName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="residueDegree != null" >
+        residue_degree = #{residueDegree,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="dtTeamId != null" >
+        dt_team_id = #{dtTeamId,jdbcType=VARCHAR},
+      </if>
+      <if test="packageType != null" >
+        package_type = #{packageType,jdbcType=INTEGER},
+      </if>
+      <if test="teamPackageId != null" >
+        team_package_id = #{teamPackageId,jdbcType=VARCHAR},
+      </if>
+      <if test="teamPackageDtlId != null" >
+        team_package_dtl_id = #{teamPackageDtlId,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_package_record_id = #{userPackageRecordId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.DtUserPackageRecord" >
+    update dt_user_package_record
+    set package_name = #{packageName,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      residue_degree = #{residueDegree,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=VARCHAR},
+      end_time = #{endTime,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=VARCHAR},
+      dt_team_id = #{dtTeamId,jdbcType=VARCHAR},
+      package_type = #{packageType,jdbcType=INTEGER},
+      team_package_id = #{teamPackageId,jdbcType=VARCHAR},
+      team_package_dtl_id = #{teamPackageDtlId,jdbcType=VARCHAR},
+      record_time = #{recordTime,jdbcType=VARCHAR}
+    where user_package_record_id = #{userPackageRecordId,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+  
+  <!-- 自定义 -->
+  <!-- 家庭医生业务（视频剩余次数查询） -->
+  <select id="residueDegree" parameterType="map" resultType="int">
+	select ifnull(sum(dupr.residue_degree),0)
+	from dt_user_package_record dupr
+	left join dt_package_dtl dpd
+	on(dupr.team_package_dtl_id = dpd.team_package_dtl_id)
+	left join
+	dt_service ds
+	on(dpd.service_id = ds.service_id)
+	where 1=1
+	and ds.del_flag = 0
+	and dpd.del_flag = 0
+	and dupr.state = 0
+	<if test="userId != null">
+		and dupr.user_id = #{userId}
+	</if>
+	<if test="dtTeamId != null">
+		and dupr.dt_team_id = #{dtTeamId}
+	</if>
+	<if test="serviceType != null">
+		and ds.service_type = #{serviceType}
+	</if>
+  </select>
+  
+  <!-- 保存 -->
+  <insert id="saveDtUserPackageRecord" parameterType="com.huatuo.customer.domain.DtUserPackageRecord" >
+    insert into dt_user_package_record (user_package_record_id, package_name, 
+      description, residue_degree, start_time, 
+      end_time, state, user_id, 
+      dt_team_id, package_type, team_package_id, 
+      team_package_dtl_id, record_time)
+    values (#{userPackageRecordId,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{residueDegree,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, 
+      #{endTime,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, 
+      #{dtTeamId,jdbcType=VARCHAR}, #{packageType,jdbcType=INTEGER}, #{teamPackageId,jdbcType=VARCHAR}, 
+      #{teamPackageDtlId,jdbcType=VARCHAR}, #{recordTime,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 修改用户和套餐详情中间表状态(要保证条件不为null) -->
+  <update id="updateToDelflag" parameterType="map">
+    update dt_user_package_record
+    set 
+        state = #{state},
+        record_time = #{nowTime}
+    where 
+    	  state = 0
+    	  and user_id = #{userId}
+    	  <if test="teamPackageId != null">
+		      and team_package_id = #{teamPackageId}
+	      </if>
+	      and dt_team_id = #{dtTeamId}
+	      and #{nowTime} > end_time
+  </update>
+  
+  
+  <!-- 查询用户签约套餐记录(要求state状态要更新及时) -->
+  <select id="listDtUPRecord" parameterType="map" resultMap="BaseResultMap">
+	select dupr.*
+	from dt_user_package_record dupr
+	left join dt_package_dtl dpd
+	on(dupr.team_package_dtl_id = dpd.team_package_dtl_id)
+	left join dt_service ds
+	on(dpd.service_id = ds.service_id)
+	where 1=1
+	and ds.del_flag = 0
+	and dpd.del_flag = 0
+	and dupr.state = 0
+	and dupr.residue_degree > 0
+	<if test="userId != null">
+		and dupr.user_id = #{userId}
+	</if>
+	<if test="dtTeamId != null">
+		and dupr.dt_team_id = #{dtTeamId}
+	</if>
+	<if test="serviceType != null">
+		and ds.service_type = #{serviceType}
+	</if>
+	order by dupr.start_time
+  </select>
+  
+  <!-- 修改用户签约套餐记录次数(每次减1) -->
+  <update id="updateResidueDegree" parameterType="map">
+    update dt_user_package_record
+    set 
+        residue_degree = residue_degree - 1
+    where  state = 0
+    and residue_degree > 0
+    <if test="userPackageRecordId != null">
+		and user_package_record_id = #{userPackageRecordId}
+	</if>
+  </update>
+</mapper>

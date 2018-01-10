@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtPersonMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtPerson" >
+    <id column="id" property="personId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="birthdate" property="birthdate" jdbcType="VARCHAR" />
+    <result column="marry" property="marry" jdbcType="INTEGER" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="birth_place" property="birthPlace" jdbcType="VARCHAR" />
+    <result column="address_id" property="addressId" jdbcType="BIGINT" />
+    <result column="occupation_id" property="occupationId" jdbcType="INTEGER" />
+    <result column="home_tel" property="homeTel" jdbcType="VARCHAR" />
+    <result column="social_id_type" property="socialIdType" jdbcType="INTEGER" />
+    <result column="social_id" property="socialId" jdbcType="VARCHAR" />
+    <result column="allergic_history" property="allergicHistory" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="DOUBLE" />
+    <result column="height" property="height" jdbcType="DOUBLE" />
+    
+     <result column="oname" property="occupationName" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, user_id, name, age, sex, birthdate, marry, nation, birth_place, address_id, occupation_id, 
+    home_tel, social_id_type, social_id, allergic_history, weight, height
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtPersonCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from xt_person
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_person
+    where id = #{personId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from xt_person
+    where id = #{personId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.XtPersonCriteria" >
+    delete from xt_person
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtPerson" >
+    insert into xt_person (id, user_id, name, 
+      age, sex, birthdate, 
+      marry, nation, birth_place, 
+      address_id, occupation_id, home_tel, 
+      social_id_type, social_id, allergic_history, 
+      weight, height)
+    values (#{personId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{age,jdbcType=INTEGER}, #{sex,jdbcType=INTEGER}, #{birthdate,jdbcType=VARCHAR}, 
+      #{marry,jdbcType=INTEGER}, #{nation,jdbcType=VARCHAR}, #{birthPlace,jdbcType=VARCHAR}, 
+      #{addressId,jdbcType=BIGINT}, #{occupationId,jdbcType=INTEGER}, #{homeTel,jdbcType=VARCHAR}, 
+      #{socialIdType,jdbcType=INTEGER}, #{socialId,jdbcType=VARCHAR}, #{allergicHistory,jdbcType=VARCHAR}, 
+      #{weight,jdbcType=DOUBLE}, #{height,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtPerson" >
+    insert into xt_person
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="personId != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="birthdate != null" >
+        birthdate,
+      </if>
+      <if test="marry != null" >
+        marry,
+      </if>
+      <if test="nation != null" >
+        nation,
+      </if>
+      <if test="birthPlace != null" >
+        birth_place,
+      </if>
+      <if test="addressId != null" >
+        address_id,
+      </if>
+      <if test="occupationId != null" >
+        occupation_id,
+      </if>
+      <if test="homeTel != null" >
+        home_tel,
+      </if>
+      <if test="socialIdType != null" >
+        social_id_type,
+      </if>
+      <if test="socialId != null" >
+        social_id,
+      </if>
+      <if test="allergicHistory != null" >
+        allergic_history,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="height != null" >
+        height,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="personId != null" >
+        #{personId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="birthdate != null" >
+        #{birthdate,jdbcType=VARCHAR},
+      </if>
+      <if test="marry != null" >
+        #{marry,jdbcType=INTEGER},
+      </if>
+      <if test="nation != null" >
+        #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="birthPlace != null" >
+        #{birthPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="addressId != null" >
+        #{addressId,jdbcType=BIGINT},
+      </if>
+      <if test="occupationId != null" >
+        #{occupationId,jdbcType=INTEGER},
+      </if>
+      <if test="homeTel != null" >
+        #{homeTel,jdbcType=VARCHAR},
+      </if>
+      <if test="socialIdType != null" >
+        #{socialIdType,jdbcType=INTEGER},
+      </if>
+      <if test="socialId != null" >
+        #{socialId,jdbcType=VARCHAR},
+      </if>
+      <if test="allergicHistory != null" >
+        #{allergicHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=DOUBLE},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.XtPersonCriteria" resultType="java.lang.Integer" >
+    select count(*) from xt_person
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update xt_person
+    <set >
+      <if test="record.personId != null" >
+        id = #{record.personId,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.age != null" >
+        age = #{record.age,jdbcType=INTEGER},
+      </if>
+      <if test="record.sex != null" >
+        sex = #{record.sex,jdbcType=INTEGER},
+      </if>
+      <if test="record.birthdate != null" >
+        birthdate = #{record.birthdate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marry != null" >
+        marry = #{record.marry,jdbcType=INTEGER},
+      </if>
+      <if test="record.nation != null" >
+        nation = #{record.nation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.birthPlace != null" >
+        birth_place = #{record.birthPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addressId != null" >
+        address_id = #{record.addressId,jdbcType=BIGINT},
+      </if>
+      <if test="record.occupationId != null" >
+        occupation_id = #{record.occupationId,jdbcType=INTEGER},
+      </if>
+      <if test="record.homeTel != null" >
+        home_tel = #{record.homeTel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.socialIdType != null" >
+        social_id_type = #{record.socialIdType,jdbcType=INTEGER},
+      </if>
+      <if test="record.socialId != null" >
+        social_id = #{record.socialId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.allergicHistory != null" >
+        allergic_history = #{record.allergicHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="record.weight != null" >
+        weight = #{record.weight,jdbcType=DOUBLE},
+      </if>
+      <if test="record.height != null" >
+        height = #{record.height,jdbcType=DOUBLE},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update xt_person
+    set id = #{record.personId,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      age = #{record.age,jdbcType=INTEGER},
+      sex = #{record.sex,jdbcType=INTEGER},
+      birthdate = #{record.birthdate,jdbcType=VARCHAR},
+      marry = #{record.marry,jdbcType=INTEGER},
+      nation = #{record.nation,jdbcType=VARCHAR},
+      birth_place = #{record.birthPlace,jdbcType=VARCHAR},
+      address_id = #{record.addressId,jdbcType=BIGINT},
+      occupation_id = #{record.occupationId,jdbcType=INTEGER},
+      home_tel = #{record.homeTel,jdbcType=VARCHAR},
+      social_id_type = #{record.socialIdType,jdbcType=INTEGER},
+      social_id = #{record.socialId,jdbcType=VARCHAR},
+      allergic_history = #{record.allergicHistory,jdbcType=VARCHAR},
+      weight = #{record.weight,jdbcType=DOUBLE},
+      height = #{record.height,jdbcType=DOUBLE}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtPerson" >
+    update xt_person
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="birthdate != null" >
+        birthdate = #{birthdate,jdbcType=VARCHAR},
+      </if>
+      <if test="marry != null" >
+        marry = #{marry,jdbcType=INTEGER},
+      </if>
+      <if test="nation != null" >
+        nation = #{nation,jdbcType=VARCHAR},
+      </if>
+      <if test="birthPlace != null" >
+        birth_place = #{birthPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="addressId != null" >
+        address_id = #{addressId,jdbcType=BIGINT},
+      </if>
+      <if test="occupationId != null" >
+        occupation_id = #{occupationId,jdbcType=INTEGER},
+      </if>
+      <if test="homeTel != null" >
+        home_tel = #{homeTel,jdbcType=VARCHAR},
+      </if>
+      <if test="socialIdType != null" >
+        social_id_type = #{socialIdType,jdbcType=INTEGER},
+      </if>
+      <if test="socialId != null" >
+        social_id = #{socialId,jdbcType=VARCHAR},
+      </if>
+      <if test="allergicHistory != null" >
+        allergic_history = #{allergicHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=DOUBLE},
+      </if>
+      <if test="height != null" >
+        height = #{height,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{personId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtPerson" >
+    update xt_person
+    set user_id = #{userId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      sex = #{sex,jdbcType=INTEGER},
+      birthdate = #{birthdate,jdbcType=VARCHAR},
+      marry = #{marry,jdbcType=INTEGER},
+      nation = #{nation,jdbcType=VARCHAR},
+      birth_place = #{birthPlace,jdbcType=VARCHAR},
+      address_id = #{addressId,jdbcType=BIGINT},
+      occupation_id = #{occupationId,jdbcType=INTEGER},
+      home_tel = #{homeTel,jdbcType=VARCHAR},
+      social_id_type = #{socialIdType,jdbcType=INTEGER},
+      social_id = #{socialId,jdbcType=VARCHAR},
+      allergic_history = #{allergicHistory,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=DOUBLE},
+      height = #{height,jdbcType=DOUBLE}
+    where id = #{personId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtPersonCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from xt_person
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectPersonByUserId" parameterType="long" resultMap="BaseResultMap">
+  	select 
+  	person.id, person.user_id, person.name, person.age, person.sex, person.birthdate, person.marry, person.nation,
+  	person.birth_place,person.address_id,person.occupation_id, 
+    person.home_tel, person.social_id_type, person.social_id, person.allergic_history, person.weight, person.height
+  	,o.name oname
+  	from xt_person person
+  	left join xt_zd_occupation o
+    on o.id = person.occupation_id
+  	where person.user_id = #{userId,jdbcType=BIGINT}
+  </select>
+  <cache />
+</mapper>

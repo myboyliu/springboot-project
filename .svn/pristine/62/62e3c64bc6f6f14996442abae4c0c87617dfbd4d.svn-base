@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.DoctorMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.Doctor" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="birthdate" property="birthdate" jdbcType="VARCHAR" />
+    <result column="birth_place" property="birthPlace" jdbcType="VARCHAR" />
+    <result column="language" property="language" jdbcType="VARCHAR" />
+    <result column="language_cn" property="languageCn" jdbcType="VARCHAR" />
+    <result column="specialty_id" property="specialtyId" jdbcType="INTEGER" />
+    <result column="zd_org_id" property="zdOrgId" jdbcType="VARCHAR" />
+    <result column="doctor_type" property="doctorType" jdbcType="INTEGER" />
+    <result column="dept" property="dept" jdbcType="VARCHAR" />
+    <result column="dept_cn" property="deptCn" jdbcType="VARCHAR" />
+    <result column="titles_clinical" property="titlesClinical" jdbcType="INTEGER" />
+    <result column="titles_teach" property="titlesTeach" jdbcType="INTEGER" />
+    <result column="good_at" property="goodAt" jdbcType="VARCHAR" />
+    <result column="avg_time" property="avgTime" jdbcType="VARCHAR" />
+    <result column="social_id_type" property="socialIdType" jdbcType="INTEGER" />
+    <result column="social_id" property="socialId" jdbcType="VARCHAR" />
+    <result column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="picture" property="picture" jdbcType="VARCHAR" />
+    <result column="praise" property="praise" jdbcType="INTEGER" />
+    <result column="appraise" property="appraise" jdbcType="REAL" />
+    <result column="tw_price" property="twPrice" jdbcType="DECIMAL" />
+    <result column="sp_price" property="spPrice" jdbcType="DECIMAL" />
+    <result column="sm_price" property="smPrice" jdbcType="DECIMAL" />
+    <result column="yy_price" property="yyPrice" jdbcType="DECIMAL" />
+    <result column="is_tw" property="isTw" jdbcType="INTEGER" />
+    <result column="is_sp" property="isSp" jdbcType="INTEGER" />
+    <result column="is_sm" property="isSm" jdbcType="INTEGER" />
+    <result column="is_jt" property="isJt" jdbcType="INTEGER" />
+    <result column="is_yy" property="isYy" jdbcType="INTEGER" />
+    <result column="is_cs" property="isCs" jdbcType="INTEGER" />
+    <result column="doctor_apply_id" property="doctorApplyId" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="bonus_id" property="bonusId" jdbcType="BIGINT" />
+    <result column="seat_type" property="seatType" jdbcType="VARCHAR" />
+    <result column="seat_title" property="seatTitle" jdbcType="VARCHAR" />
+    
+    <result column="province_code" jdbcType="OTHER" property="provinceCode"/>
+    <result column="province" jdbcType="VARCHAR" property="province"/>
+    <result column="city_code" jdbcType="OTHER" property="cityCode"/>
+    <result column="city" jdbcType="VARCHAR" property="city"/>
+    <result column="county_code" jdbcType="OTHER" property="countyCode"/>
+    <result column="county" jdbcType="VARCHAR" property="county"/>
+    <result column="road_code" jdbcType="OTHER" property="roadCode"/>
+    <result column="road" jdbcType="VARCHAR" property="road"/>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    d.id, d.user_id,d.name, d.age, d.sex,d.nation,d.birthdate,d.birth_place,d.language,d.language_cn,
+    d.specialty_id,d.zd_org_id,d.doctor_type,d.dept,d.dept_cn,d.titles_teach,d.good_at,d.avg_time,d.social_id_type,
+    d.social_id,d.role_id,d.picture,d.praise,d.appraise,d.tw_price,d.sp_price,d.sm_price,d.yy_price,is_tw,
+    d.is_sp,d.is_sm,is_jt,d.is_yy,d.is_cs,d.doctor_apply_id,d.del_flag,d.bonus_id,d.seat_type,d.seat_title
+  </sql>
+  
+  <sql id="Base_Column_List_extends" >
+    d.id, d.user_id,d.name, d.age, d.sex,d.nation,d.birthdate,d.birth_place,d.language,d.language_cn,
+    d.specialty_id,d.zd_org_id,org.name orgName,d.doctor_type,d.dept,d.dept_cn,titles_clinical,d.titles_teach,d.good_at,d.avg_time,d.social_id_type,
+    d.social_id,d.role_id,d.picture,d.praise,d.appraise,d.tw_price,d.sp_price,d.sm_price,d.yy_price,is_tw,
+    d.is_sp,d.is_sm,is_jt,d.is_yy,d.is_cs,d.doctor_apply_id,d.del_flag,d.bonus_id,d.seat_type,d.seat_title,
+    address.province_code,address.province,address.city_code,address.city,address.county_code,address.county,address.road_code,
+    address.road
+  </sql>
+  
+  <sql id="Condition">
+  		<if test="provinceCode != null">
+  			and address.province_code = #{provinceCode,jdbcType=OTHER}
+  		</if>
+  		<if test="province != null">
+  			and address_province = #{province,jdbcType=VARCHAR}
+  		</if>
+  		
+  		<if test="cityCode != null">
+  			and address.city_code = #{cityCode,jdbcType=OTHER}
+  		</if>
+  		<if test="city != null">
+  			and address.city = #{city,jdbcType=VARCHAR}
+  		</if>
+  		<if test="countyCode != null">
+  			and address.county_code = #{countyCode,jdbcType=OTHER}
+  		</if>
+  		<if test="county != null">
+  			and address.county = #{county,jdbcType=VARCHAR}
+  		</if> 		
+  		<if test="roadCode != null">
+  			and address.road_code = #{roadCode,jdbcType=OTHER}
+  		</if>
+  		<if test="road != null">
+  			and address.road = #{road,jdbcType=VARCHAR}
+  		</if>
+ 		<if test="specialtyId != null">
+  			and d.specialty_id = #{specialtyId,jdbcType=INTEGER} 
+  		</if> 
+  		<if test="zdOrgId != null">
+  			and d.zd_org_id = #{zdOrgId,jdbcType=INTEGER} 
+  		</if>  
+  		
+  		
+  </sql>
+  
+	<select id="selectAllDoctors" resultType="com.huatuo.customer.domain.Doctor">
+		select * from xt_doctor
+	</select>
+	
+	<select id="selectDoctorInfo" parameterType="java.util.Map" resultType="com.huatuo.customer.domain.Doctor">
+	    select 
+	    <include refid="Base_Column_List_extends" />
+	    from xt_doctor d
+	    left join xt_zd_org org
+	    on
+	    d.zd_org_id = org.id
+	    left join xt_address address
+	    on
+	    org.address_id = address.address_id
+	    where
+	    1=1
+	    <include refid="Condition" />
+	    <if test="start != null and pageSize != null">	    
+	       limit #{start}, #{pageSize}      	
+    	</if>
+	</select>
+	
+	<select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+      	select 
+	    count(*)
+	    from xt_doctor d
+	    left join xt_zd_org org
+	    on
+	    d.zd_org_id = org.id
+	    left join xt_address address
+	    on
+	    org.address_id = address.address_id
+	    where
+	    1=1
+	    <include refid="Condition" />
+    </select> 
+	
+	<select id="selectDoctorDetailById" parameterType="java.util.Map" resultType="com.huatuo.customer.domain.Doctor" >	
+	    SELECT d.id doctorId,d.name name,d.titles_clinical titlesClinical,d.dept dept,
+			d.titles_teach titlesTeach,d.good_at goodAt,d.language language,d.role_id
+			roleId,d.praise praise,d.zd_org_id orgId,org.name orgName,s.name specialtyName,
+			d.appraise appraise,d.is_sp isSp,d.is_tw isTuwen,d.picture picture,d.seat_title seatTitle,d.is_yy isYy,
+			d.titles_clinical titlesClinical,d.titles_teach titlesTeach,
+			(select count(*) from xt_doctor d1 left join mz_visit v on v.doctor_id = d1.id where v.`status`=20) as servicePerson
+		FROM xt_doctor d 
+		left join xt_zd_org org
+		on d.zd_org_id = org.id
+		left join xt_specialty s
+		on d.specialty_id = s.id
+		WHERE d.id = #{doctorId}   
+    </select>
+	
+	<select id="selectDoctorById" parameterType="long" resultMap="BaseResultMap" >
+		select 
+			id, user_id, name, age, sex, nation, birthdate, birth_place, language, language_cn, 
+		    specialty_id, zd_org_id, doctor_type, dept, dept_cn, titles_clinical, titles_teach, 
+		    good_at, avg_time, social_id_type, social_id, role_id, picture, praise, appraise, 
+		    tw_price, sp_price, sm_price,yy_price , is_tw, is_sp, is_sm, is_jt, is_yy,is_cs, doctor_apply_id, 
+		    del_flag, bonus_id, seat_type, seat_title
+		from xt_doctor 
+		where id = #{doctorId,jdbcType=VARCHAR} 
+	</select>
+	
+	<select id="listDoctorsByDtTeamId" parameterType="map" resultMap="BaseResultMap" >
+		select 
+			xd.id, xd.user_id, xd.name, xd.age, xd.sex, xd.nation, xd.birthdate, xd.birth_place, 
+			xd.language, xd.language_cn, xd.specialty_id, xd.zd_org_id, xd.doctor_type, xd.dept, 
+			xd.dept_cn, xd.titles_clinical, xd.titles_teach, xd.good_at, xd.avg_time, xd.social_id_type, 
+			xd.social_id, xd.role_id, xd.picture, xd.praise, xd.appraise, xd.tw_price, xd.sp_price, 
+			xd.sm_price,yy_price , xd.is_tw, xd.is_sp, xd.is_sm, xd.is_jt, xd.is_yy,is_cs, xd.doctor_apply_id, 
+			xd.del_flag, xd.bonus_id, xd.seat_type, xd.seat_title
+		from dt_member dm
+		left join xt_doctor xd
+		on(dm.doctor_id = xd.id)
+		where 1=1
+		<if test="dtTeamId != null">
+	      and dm.dt_team_id = ${dtTeamId}
+	    </if>
+		and dm.del_flg = 0 
+	</select>
+	
+
+</mapper>

@@ -1,0 +1,70 @@
+#241
+#application.spring.datasource = spring.datasource.241.
+#application.spring.redis = spring.redis.241.
+#application.fms.host = fms.host.241.
+#web_url = http://192.168.100.241:8080
+#assemblyPayParamForAlipay=http://192.168.100.241:7788/order/alipay/thirdPartyPreparePayForParam?orderNo=
+#timerUrl=http://192.168.100.241:8080/timer
+#pay_after_notice_url = http://192.168.100.65:9981
+
+#61
+application.spring.datasource = spring.datasource.61.
+application.spring.redis = spring.redis.61.
+application.fms.host = fms.host.61.
+web_url = http://192.168.100.61:8080
+assemblyPayParamForAlipay=http://192.168.100.63:28080/order/alipay/thirdPartyPreparePayForParam?orderNo=
+timerUrl=http://192.168.100.61:18081/timer
+pay_after_notice_url = http://192.168.100.65:9981
+
+#www
+#application.spring.datasource = spring.datasource.www.
+#application.spring.redis = spring.redis.www.
+#application.fms.host = fms.host.www.
+#assemblyPayParamForAlipay=https://www.huatuooh.com/order/alipay/thirdPartyPreparePayForParam?orderNo=
+
+epay_url = http://pay.huatuooh.com/order/web/alipay/epayRedirect/
+epay_register_url = https://testmy.orangebank.com.cn/scfpwp-p-web/thirdPart/input_thirdpartyinterface.action
+epay_register_jsk_url = src\\main\\webapp\\WEB-INF\\resource\\keystore\\merchant.jks
+epay_register_jsk_lias = mykey
+epay_register_jsk_pwd = changeit
+
+
+file_upload_path=C:\\HuatuoOnlineUpload
+ftpUrl =192.168.100.61
+authorize_url = http://219.138.163.21:800/newhealth/oauth/authorize2.aspx
+port =21
+userName =upfile
+password =htwy.com
+imageUrl=http://192.168.100.61:9999/images/upload
+#assemblyPayParamForAlipay=http://192.168.100.78:7788/alipay/thirdPartyPreparePayForParam?orderNo=
+
+
+messageUrl=http://192.168.100.61:8089/huatuo-message
+newsUrl=http://192.168.100.242:81
+
+
+des.key=huatuo12
+
+redis.redisKeyQueuingMap=flexDoctorQueuingMap
+redis.task=taskMap
+
+
+
+
+nsqAddress=192.168.100.95
+dictionary.districtMap=districtMap
+dictionary.familyRelationMap=familyRelationMap
+dictionary.icdMap=icdMap
+dictionary.xtZdOrgMap=xtZdOrgMap
+dictionary.ypZdKindMap=ypZdKindMap
+dictionary.ypZdSupplyMap=ypZdSupplyMap
+dictionary.xtSpecialtyMap=xtSpecialtyMap
+dictionary.xtealthExamMap=xtealthExamMap
+dictionary.taskExeMap=taskExeMap
+
+dictionary.companyMap=companyMap
+dictionary.unitMap=unitMap
+dictionary.occupationMap=occupationMap
+dictionary.frequencyMap=frequencyMap
+
+dictionary.doctorId=doctorId

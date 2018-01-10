@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtHealthCenterMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtHealthCenter" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="measuring_date" property="measuringDate" jdbcType="VARCHAR" />
+    <result column="measuring_time" property="measuringTime" jdbcType="VARCHAR" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+    <result column="measuring_value" property="measuringValue" jdbcType="DOUBLE" />
+    <result column="diastolic_pressure" property="diastolicPressure" jdbcType="DOUBLE" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="family_id" property="familyId" jdbcType="VARCHAR" />
+    <result column="health_status_id" property="healthStatusId" jdbcType="VARCHAR" />
+    <result column="discomfort" property="discomfort" jdbcType="VARCHAR" />
+    <result column="mark" property="mark" jdbcType="VARCHAR" />
+    
+    <result column="health_status" property="healthStatus" jdbcType="VARCHAR" />
+    <result column="prompt" property="prompt" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type, measuring_date, measuring_time, record_time, measuring_value, diastolic_pressure, 
+    user_id, family_id, health_status_id, discomfort, mark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_health_center
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectXtHealthCenterList" resultType="com.huatuo.customer.domain.XtHealthCenter" parameterType="map" >
+    select 
+    c.id id, c.type type,c.measuring_date measuringDate, c.measuring_time measuringTime, c.record_time recordTime,
+    c.measuring_value measuringValue, c.diastolic_pressure diastolicPressure, c.user_id userId, c.family_id familyId,
+    c.health_status_id healthStatusId, c.discomfort discomfort,c.mark mark,s.preset_min presetMin,s.preset_max presetMax,
+    s.bp_preset_min bpPresetMin,s.bp_preset_max bpPresetMax,s.health_status healthStatus,s.prompt prompt
+    <if test="firstOfWeek!=null and lastOfWeek!=null"> <!--按周查出每天最高值和最低值  -->
+       ,max(c.measuring_value) maxMeaValue,min(c.measuring_value) minMeaValue
+       ,max(c.diastolic_pressure) maxDiaValue,min(diastolic_pressure) minDiaValue
+    </if>    
+    from xt_health_center c
+    left join xt_health_status s
+    on s.id = c.health_status_id   
+    where 1=1
+    <if test="userId!=null">    
+        and  c.user_id = #{userId,jdbcType=VARCHAR}
+    </if>   
+    <if test="type!=null">
+        and c.type = #{type,jdbcType=INTEGER}
+    </if>
+    <if test="measuringDate!=null"><!-- 区分血糖     -->
+      <if test="type!=4">
+        and  c.measuring_date = #{measuringDate,jdbcType=VARCHAR}
+        group by HOUR(c.measuring_time)
+      </if>
+       <if test="type==4">
+        and  c.measuring_date = #{measuringDate,jdbcType=VARCHAR}
+        group by c.measuring_time
+      </if>
+    </if>
+    <if test="firstOfWeek!=null and lastOfWeek!=null">   
+        and  c.measuring_date between #{firstOfWeek} and #{lastOfWeek}
+        group by DAY(c.measuring_date,jdbcType=VARCHAR)
+    </if>
+    <if test="firstOfMonth!=null and lastOfMonth!=null">    
+        and  c.measuring_date between #{firstOfMonth} and #{lastOfMonth}
+    </if>
+       order by c.measuring_date desc
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from xt_health_center
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtHealthCenter" >
+    insert into xt_health_center (id, type, measuring_date, 
+      measuring_time, record_time, measuring_value, 
+      diastolic_pressure, user_id, family_id, 
+      health_status_id, discomfort, mark
+      )
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{measuringDate,jdbcType=VARCHAR}, 
+      #{measuringTime,jdbcType=VARCHAR}, #{recordTime,jdbcType=VARCHAR}, #{measuringValue,jdbcType=DOUBLE}, 
+      #{diastolicPressure,jdbcType=DOUBLE}, #{userId,jdbcType=VARCHAR}, #{familyId,jdbcType=VARCHAR}, 
+      #{healthStatusId,jdbcType=VARCHAR}, #{discomfort,jdbcType=VARCHAR}, #{mark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtHealthCenter" >
+    insert into xt_health_center
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="measuringDate != null" >
+        measuring_date,
+      </if>
+      <if test="measuringTime != null" >
+        measuring_time,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+      <if test="measuringValue != null" >
+        measuring_value,
+      </if>
+      <if test="diastolicPressure != null" >
+        diastolic_pressure,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="familyId != null" >
+        family_id,
+      </if>
+      <if test="healthStatusId != null" >
+        health_status_id,
+      </if>
+      <if test="discomfort != null" >
+        discomfort,
+      </if>
+      <if test="mark != null" >
+        mark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="measuringDate != null" >
+        #{measuringDate,jdbcType=VARCHAR},
+      </if>
+      <if test="measuringTime != null" >
+        #{measuringTime,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="measuringValue != null" >
+        #{measuringValue,jdbcType=DOUBLE},
+      </if>
+      <if test="diastolicPressure != null" >
+        #{diastolicPressure,jdbcType=DOUBLE},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="familyId != null" >
+        #{familyId,jdbcType=VARCHAR},
+      </if>
+      <if test="healthStatusId != null" >
+        #{healthStatusId,jdbcType=VARCHAR},
+      </if>
+      <if test="discomfort != null" >
+        #{discomfort,jdbcType=VARCHAR},
+      </if>
+      <if test="mark != null" >
+        #{mark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtHealthCenter" >
+    update xt_health_center
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="measuringDate != null" >
+        measuring_date = #{measuringDate,jdbcType=VARCHAR},
+      </if>
+      <if test="measuringTime != null" >
+        measuring_time = #{measuringTime,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="measuringValue != null" >
+        measuring_value = #{measuringValue,jdbcType=DOUBLE},
+      </if>
+      <if test="diastolicPressure != null" >
+        diastolic_pressure = #{diastolicPressure,jdbcType=DOUBLE},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="familyId != null" >
+        family_id = #{familyId,jdbcType=VARCHAR},
+      </if>
+      <if test="healthStatusId != null" >
+        health_status_id = #{healthStatusId,jdbcType=VARCHAR},
+      </if>
+      <if test="discomfort != null" >
+        discomfort = #{discomfort,jdbcType=VARCHAR},
+      </if>
+      <if test="mark != null" >
+        mark = #{mark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtHealthCenter" >
+    update xt_health_center
+    set type = #{type,jdbcType=INTEGER},
+      measuring_date = #{measuringDate,jdbcType=VARCHAR},
+      measuring_time = #{measuringTime,jdbcType=VARCHAR},
+      record_time = #{recordTime,jdbcType=VARCHAR},
+      measuring_value = #{measuringValue,jdbcType=DOUBLE},
+      diastolic_pressure = #{diastolicPressure,jdbcType=DOUBLE},
+      user_id = #{userId,jdbcType=VARCHAR},
+      family_id = #{familyId,jdbcType=VARCHAR},
+      health_status_id = #{healthStatusId,jdbcType=VARCHAR},
+      discomfort = #{discomfort,jdbcType=VARCHAR},
+      mark = #{mark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>	
+	<!-- 查询历史记录条件sql -->
+	<sql id="condition_sql">
+		from xt_health_center hc
+		left join xt_health_status hs on hc.health_status_id = hs.id
+		left join xt_person_family pf on hc.family_id = pf.id
+		where hc.user_id = #{userId} 
+			and hc.type = #{type} 
+			and hc.measuring_date between #{starttime} and #{endtime}
+			<if test="familyId != null and familyId != ''">
+				and hc.family_id = #{familyId}
+			</if>
+			<if test="familyId == null or familyId == ''">
+				and hc.family_id is null
+			</if>
+	</sql>
+	
+	<!-- 历史记录列 -->
+	<sql id="history_column">
+		hc.id id, hc.type type, hc.measuring_date measuringDate, 
+		hc.measuring_time measuringTime, hc.record_time recordTime, 
+		hc.measuring_value measuringValue, hc.diastolic_pressure diastolicPressure, 
+		hc.discomfort discomfort, hc.mark mark, hs.health_status healthStatus, 
+		hs.prompt prompt, pf.name `name`
+	</sql>
+	
+	<!-- 统计历史记录条数 -->
+	<select id="getStatistics" parameterType="HealthCenterQuery" resultType="map">
+		select hs.health_status healthStatus, count(hs.health_status) `count`
+		<include refid="condition_sql"/>
+		group by hs.health_status
+	</select>
+	
+	<!-- 统计历史记录条数 -->
+	<select id="countHistory" parameterType="HealthCenterQuery" resultType="int">
+		select count(hc.id) <include refid="condition_sql"/>
+	</select>
+	
+	<!-- 获取历史记录 -->
+	<select id="getHistory" parameterType="HealthCenterQuery" resultType="XtHealthCenterHistory">
+		select <include refid="history_column"/>
+		<include refid="condition_sql"/>
+		limit #{start}, #{pageSize}
+	</select>
+</mapper>

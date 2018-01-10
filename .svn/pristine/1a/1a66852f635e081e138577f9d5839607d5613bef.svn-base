@@ -1,0 +1,26 @@
+package com.huatuo.customer.dao;
+
+
+import java.util.List;
+
+import com.huatuo.customer.domain.XtServiceFile;
+
+public interface XtServiceFileMapper {
+    int deleteByPrimaryKey(Long id);
+
+    int insert(XtServiceFile record);
+
+    int insertSelective(XtServiceFile record);
+
+    XtServiceFile selectByPrimaryKey(Long id);
+
+    int updateByPrimaryKeySelective(XtServiceFile record);
+
+    int updateByPrimaryKey(XtServiceFile record);
+    /**
+     * 根据主题id查询主题的图片和音频
+     * @param id
+     * @return
+     */
+	List<XtServiceFile> getFilesByConsultId(Long consultId);
+}

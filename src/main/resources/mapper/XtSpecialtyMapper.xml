@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.XtSpecialtyMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.XtSpecialty" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="alias_name" property="aliasName" jdbcType="VARCHAR" />
+    <result column="grade" property="grade" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="mz_activated" property="mzActivated" jdbcType="INTEGER" />
+    <result column="py_code" property="pyCode" jdbcType="VARCHAR" />
+    <result column="d_code" property="dCode" jdbcType="VARCHAR" />
+    <result column="sort_no" property="sortNo" jdbcType="INTEGER" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="open_flag" property="openFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, code, name, alias_name, grade, parent_id, mz_activated, py_code, d_code, sort_no, 
+    del_flag, open_flag
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtSpecialtyCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from xt_specialty
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from xt_specialty
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from xt_specialty
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.huatuo.customer.domain.XtSpecialtyCriteria" >
+    delete from xt_specialty
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.XtSpecialty" >
+    insert into xt_specialty (id, code, name, 
+      alias_name, grade, parent_id, 
+      mz_activated, py_code, d_code, 
+      sort_no, del_flag, open_flag
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{aliasName,jdbcType=VARCHAR}, #{grade,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, 
+      #{mzActivated,jdbcType=INTEGER}, #{pyCode,jdbcType=VARCHAR}, #{dCode,jdbcType=VARCHAR}, 
+      #{sortNo,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER}, #{openFlag,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.XtSpecialty" >
+    insert into xt_specialty
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="aliasName != null" >
+        alias_name,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="mzActivated != null" >
+        mz_activated,
+      </if>
+      <if test="pyCode != null" >
+        py_code,
+      </if>
+      <if test="dCode != null" >
+        d_code,
+      </if>
+      <if test="sortNo != null" >
+        sort_no,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="openFlag != null" >
+        open_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="aliasName != null" >
+        #{aliasName,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="mzActivated != null" >
+        #{mzActivated,jdbcType=INTEGER},
+      </if>
+      <if test="pyCode != null" >
+        #{pyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dCode != null" >
+        #{dCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNo != null" >
+        #{sortNo,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="openFlag != null" >
+        #{openFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.huatuo.customer.domain.XtSpecialtyCriteria" resultType="java.lang.Integer" >
+    select count(*) from xt_specialty
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update xt_specialty
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aliasName != null" >
+        alias_name = #{record.aliasName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.grade != null" >
+        grade = #{record.grade,jdbcType=INTEGER},
+      </if>
+      <if test="record.parentId != null" >
+        parent_id = #{record.parentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.mzActivated != null" >
+        mz_activated = #{record.mzActivated,jdbcType=INTEGER},
+      </if>
+      <if test="record.pyCode != null" >
+        py_code = #{record.pyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dCode != null" >
+        d_code = #{record.dCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sortNo != null" >
+        sort_no = #{record.sortNo,jdbcType=INTEGER},
+      </if>
+      <if test="record.delFlag != null" >
+        del_flag = #{record.delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.openFlag != null" >
+        open_flag = #{record.openFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update xt_specialty
+    set id = #{record.id,jdbcType=INTEGER},
+      code = #{record.code,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      alias_name = #{record.aliasName,jdbcType=VARCHAR},
+      grade = #{record.grade,jdbcType=INTEGER},
+      parent_id = #{record.parentId,jdbcType=INTEGER},
+      mz_activated = #{record.mzActivated,jdbcType=INTEGER},
+      py_code = #{record.pyCode,jdbcType=VARCHAR},
+      d_code = #{record.dCode,jdbcType=VARCHAR},
+      sort_no = #{record.sortNo,jdbcType=INTEGER},
+      del_flag = #{record.delFlag,jdbcType=INTEGER},
+      open_flag = #{record.openFlag,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.XtSpecialty" >
+    update xt_specialty
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="aliasName != null" >
+        alias_name = #{aliasName,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="mzActivated != null" >
+        mz_activated = #{mzActivated,jdbcType=INTEGER},
+      </if>
+      <if test="pyCode != null" >
+        py_code = #{pyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dCode != null" >
+        d_code = #{dCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sortNo != null" >
+        sort_no = #{sortNo,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="openFlag != null" >
+        open_flag = #{openFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.XtSpecialty" >
+    update xt_specialty
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      alias_name = #{aliasName,jdbcType=VARCHAR},
+      grade = #{grade,jdbcType=INTEGER},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      mz_activated = #{mzActivated,jdbcType=INTEGER},
+      py_code = #{pyCode,jdbcType=VARCHAR},
+      d_code = #{dCode,jdbcType=VARCHAR},
+      sort_no = #{sortNo,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      open_flag = #{openFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtSpecialtyCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from xt_specialty
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+   <select id="selectSpecialtyInfo" resultMap="BaseResultMap" parameterType="com.huatuo.customer.domain.XtSpecialty" >
+    select
+    <include refid="Base_Column_List" />
+    from xt_specialty 
+    where  
+    xt_specialty.grade=0
+  </select>
+  
+  <select id="selectSubsetSpecialtys" parameterType="int" resultMap="BaseResultMap">
+  	select * from xt_specialty where parent_id = #{specialtyId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectSpecialtyInfoByIdOrParentId" parameterType="int" resultMap="BaseResultMap">
+  	select 
+  		id
+  	from xt_specialty where id = #{specialtyId,jdbcType=INTEGER} or parent_id = #{specialtyId,jdbcType=INTEGER}
+  </select>
+</mapper>

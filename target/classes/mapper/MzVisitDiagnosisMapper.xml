@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huatuo.customer.dao.MzVisitDiagnosisMapper" >
+  <resultMap id="BaseResultMap" type="com.huatuo.customer.domain.MzVisitDiagnosis" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="visit_id" property="visitId" jdbcType="BIGINT" />
+    <result column="icd_code" property="icdCode" jdbcType="VARCHAR" />
+    <result column="icd_name_orig" property="icdNameOrig" jdbcType="VARCHAR" />
+    <result column="icd_name_new" property="icdNameNew" jdbcType="VARCHAR" />
+    <result column="addition_code" property="additionCode" jdbcType="VARCHAR" />
+    <result column="addition_name_orig" property="additionNameOrig" jdbcType="VARCHAR" />
+    <result column="addition_name_new" property="additionNameNew" jdbcType="VARCHAR" />
+    <result column="medical_system" property="medicalSystem" jdbcType="INTEGER" />
+    <result column="index_no" property="indexNo" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, visit_id, icd_code, icd_name_orig, icd_name_new, addition_code, addition_name_orig, 
+    addition_name_new, medical_system, index_no
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mz_visit_diagnosis
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mz_visit_diagnosis
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huatuo.customer.domain.MzVisitDiagnosis" >
+    insert into mz_visit_diagnosis (id, visit_id, icd_code, 
+      icd_name_orig, icd_name_new, addition_code, 
+      addition_name_orig, addition_name_new, medical_system, 
+      index_no)
+    values (#{id,jdbcType=BIGINT}, #{visitId,jdbcType=BIGINT}, #{icdCode,jdbcType=VARCHAR}, 
+      #{icdNameOrig,jdbcType=VARCHAR}, #{icdNameNew,jdbcType=VARCHAR}, #{additionCode,jdbcType=VARCHAR}, 
+      #{additionNameOrig,jdbcType=VARCHAR}, #{additionNameNew,jdbcType=VARCHAR}, #{medicalSystem,jdbcType=INTEGER}, 
+      #{indexNo,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huatuo.customer.domain.MzVisitDiagnosis" >
+    insert into mz_visit_diagnosis
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="visitId != null" >
+        visit_id,
+      </if>
+      <if test="icdCode != null" >
+        icd_code,
+      </if>
+      <if test="icdNameOrig != null" >
+        icd_name_orig,
+      </if>
+      <if test="icdNameNew != null" >
+        icd_name_new,
+      </if>
+      <if test="additionCode != null" >
+        addition_code,
+      </if>
+      <if test="additionNameOrig != null" >
+        addition_name_orig,
+      </if>
+      <if test="additionNameNew != null" >
+        addition_name_new,
+      </if>
+      <if test="medicalSystem != null" >
+        medical_system,
+      </if>
+      <if test="indexNo != null" >
+        index_no,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="visitId != null" >
+        #{visitId,jdbcType=BIGINT},
+      </if>
+      <if test="icdCode != null" >
+        #{icdCode,jdbcType=VARCHAR},
+      </if>
+      <if test="icdNameOrig != null" >
+        #{icdNameOrig,jdbcType=VARCHAR},
+      </if>
+      <if test="icdNameNew != null" >
+        #{icdNameNew,jdbcType=VARCHAR},
+      </if>
+      <if test="additionCode != null" >
+        #{additionCode,jdbcType=VARCHAR},
+      </if>
+      <if test="additionNameOrig != null" >
+        #{additionNameOrig,jdbcType=VARCHAR},
+      </if>
+      <if test="additionNameNew != null" >
+        #{additionNameNew,jdbcType=VARCHAR},
+      </if>
+      <if test="medicalSystem != null" >
+        #{medicalSystem,jdbcType=INTEGER},
+      </if>
+      <if test="indexNo != null" >
+        #{indexNo,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huatuo.customer.domain.MzVisitDiagnosis" >
+    update mz_visit_diagnosis
+    <set >
+      <if test="visitId != null" >
+        visit_id = #{visitId,jdbcType=BIGINT},
+      </if>
+      <if test="icdCode != null" >
+        icd_code = #{icdCode,jdbcType=VARCHAR},
+      </if>
+      <if test="icdNameOrig != null" >
+        icd_name_orig = #{icdNameOrig,jdbcType=VARCHAR},
+      </if>
+      <if test="icdNameNew != null" >
+        icd_name_new = #{icdNameNew,jdbcType=VARCHAR},
+      </if>
+      <if test="additionCode != null" >
+        addition_code = #{additionCode,jdbcType=VARCHAR},
+      </if>
+      <if test="additionNameOrig != null" >
+        addition_name_orig = #{additionNameOrig,jdbcType=VARCHAR},
+      </if>
+      <if test="additionNameNew != null" >
+        addition_name_new = #{additionNameNew,jdbcType=VARCHAR},
+      </if>
+      <if test="medicalSystem != null" >
+        medical_system = #{medicalSystem,jdbcType=INTEGER},
+      </if>
+      <if test="indexNo != null" >
+        index_no = #{indexNo,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huatuo.customer.domain.MzVisitDiagnosis" >
+    update mz_visit_diagnosis
+    set visit_id = #{visitId,jdbcType=BIGINT},
+      icd_code = #{icdCode,jdbcType=VARCHAR},
+      icd_name_orig = #{icdNameOrig,jdbcType=VARCHAR},
+      icd_name_new = #{icdNameNew,jdbcType=VARCHAR},
+      addition_code = #{additionCode,jdbcType=VARCHAR},
+      addition_name_orig = #{additionNameOrig,jdbcType=VARCHAR},
+      addition_name_new = #{additionNameNew,jdbcType=VARCHAR},
+      medical_system = #{medicalSystem,jdbcType=INTEGER},
+      index_no = #{indexNo,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <cache />
+  <!-- 查询就诊记录的诊断 -->
+  <select id="getListByVisitId" parameterType="long" resultMap="BaseResultMap">
+	SELECT * FROM mz_visit_diagnosis WHERE visit_id = #{visitId}
+  </select>
+</mapper>
